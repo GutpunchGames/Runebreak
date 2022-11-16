@@ -1,7 +1,11 @@
 package main
 
-import "github.com/GutpunchGames/Runebreak/runebreak-infra/services/gateway"
+import (
+	"fmt"
+
+	"github.com/GutpunchGames/Runebreak/runebreak-infra/services/gateway"
+)
 
 func main() {
-	gateway.TestFunc()
+	fmt.Printf("%s\n", gateway.Pong())
 }
