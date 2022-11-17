@@ -1,0 +1,19 @@
+syntax="proto3";
+option go_package="/accountsprotos";
+
+service Accounts {
+    rpc GetExample(ExampleRequest) returns (ExampleResponse);
+}
+
+message ExampleRequest {
+    ExampleEnum ParamOne = 1;
+}
+
+message ExampleResponse {
+    float Rate = 1;
+}
+
+enum ExampleEnum {
+    ZERO=0;
+    ONE=1;
+}

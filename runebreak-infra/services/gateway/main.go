@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"time"
 
+	accountsProtos "github.com/GutpunchGames/Runebreak/runebreak-infra/services/accounts/protos"
 	"github.com/gorilla/mux"
 )
 
@@ -20,6 +21,21 @@ func main() {
 	serveMux := mux.NewRouter()
 	getRouter := serveMux.Methods(http.MethodGet).Subrouter()
 	getRouter.HandleFunc("/",  t)
+
+	accountsProtos.TestFunc2()
+
+	// conn, err := grpc.Dial("localhost:9091", grpc.WithInsecure())
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// defer conn.Close()
+
+	// accountsClient := accountsProtos.NewAccountsClient(conn)
+
+	// req := accounts.ExampleRequest{ParamOne: accounts.ExampleEnum_ZERO}
+	// fmt.Printf("created request: %s\n", req)
+	// res, err := accountsClient.GetExample(context.TODO(), &req)
+	// fmt.Printf("got response: %s\n", res)
 
 	url := fmt.Sprintf("localhost:%s", port)
 
@@ -52,7 +68,7 @@ func main() {
 }
 
 func t(rw http.ResponseWriter, request *http.Request) {
-	rw.Write([]byte("hello"))
+	rw.Write([]byte("gateway"))
 }
 
 // expecting:
