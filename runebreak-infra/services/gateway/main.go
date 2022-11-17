@@ -9,8 +9,9 @@ import (
 	"os/signal"
 	"time"
 
-	accountsProtos "github.com/GutpunchGames/Runebreak/runebreak-infra/services/accounts/protos"
+	accountsProtos "github.com/GutpunchGames/Runebreak/runebreak-infra/services/accounts/protos/accounts"
 	"github.com/gorilla/mux"
+	"google.golang.org/grpc"
 )
 
 const serviceName = "runebreak-gateway-service"
@@ -22,15 +23,13 @@ func main() {
 	getRouter := serveMux.Methods(http.MethodGet).Subrouter()
 	getRouter.HandleFunc("/",  t)
 
-	accountsProtos.TestFunc2()
+	conn, err := grpc.Dial("localhost:9091", grpc.WithInsecure())
+	if err != nil {
+		panic(err)
+	}
+	defer conn.Close()
 
-	// conn, err := grpc.Dial("localhost:9091", grpc.WithInsecure())
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// defer conn.Close()
-
-	// accountsClient := accountsProtos.NewAccountsClient(conn)
+	accountsProtos.NewAccountsClient(conn)
 
 	// req := accounts.ExampleRequest{ParamOne: accounts.ExampleEnum_ZERO}
 	// fmt.Printf("created request: %s\n", req)

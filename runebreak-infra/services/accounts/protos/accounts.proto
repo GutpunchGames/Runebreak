@@ -1,5 +1,5 @@
 syntax="proto3";
-option go_package="/accountsprotos";
+option go_package="/accounts";
 
 service Accounts {
     rpc GetExample(ExampleRequest) returns (ExampleResponse);
