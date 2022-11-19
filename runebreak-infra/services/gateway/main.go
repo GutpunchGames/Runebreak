@@ -9,7 +9,7 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/GutpunchGames/Runebreak/runebreak-infra/services/accounts/protos/accounts"
+	"github.com/GutpunchGames/Runebreak/runebreak-infra/protos/accounts"
 	"github.com/GutpunchGames/Runebreak/runebreak-infra/services/gateway/handlers"
 	"github.com/gorilla/mux"
 	"google.golang.org/grpc"

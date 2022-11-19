@@ -6,6 +6,8 @@ services:
     image: gateway
     ports:
       - "3000:9090"
+    environment:
+      - GOPRIVATE=value
   accounts:
     build: ./services/accounts
     image: accounts
