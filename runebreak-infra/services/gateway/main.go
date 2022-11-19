@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"time"
 
+	exported "github.com/GutpunchGames/Runebreak/runebreak-infra/protos"
 	"github.com/GutpunchGames/Runebreak/runebreak-infra/protos/accounts"
 	"github.com/GutpunchGames/Runebreak/runebreak-infra/services/gateway/handlers"
 	"github.com/gorilla/mux"
@@ -18,6 +19,7 @@ import (
 const serviceName = "runebreak-gateway-service"
 
 func main() {
+	exported.ExportedFunc()
 	port := extractArgs(os.Args)
 	logger := log.New(os.Stdout,serviceName, log.LstdFlags)
 	serveMux := mux.NewRouter()
