@@ -9,9 +9,9 @@ import (
 	"os/signal"
 	"time"
 
-	exported "github.com/GutpunchGames/Runebreak/runebreak-infra/protos"
-	"github.com/GutpunchGames/Runebreak/runebreak-infra/protos/accounts"
 	"github.com/GutpunchGames/Runebreak/runebreak-infra/services/gateway/handlers"
+	exported "github.com/GutpunchGames/Runebreak/runebreak-infra/services/protos"
+	"github.com/GutpunchGames/Runebreak/runebreak-infra/services/protos/accounts"
 	"github.com/gorilla/mux"
 	"google.golang.org/grpc"
 )

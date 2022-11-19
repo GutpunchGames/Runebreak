@@ -1,4 +1,4 @@
-module github.com/GutpunchGames/Runebreak/runebreak-infra/protos
+module github.com/GutpunchGames/Runebreak/runebreak-infra/services/protos
 
 go 1.19
 
