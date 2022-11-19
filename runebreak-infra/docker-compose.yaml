@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+  gateway:
+    build: ./services/gateway
+    image: gateway
+    ports:
+      - "3000:9090"
+  accounts:
+    build: ./services/accounts
+    image: accounts
+    ports:
+      - "3001:9090"
