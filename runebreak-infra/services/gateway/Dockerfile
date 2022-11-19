@@ -4,6 +4,5 @@ RUN apt-get upgrade -y
 RUN apt-get install -y protobuf-compiler
 WORKDIR /gateway
 COPY . .
-# RUN make protos
 CMD ["go", "run", "main.go", "9090"]
 EXPOSE 9090

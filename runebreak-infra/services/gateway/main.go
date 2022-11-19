@@ -9,7 +9,10 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/GutpunchGames/Runebreak/runebreak-infra/services/accounts/protos/accounts"
+	"github.com/GutpunchGames/Runebreak/runebreak-infra/services/gateway/handlers"
 	"github.com/gorilla/mux"
+	"google.golang.org/grpc"
 )
 
 const serviceName = "runebreak-gateway-service"
@@ -18,19 +21,31 @@ func main() {
 	port := extractArgs(os.Args)
 	logger := log.New(os.Stdout,serviceName, log.LstdFlags)
 	serveMux := mux.NewRouter()
+
+	registerHandler := handlers.NewRegisterHandler(logger)
 	getRouter := serveMux.Methods(http.MethodGet).Subrouter()
-	getRouter.HandleFunc("/",  t)
+	getRouter.HandleFunc("/register", registerHandler.Register)
 
-	// conn, err := grpc.Dial("localhost:9091", grpc.WithInsecure())
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// defer conn.Close()
+	conn, err := grpc.Dial(":9092", grpc.WithInsecure())
+	if err != nil {
+		panic(err)
+	}
+	defer conn.Close()
 
-	// accountsProtos.NewAccountsClient(conn)
+	accountsClient := accounts.NewAccountsClient(conn)
+	req := accounts.ExampleRequest{ParamOne: accounts.ExampleEnum_ZERO}
+	ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
+	defer cancel()
+
+	res, err := accountsClient.GetExample(ctx, &req)
+	if err == nil {
+		logger.Printf("got response: %s\n", res)
+	} else {
+		logger.Printf("got error: %s\n", err)
+		return
+	}
 
 	url := fmt.Sprintf(":%s", port)
-
 	server := &http.Server{
 		Addr: url,
 		Handler: serveMux,
@@ -57,10 +72,6 @@ func main() {
 	tc, cancelFunc := context.WithTimeout(context.Background(), 30 * time.Second)
 	server.Shutdown(tc)
 	cancelFunc()
-}
-
-func t(rw http.ResponseWriter, request *http.Request) {
-	rw.Write([]byte("gateway"))
 }
 
 // expecting:

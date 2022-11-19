@@ -10,4 +10,4 @@ services:
     build: ./services/accounts
     image: accounts
     ports:
-      - "3001:9090"
+      - "3001:9092"
