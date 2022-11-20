@@ -1,7 +1,7 @@
 go 1.19
 
 use (
-    ./services/gateway
-    ./services/accounts
-    ./services/protos
+    ./gateway
+    ./accounts
+    ./protos
 )

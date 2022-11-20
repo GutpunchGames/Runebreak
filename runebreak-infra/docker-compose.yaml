@@ -2,12 +2,17 @@ version: '2'
 
 services:
   gateway:
-    build: ./services/gateway
+    build: ./gateway
     image: gateway
     ports:
       - "9000:9090"
   accounts:
-    build: ./services/accounts
+    build: ./accounts
     image: accounts
     ports:
       - "9001:9090"
+  debug-web-client:
+    build: ./debug-web-client
+    image: debug-web-client
+    ports:
+      - "3000:3000"

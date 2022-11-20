@@ -1,11 +1,11 @@
 import logo from './logo.svg';
 import './App.css';
-import {Text, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 
 function App() {
   const [posts, setPosts] = useState([]);
      useEffect(() => {
-      fetch('http://localhost:9001/')
+      fetch('http://localhost:9001/') // todo: configurable port
       .then((data) => data.json())
          .then((data) => {
             console.log(data);
@@ -15,8 +15,6 @@ function App() {
             console.log(err.message);
          });
    }, []);
-
-  const smth = 'something';
 
   return (
     <div className="App">
