@@ -1,2 +1,4 @@
+github.com/GutpunchGames/Runebreak/runebreak-infra/services/protos v0.0.0-20221119232922-3b05239ddfc2 h1:PZPK1htwCoP8W2KqVee3cE/VhIny5qlMriDC8j3Q+gw=
+github.com/GutpunchGames/Runebreak/runebreak-infra/services/protos v0.0.0-20221119232922-3b05239ddfc2/go.mod h1:PIbZ2WHYGp62vlvFRkHLGpqWwlWK5HUmJRJ5IM+p44s=
 github.com/gorilla/mux v1.8.0 h1:i40aqfkR1h2SlN9hojwV5ZA91wcXFOvkdNIeFDP5koI=
 github.com/gorilla/mux v1.8.0/go.mod h1:DVbg23sWSpFRCP0SfiEN6jmj59UnW/n46BH5rLB71So=
