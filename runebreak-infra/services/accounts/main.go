@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -9,10 +10,16 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/gorilla/handlers"
+
 	"github.com/gorilla/mux"
 )
 
 const serviceName = "runebreak-accounts-service"
+
+type BasicResponse struct {
+    Name string
+}
 
 func main() {
 	port := extractArgs(os.Args)
@@ -21,11 +28,14 @@ func main() {
 	getRouter := serveMux.Methods(http.MethodGet).Subrouter()
 	getRouter.HandleFunc("/",  t)
 
+	originsOk := handlers.AllowedOrigins([]string{"*"})
+	wrapped := handlers.CORS(originsOk)(serveMux)
+
 	url := fmt.Sprintf(":%s", port)
 
 	server := &http.Server{
 		Addr: url,
-		Handler: serveMux,
+		Handler: wrapped,
 		IdleTimeout: 120 * time.Second,
 		ReadTimeout: 1 * time.Second,
 		WriteTimeout: 1 * time.Second,
@@ -52,7 +62,9 @@ func main() {
 }
 
 func t(rw http.ResponseWriter, request *http.Request) {
-	rw.Write([]byte("accounts"))
+	resp := &BasicResponse{Name: "hello"}
+	respJson, _ := json.Marshal(resp)
+	rw.Write(respJson)
 }
 
 // expecting:

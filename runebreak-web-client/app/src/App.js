@@ -1,7 +1,23 @@
 import logo from './logo.svg';
 import './App.css';
+import {Text, useEffect, useState} from 'react';
 
 function App() {
+  const [posts, setPosts] = useState([]);
+     useEffect(() => {
+      fetch('http://localhost:9001/')
+      .then((data) => data.json())
+         .then((data) => {
+            console.log(data);
+            setPosts(data);
+         })
+         .catch((err) => {
+            console.log(err.message);
+         });
+   }, []);
+
+  const smth = 'something';
+
   return (
     <div className="App">
       <header className="App-header">
@@ -16,6 +32,9 @@ function App() {
           rel="noopener noreferrer"
         >
           Learn React
+          <p>
+          ({posts && `Got response from server: ${posts.Name}`})
+          </p>
         </a>
       </header>
     </div>
