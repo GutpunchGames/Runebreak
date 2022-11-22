@@ -11,9 +11,8 @@ import (
 
 	"github.com/GutpunchGames/Runebreak/runebreak-infra/services/gateway/handlers"
 	exported "github.com/GutpunchGames/Runebreak/runebreak-infra/services/protos"
-	"github.com/GutpunchGames/Runebreak/runebreak-infra/services/protos/accounts"
+	gorillaHandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"google.golang.org/grpc"
 )
 
 const serviceName = "runebreak-gateway-service"
@@ -22,35 +21,45 @@ func main() {
 	exported.ExportedFunc()
 	port := extractArgs(os.Args)
 	logger := log.New(os.Stdout,serviceName, log.LstdFlags)
-	serveMux := mux.NewRouter()
 
 	registerHandler := handlers.NewRegisterHandler(logger)
-	getRouter := serveMux.Methods(http.MethodGet).Subrouter()
-	getRouter.HandleFunc("/register", registerHandler.Register)
 
-	conn, err := grpc.Dial(":9092", grpc.WithInsecure())
-	if err != nil {
-		panic(err)
-	}
-	defer conn.Close()
+	serveMux := mux.NewRouter()
+	postRouter := serveMux.Methods(http.MethodPost).Subrouter()
+	postRouter.HandleFunc("/", registerHandler.Register)
 
-	accountsClient := accounts.NewAccountsClient(conn)
-	req := accounts.ExampleRequest{ParamOne: accounts.ExampleEnum_ZERO}
-	ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
-	defer cancel()
 
-	res, err := accountsClient.GetExample(ctx, &req)
-	if err == nil {
-		logger.Printf("got response: %s\n", res)
-	} else {
-		logger.Printf("got error: %s\n", err)
-		return
-	}
+	// getRouter := serveMux.Methods(http.MethodGet).Subrouter()
+	// getRouter.HandleFunc("/register", registerHandler.Register)
+
+	// conn, err := grpc.Dial(":9092", grpc.WithInsecure())
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// defer conn.Close()
+
+	// accountsClient := accounts.NewAccountsClient(conn)
+	// req := accounts.ExampleRequest{ParamOne: accounts.ExampleEnum_ZERO}
+	// ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
+	// defer cancel()
+
+	// res, err := accountsClient.GetExample(ctx, &req)
+	// if err == nil {
+	// 	logger.Printf("got response: %s\n", res)
+	// } else {
+	// 	logger.Printf("got error: %s\n", err)
+	// 	return
+	// }
+
+	headersOk := gorillaHandlers.AllowedHeaders([]string{"X-Requested-With"})
+	originsOk := gorillaHandlers.AllowedOrigins([]string{os.Getenv("ORIGIN_ALLOWED"), "*"})
+	methodsOk := gorillaHandlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+	wrapped := gorillaHandlers.CORS(originsOk, headersOk, methodsOk)(serveMux)
 
 	url := fmt.Sprintf(":%s", port)
 	server := &http.Server{
 		Addr: url,
-		Handler: serveMux,
+		Handler: wrapped,
 		IdleTimeout: 120 * time.Second,
 		ReadTimeout: 1 * time.Second,
 		WriteTimeout: 1 * time.Second,
