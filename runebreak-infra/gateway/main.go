@@ -26,11 +26,7 @@ func main() {
 
 	serveMux := mux.NewRouter()
 	postRouter := serveMux.Methods(http.MethodPost).Subrouter()
-	postRouter.HandleFunc("/", registerHandler.Register)
-
-
-	// getRouter := serveMux.Methods(http.MethodGet).Subrouter()
-	// getRouter.HandleFunc("/register", registerHandler.Register)
+	postRouter.HandleFunc("/register", registerHandler.Register)
 
 	// conn, err := grpc.Dial(":9092", grpc.WithInsecure())
 	// if err != nil {
@@ -51,10 +47,8 @@ func main() {
 	// 	return
 	// }
 
-	headersOk := gorillaHandlers.AllowedHeaders([]string{"X-Requested-With"})
 	originsOk := gorillaHandlers.AllowedOrigins([]string{os.Getenv("ORIGIN_ALLOWED"), "*"})
-	methodsOk := gorillaHandlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
-	wrapped := gorillaHandlers.CORS(originsOk, headersOk, methodsOk)(serveMux)
+	wrapped := gorillaHandlers.CORS(originsOk)(serveMux)
 
 	url := fmt.Sprintf(":%s", port)
 	server := &http.Server{
