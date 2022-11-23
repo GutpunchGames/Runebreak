@@ -34,7 +34,7 @@ func main() {
 	accountsPbs.RegisterAccountsServer(grpcServer, accServer)
 	reflection.Register(grpcServer)
 
-	endpoint := fmt.Sprintf("localhost:%s", port)
+	endpoint := fmt.Sprintf(":%s", port)
 	lis, err := net.Listen("tcp", endpoint)
 	if err != nil {
 		logger2.Error("unable to listen", "error", err)

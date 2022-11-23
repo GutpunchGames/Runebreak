@@ -37,6 +37,7 @@ func NewRegisterHandler(logger *log.Logger) *RegisterHandler {
 
 // http POST /register
 func (handler *RegisterHandler) Register(rw http.ResponseWriter, req *http.Request) {
+	handler.logger.Printf("checkpoint 1\n")
 	requestBody := RegisterRequest{}
 	err := requestBody.FromJSON(req.Body)
 	if err != nil {
@@ -44,18 +45,21 @@ func (handler *RegisterHandler) Register(rw http.ResponseWriter, req *http.Reque
 		return
 	}
 
+	handler.logger.Printf("checkpoint 2\n")
 	err = handler.rpcRegister(requestBody.Username, requestBody.Password)
 	if err == nil {
+		handler.logger.Printf("checkpoint 3\n")
 		resp := &RegisterResponse{UserId: "1234"}
 		respJson, _ := json.Marshal(resp)
 		rw.Write(respJson)
 	} else {
+		handler.logger.Printf("checkpoint 4\n")
 		http.Error(rw, fmt.Sprintf("couldn't make rpc call: %s", err), http.StatusInternalServerError)
 	}
 }
 
 func (handler *RegisterHandler) rpcRegister(username string, password string) error {
-	conn, err := grpc.Dial("localhost:9001", grpc.WithInsecure())
+	conn, err := grpc.Dial("accounts:9090", grpc.WithInsecure())
 	if err != nil {
 		panic(err)
 	}
