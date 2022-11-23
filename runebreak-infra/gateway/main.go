@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/GutpunchGames/Runebreak/runebreak-infra/gateway/handlers"
-	exported "github.com/GutpunchGames/Runebreak/runebreak-infra/protos"
 	gorillaHandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
@@ -18,7 +17,6 @@ import (
 const serviceName = "runebreak-gateway-service"
 
 func main() {
-	exported.ExportedFunc()
 	port := extractArgs(os.Args)
 	logger := log.New(os.Stdout,serviceName, log.LstdFlags)
 

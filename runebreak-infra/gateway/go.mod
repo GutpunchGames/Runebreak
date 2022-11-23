@@ -9,6 +9,7 @@ require (
 )
 
 require (
+	github.com/GutpunchGames/Runebreak/runebreak-infra/protos v0.0.0-20221123041117-81a93b4dd6b7 // indirect
 	github.com/felixge/httpsnoop v1.0.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	golang.org/x/net v0.0.0-20220722155237-a158d28d115b // indirect
