@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/GutpunchGames/Runebreak/runebreak-infra/services/protos/accounts"
+	"github.com/GutpunchGames/Runebreak/runebreak-infra/protos/accounts"
 	"google.golang.org/grpc"
 )
 

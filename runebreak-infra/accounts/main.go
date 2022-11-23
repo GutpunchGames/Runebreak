@@ -9,8 +9,8 @@ import (
 	"os/signal"
 	"time"
 
-	accountsServer "github.com/GutpunchGames/Runebreak/runebreak-infra/services/accounts/server"
-	accountsPbs "github.com/GutpunchGames/Runebreak/runebreak-infra/services/protos/accounts"
+	accountsServer "github.com/GutpunchGames/Runebreak/runebreak-infra/accounts/server"
+	accountsPbs "github.com/GutpunchGames/Runebreak/runebreak-infra/protos/accounts"
 	"github.com/hashicorp/go-hclog"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"

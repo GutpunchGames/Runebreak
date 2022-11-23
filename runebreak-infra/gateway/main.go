@@ -9,8 +9,8 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/GutpunchGames/Runebreak/runebreak-infra/services/gateway/handlers"
-	exported "github.com/GutpunchGames/Runebreak/runebreak-infra/services/protos"
+	"github.com/GutpunchGames/Runebreak/runebreak-infra/gateway/handlers"
+	exported "github.com/GutpunchGames/Runebreak/runebreak-infra/protos"
 	gorillaHandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )

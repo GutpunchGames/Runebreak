@@ -3,7 +3,7 @@ package server
 import (
 	"context"
 
-	"github.com/GutpunchGames/Runebreak/runebreak-infra/services/protos/accounts"
+	"github.com/GutpunchGames/Runebreak/runebreak-infra/protos/accounts"
 	"github.com/hashicorp/go-hclog"
 )
 

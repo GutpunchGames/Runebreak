@@ -1,4 +1,4 @@
-module github.com/GutpunchGames/Runebreak/runebreak-infra/services/accounts
+module github.com/GutpunchGames/Runebreak/runebreak-infra/accounts
 
 go 1.19
 
