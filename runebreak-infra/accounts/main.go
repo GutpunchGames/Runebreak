@@ -2,17 +2,18 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
-	"net/http"
+	"net"
 	"os"
 	"os/signal"
 	"time"
 
-	"github.com/gorilla/handlers"
-
-	"github.com/gorilla/mux"
+	accountsServer "github.com/GutpunchGames/Runebreak/runebreak-infra/services/accounts/server"
+	accountsPbs "github.com/GutpunchGames/Runebreak/runebreak-infra/services/protos/accounts"
+	"github.com/hashicorp/go-hclog"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 const serviceName = "runebreak-accounts-service"
@@ -24,30 +25,24 @@ type BasicResponse struct {
 func main() {
 	port := extractArgs(os.Args)
 	logger := log.New(os.Stdout,serviceName, log.LstdFlags)
-	serveMux := mux.NewRouter()
-	getRouter := serveMux.Methods(http.MethodGet).Subrouter()
-	getRouter.HandleFunc("/",  t)
 
-	originsOk := handlers.AllowedOrigins([]string{"*"})
-	wrapped := handlers.CORS(originsOk)(serveMux)
+	var opts []grpc.ServerOption
+	grpcServer := grpc.NewServer(opts...)
 
-	url := fmt.Sprintf(":%s", port)
+	logger2 := hclog.Default()
+	accServer := accountsServer.NewServer(logger2)
+	accountsPbs.RegisterAccountsServer(grpcServer, accServer)
+	reflection.Register(grpcServer)
 
-	server := &http.Server{
-		Addr: url,
-		Handler: wrapped,
-		IdleTimeout: 120 * time.Second,
-		ReadTimeout: 1 * time.Second,
-		WriteTimeout: 1 * time.Second,
+	endpoint := fmt.Sprintf("localhost:%s", port)
+	lis, err := net.Listen("tcp", endpoint)
+	if err != nil {
+		logger2.Error("unable to listen", "error", err)
+		os.Exit(1)
+		return
 	}
-
-	go func() {
-		logger.Printf("listening at %s\n", url)
-		err := server.ListenAndServe()
-		if err != nil {
-			logger.Fatalf("error: %s", err)
-		}
-	}()
+	logger2.Info("listening.", "endpoint", endpoint)
+	grpcServer.Serve(lis)
 
 	sigChan := make(chan os.Signal)
 	signal.Notify(sigChan, os.Interrupt)
@@ -56,15 +51,8 @@ func main() {
 	sig := <- sigChan
 	logger.Println("Received terminate, graceful shutdown", sig)
 
-	tc, cancelFunc := context.WithTimeout(context.Background(), 30 * time.Second)
-	server.Shutdown(tc)
+	_, cancelFunc := context.WithTimeout(context.Background(), 30 * time.Second)
 	cancelFunc()
-}
-
-func t(rw http.ResponseWriter, request *http.Request) {
-	resp := &BasicResponse{Name: "hello"}
-	respJson, _ := json.Marshal(resp)
-	rw.Write(respJson)
 }
 
 // expecting:

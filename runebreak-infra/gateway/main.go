@@ -28,25 +28,6 @@ func main() {
 	postRouter := serveMux.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/register", registerHandler.Register)
 
-	// conn, err := grpc.Dial(":9092", grpc.WithInsecure())
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// defer conn.Close()
-
-	// accountsClient := accounts.NewAccountsClient(conn)
-	// req := accounts.ExampleRequest{ParamOne: accounts.ExampleEnum_ZERO}
-	// ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
-	// defer cancel()
-
-	// res, err := accountsClient.GetExample(ctx, &req)
-	// if err == nil {
-	// 	logger.Printf("got response: %s\n", res)
-	// } else {
-	// 	logger.Printf("got error: %s\n", err)
-	// 	return
-	// }
-
 	originsOk := gorillaHandlers.AllowedOrigins([]string{os.Getenv("ORIGIN_ALLOWED"), "*"})
 	wrapped := gorillaHandlers.CORS(originsOk)(serveMux)
 
