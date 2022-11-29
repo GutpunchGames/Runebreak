@@ -7,6 +7,7 @@ require github.com/hashicorp/go-hclog v1.3.1
 require (
 	github.com/GutpunchGames/Runebreak/runebreak-infra/protos v0.0.0-20221123041117-81a93b4dd6b7 // indirect
 	github.com/fatih/color v1.13.0 // indirect
+	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect

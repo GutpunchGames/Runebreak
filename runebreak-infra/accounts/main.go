@@ -11,6 +11,7 @@ import (
 
 	accountsServer "github.com/GutpunchGames/Runebreak/runebreak-infra/accounts/server"
 	accountsPbs "github.com/GutpunchGames/Runebreak/runebreak-infra/protos/accounts"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/hashicorp/go-hclog"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -44,10 +45,12 @@ func main() {
 	logger2.Info("listening.", "endpoint", endpoint)
 	grpcServer.Serve(lis)
 
+	// listen for termination
 	sigChan := make(chan os.Signal)
 	signal.Notify(sigChan, os.Interrupt)
 	signal.Notify(sigChan, os.Kill)
 
+	// "graceful" termination
 	sig := <- sigChan
 	logger.Println("Received terminate, graceful shutdown", sig)
 

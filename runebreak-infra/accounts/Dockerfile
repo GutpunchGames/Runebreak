@@ -1,8 +1,20 @@
 FROM golang
+
+# generic config
 RUN apt-get update -y
 RUN apt-get upgrade -y
-RUN apt-get install -y protobuf-compiler
+
+# todo: don't commit secret keys lol
 RUN git config --global url."https://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:@github.com/".insteadOf "https://github.com/"
+
+# protobuf compiler. TODO: needed???
+# RUN apt-get install -y protobuf-compiler
+
+# mariadb
+RUN apt-get install -y mariadb-server
+
+# now we're podracing
 WORKDIR /accounts
 COPY . .
-CMD ["go", "run", "main.go", "9090"]
+RUN chmod 777 ./cmd.sh
+CMD ["./cmd.sh"]
