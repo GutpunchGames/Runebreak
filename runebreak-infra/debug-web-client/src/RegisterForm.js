@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, {Text, useEffect, useState} from 'react';
+import React from 'react';
 
 class RegisterForm extends React.Component {
   constructor(props) {
