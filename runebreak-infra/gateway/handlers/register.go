@@ -46,10 +46,10 @@ func (handler *RegisterHandler) Register(rw http.ResponseWriter, req *http.Reque
 	}
 
 	handler.logger.Printf("checkpoint 2\n")
-	err = handler.rpcRegister(requestBody.Username, requestBody.Password)
+	rpcResponse, err := handler.rpcRegister(requestBody.Username, requestBody.Password)
 	if err == nil {
 		handler.logger.Printf("checkpoint 3\n")
-		resp := &RegisterResponse{UserId: "1234"}
+		resp := &RegisterResponse{UserId: rpcResponse.UserId}
 		respJson, _ := json.Marshal(resp)
 		rw.Write(respJson)
 	} else {
@@ -58,7 +58,7 @@ func (handler *RegisterHandler) Register(rw http.ResponseWriter, req *http.Reque
 	}
 }
 
-func (handler *RegisterHandler) rpcRegister(username string, password string) error {
+func (handler *RegisterHandler) rpcRegister(username string, password string) (accounts.UserAuthenticationResponse, error) {
 	conn, err := grpc.Dial("accounts:9090", grpc.WithInsecure())
 	if err != nil {
 		panic(err)
@@ -66,17 +66,17 @@ func (handler *RegisterHandler) rpcRegister(username string, password string) er
 	defer conn.Close()
 
 	accountsClient := accounts.NewAccountsClient(conn)
-	req := accounts.ExampleRequest{ParamOne: accounts.ExampleEnum_ZERO}
+	req := accounts.UserAuthenticationRequest{Username: username, Password: password}
 	ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
 	defer cancel()
 
-	res, err := accountsClient.GetExample(ctx, &req)
+	resp, err := accountsClient.Register(ctx, &req)
 	if err == nil {
-		handler.logger.Printf("got response: %s\n", res)
-		return nil
+		handler.logger.Printf("got response: %s\n", resp)
+		return resp, nil
 	} else {
 		handler.logger.Printf("got error: %s\n", err)
-		return err
+		return nil, err
 	}
 }
 

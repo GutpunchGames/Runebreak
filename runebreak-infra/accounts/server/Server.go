@@ -18,19 +18,15 @@ func NewServer(l hclog.Logger) *AccountsServer {
 	return &AccountsServer{Logger: l, UnimplementedAccountsServer: accounts.UnimplementedAccountsServer{}}
 }
 
-func (server *AccountsServer) DoThing() {
-	server.Logger.Info("did a thing")
-}
-
-func (server AccountsServer) GetExample(ctx context.Context, req *accounts.ExampleRequest) (*accounts.ExampleResponse, error) {
-	server.Logger.Info("Handle GetRate", "base", req.ParamOne)
+func (server AccountsServer) Register(ctx context.Context, req *accounts.UserAuthenticationRequest) (*accounts.UserAuthenticationResponse) {
+	server.Logger.Info("Handle Register", "username", req.Username, "pw", req.Password)
 	testDB()
-	return &accounts.ExampleResponse{Rate: 0.5}, nil
+	return &accounts.UserAuthenticationResponse{UserId: "userid", Username: req.Username}
 }
 
 func testDB() {
 	fmt.Printf("attempting to interface with db\n")
-	db, err := sql.Open("mysql", "accountsservice:pdubz@tcp(localhost:3306)/testdb")
+	db, err := sql.Open("mysql", "accountsservice:accountsservice_pw@tcp(localhost:3306)/testdb")
     defer db.Close()
 
 	if err != nil {

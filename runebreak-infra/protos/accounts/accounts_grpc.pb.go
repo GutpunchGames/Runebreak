@@ -22,7 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AccountsClient interface {
-	GetExample(ctx context.Context, in *ExampleRequest, opts ...grpc.CallOption) (*ExampleResponse, error)
+	Register(ctx context.Context, in *UserAuthenticationRequest, opts ...grpc.CallOption) (*UserAuthenticationResponse, error)
+	Login(ctx context.Context, in *UserAuthenticationRequest, opts ...grpc.CallOption) (*UserAuthenticationResponse, error)
 }
 
 type accountsClient struct {
@@ -33,9 +34,18 @@ func NewAccountsClient(cc grpc.ClientConnInterface) AccountsClient {
 	return &accountsClient{cc}
 }
 
-func (c *accountsClient) GetExample(ctx context.Context, in *ExampleRequest, opts ...grpc.CallOption) (*ExampleResponse, error) {
-	out := new(ExampleResponse)
-	err := c.cc.Invoke(ctx, "/Accounts/GetExample", in, out, opts...)
+func (c *accountsClient) Register(ctx context.Context, in *UserAuthenticationRequest, opts ...grpc.CallOption) (*UserAuthenticationResponse, error) {
+	out := new(UserAuthenticationResponse)
+	err := c.cc.Invoke(ctx, "/Accounts/Register", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountsClient) Login(ctx context.Context, in *UserAuthenticationRequest, opts ...grpc.CallOption) (*UserAuthenticationResponse, error) {
+	out := new(UserAuthenticationResponse)
+	err := c.cc.Invoke(ctx, "/Accounts/Login", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +56,8 @@ func (c *accountsClient) GetExample(ctx context.Context, in *ExampleRequest, opt
 // All implementations must embed UnimplementedAccountsServer
 // for forward compatibility
 type AccountsServer interface {
-	GetExample(context.Context, *ExampleRequest) (*ExampleResponse, error)
+	Register(context.Context, *UserAuthenticationRequest) (*UserAuthenticationResponse, error)
+	Login(context.Context, *UserAuthenticationRequest) (*UserAuthenticationResponse, error)
 	mustEmbedUnimplementedAccountsServer()
 }
 
@@ -54,8 +65,11 @@ type AccountsServer interface {
 type UnimplementedAccountsServer struct {
 }
 
-func (UnimplementedAccountsServer) GetExample(context.Context, *ExampleRequest) (*ExampleResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetExample not implemented")
+func (UnimplementedAccountsServer) Register(context.Context, *UserAuthenticationRequest) (*UserAuthenticationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
+}
+func (UnimplementedAccountsServer) Login(context.Context, *UserAuthenticationRequest) (*UserAuthenticationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
 func (UnimplementedAccountsServer) mustEmbedUnimplementedAccountsServer() {}
 
@@ -70,20 +84,38 @@ func RegisterAccountsServer(s grpc.ServiceRegistrar, srv AccountsServer) {
 	s.RegisterService(&Accounts_ServiceDesc, srv)
 }
 
-func _Accounts_GetExample_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ExampleRequest)
+func _Accounts_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserAuthenticationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AccountsServer).GetExample(ctx, in)
+		return srv.(AccountsServer).Register(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/Accounts/GetExample",
+		FullMethod: "/Accounts/Register",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccountsServer).GetExample(ctx, req.(*ExampleRequest))
+		return srv.(AccountsServer).Register(ctx, req.(*UserAuthenticationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Accounts_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserAuthenticationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountsServer).Login(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Accounts/Login",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountsServer).Login(ctx, req.(*UserAuthenticationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -96,8 +128,12 @@ var Accounts_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*AccountsServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetExample",
-			Handler:    _Accounts_GetExample_Handler,
+			MethodName: "Register",
+			Handler:    _Accounts_Register_Handler,
+		},
+		{
+			MethodName: "Login",
+			Handler:    _Accounts_Login_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

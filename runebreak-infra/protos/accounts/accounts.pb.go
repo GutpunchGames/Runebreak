@@ -20,62 +20,17 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type ExampleEnum int32
-
-const (
-	ExampleEnum_ZERO ExampleEnum = 0
-	ExampleEnum_ONE  ExampleEnum = 1
-)
-
-// Enum value maps for ExampleEnum.
-var (
-	ExampleEnum_name = map[int32]string{
-		0: "ZERO",
-		1: "ONE",
-	}
-	ExampleEnum_value = map[string]int32{
-		"ZERO": 0,
-		"ONE":  1,
-	}
-)
-
-func (x ExampleEnum) Enum() *ExampleEnum {
-	p := new(ExampleEnum)
-	*p = x
-	return p
-}
-
-func (x ExampleEnum) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (ExampleEnum) Descriptor() protoreflect.EnumDescriptor {
-	return file_accounts_proto_enumTypes[0].Descriptor()
-}
-
-func (ExampleEnum) Type() protoreflect.EnumType {
-	return &file_accounts_proto_enumTypes[0]
-}
-
-func (x ExampleEnum) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use ExampleEnum.Descriptor instead.
-func (ExampleEnum) EnumDescriptor() ([]byte, []int) {
-	return file_accounts_proto_rawDescGZIP(), []int{0}
-}
-
-type ExampleRequest struct {
+type UserAuthenticationRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ParamOne ExampleEnum `protobuf:"varint,1,opt,name=ParamOne,proto3,enum=ExampleEnum" json:"ParamOne,omitempty"`
+	Username string `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
+	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
 }
 
-func (x *ExampleRequest) Reset() {
-	*x = ExampleRequest{}
+func (x *UserAuthenticationRequest) Reset() {
+	*x = UserAuthenticationRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_accounts_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -83,13 +38,13 @@ func (x *ExampleRequest) Reset() {
 	}
 }
 
-func (x *ExampleRequest) String() string {
+func (x *UserAuthenticationRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ExampleRequest) ProtoMessage() {}
+func (*UserAuthenticationRequest) ProtoMessage() {}
 
-func (x *ExampleRequest) ProtoReflect() protoreflect.Message {
+func (x *UserAuthenticationRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_accounts_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -101,28 +56,36 @@ func (x *ExampleRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ExampleRequest.ProtoReflect.Descriptor instead.
-func (*ExampleRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use UserAuthenticationRequest.ProtoReflect.Descriptor instead.
+func (*UserAuthenticationRequest) Descriptor() ([]byte, []int) {
 	return file_accounts_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *ExampleRequest) GetParamOne() ExampleEnum {
+func (x *UserAuthenticationRequest) GetUsername() string {
 	if x != nil {
-		return x.ParamOne
+		return x.Username
 	}
-	return ExampleEnum_ZERO
+	return ""
 }
 
-type ExampleResponse struct {
+func (x *UserAuthenticationRequest) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
+type UserAuthenticationResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Rate float32 `protobuf:"fixed32,1,opt,name=Rate,proto3" json:"Rate,omitempty"`
+	UserId   string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Username string `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
 }
 
-func (x *ExampleResponse) Reset() {
-	*x = ExampleResponse{}
+func (x *UserAuthenticationResponse) Reset() {
+	*x = UserAuthenticationResponse{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_accounts_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -130,13 +93,13 @@ func (x *ExampleResponse) Reset() {
 	}
 }
 
-func (x *ExampleResponse) String() string {
+func (x *UserAuthenticationResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ExampleResponse) ProtoMessage() {}
+func (*UserAuthenticationResponse) ProtoMessage() {}
 
-func (x *ExampleResponse) ProtoReflect() protoreflect.Message {
+func (x *UserAuthenticationResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_accounts_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -148,36 +111,51 @@ func (x *ExampleResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ExampleResponse.ProtoReflect.Descriptor instead.
-func (*ExampleResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use UserAuthenticationResponse.ProtoReflect.Descriptor instead.
+func (*UserAuthenticationResponse) Descriptor() ([]byte, []int) {
 	return file_accounts_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ExampleResponse) GetRate() float32 {
+func (x *UserAuthenticationResponse) GetUserId() string {
 	if x != nil {
-		return x.Rate
+		return x.UserId
 	}
-	return 0
+	return ""
+}
+
+func (x *UserAuthenticationResponse) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
 }
 
 var File_accounts_proto protoreflect.FileDescriptor
 
 var file_accounts_proto_rawDesc = []byte{
 	0x0a, 0x0e, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x22, 0x3a, 0x0a, 0x0e, 0x45, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x12, 0x28, 0x0a, 0x08, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x4f, 0x6e, 0x65, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x0e, 0x32, 0x0c, 0x2e, 0x45, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x45, 0x6e,
-	0x75, 0x6d, 0x52, 0x08, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x4f, 0x6e, 0x65, 0x22, 0x25, 0x0a, 0x0f,
-	0x45, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
-	0x12, 0x0a, 0x04, 0x52, 0x61, 0x74, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x02, 0x52, 0x04, 0x52,
-	0x61, 0x74, 0x65, 0x2a, 0x20, 0x0a, 0x0b, 0x45, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x45, 0x6e,
-	0x75, 0x6d, 0x12, 0x08, 0x0a, 0x04, 0x5a, 0x45, 0x52, 0x4f, 0x10, 0x00, 0x12, 0x07, 0x0a, 0x03,
-	0x4f, 0x4e, 0x45, 0x10, 0x01, 0x32, 0x3b, 0x0a, 0x08, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74,
-	0x73, 0x12, 0x2f, 0x0a, 0x0a, 0x47, 0x65, 0x74, 0x45, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x12,
-	0x0f, 0x2e, 0x45, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
-	0x1a, 0x10, 0x2e, 0x45, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x42, 0x0b, 0x5a, 0x09, 0x2f, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x73, 0x62,
-	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x22, 0x53, 0x0a, 0x19, 0x55, 0x73, 0x65, 0x72, 0x41, 0x75, 0x74, 0x68, 0x65, 0x6e, 0x74, 0x69,
+	0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1a, 0x0a,
+	0x08, 0x75, 0x73, 0x65, 0x72, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x08, 0x75, 0x73, 0x65, 0x72, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x70, 0x61, 0x73,
+	0x73, 0x77, 0x6f, 0x72, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x70, 0x61, 0x73,
+	0x73, 0x77, 0x6f, 0x72, 0x64, 0x22, 0x51, 0x0a, 0x1a, 0x55, 0x73, 0x65, 0x72, 0x41, 0x75, 0x74,
+	0x68, 0x65, 0x6e, 0x74, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x12, 0x17, 0x0a, 0x07, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x12, 0x1a, 0x0a, 0x08,
+	0x75, 0x73, 0x65, 0x72, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08,
+	0x75, 0x73, 0x65, 0x72, 0x6e, 0x61, 0x6d, 0x65, 0x32, 0x91, 0x01, 0x0a, 0x08, 0x41, 0x63, 0x63,
+	0x6f, 0x75, 0x6e, 0x74, 0x73, 0x12, 0x43, 0x0a, 0x08, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65,
+	0x72, 0x12, 0x1a, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x41, 0x75, 0x74, 0x68, 0x65, 0x6e, 0x74, 0x69,
+	0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1b, 0x2e,
+	0x55, 0x73, 0x65, 0x72, 0x41, 0x75, 0x74, 0x68, 0x65, 0x6e, 0x74, 0x69, 0x63, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x40, 0x0a, 0x05, 0x4c, 0x6f,
+	0x67, 0x69, 0x6e, 0x12, 0x1a, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x41, 0x75, 0x74, 0x68, 0x65, 0x6e,
+	0x74, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
+	0x1b, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x41, 0x75, 0x74, 0x68, 0x65, 0x6e, 0x74, 0x69, 0x63, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x0b, 0x5a, 0x09,
+	0x2f, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x33,
 }
 
 var (
@@ -192,22 +170,21 @@ func file_accounts_proto_rawDescGZIP() []byte {
 	return file_accounts_proto_rawDescData
 }
 
-var file_accounts_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_accounts_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_accounts_proto_goTypes = []interface{}{
-	(ExampleEnum)(0),        // 0: ExampleEnum
-	(*ExampleRequest)(nil),  // 1: ExampleRequest
-	(*ExampleResponse)(nil), // 2: ExampleResponse
+	(*UserAuthenticationRequest)(nil),  // 0: UserAuthenticationRequest
+	(*UserAuthenticationResponse)(nil), // 1: UserAuthenticationResponse
 }
 var file_accounts_proto_depIdxs = []int32{
-	0, // 0: ExampleRequest.ParamOne:type_name -> ExampleEnum
-	1, // 1: Accounts.GetExample:input_type -> ExampleRequest
-	2, // 2: Accounts.GetExample:output_type -> ExampleResponse
-	2, // [2:3] is the sub-list for method output_type
-	1, // [1:2] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	0, // 0: Accounts.Register:input_type -> UserAuthenticationRequest
+	0, // 1: Accounts.Login:input_type -> UserAuthenticationRequest
+	1, // 2: Accounts.Register:output_type -> UserAuthenticationResponse
+	1, // 3: Accounts.Login:output_type -> UserAuthenticationResponse
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
+	0, // [0:0] is the sub-list for extension type_name
+	0, // [0:0] is the sub-list for extension extendee
+	0, // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_accounts_proto_init() }
@@ -217,7 +194,7 @@ func file_accounts_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_accounts_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ExampleRequest); i {
+			switch v := v.(*UserAuthenticationRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -229,7 +206,7 @@ func file_accounts_proto_init() {
 			}
 		}
 		file_accounts_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ExampleResponse); i {
+			switch v := v.(*UserAuthenticationResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -246,14 +223,13 @@ func file_accounts_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_accounts_proto_rawDesc,
-			NumEnums:      1,
+			NumEnums:      0,
 			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_accounts_proto_goTypes,
 		DependencyIndexes: file_accounts_proto_depIdxs,
-		EnumInfos:         file_accounts_proto_enumTypes,
 		MessageInfos:      file_accounts_proto_msgTypes,
 	}.Build()
 	File_accounts_proto = out.File

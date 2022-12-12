@@ -19,10 +19,6 @@ import (
 
 const serviceName = "runebreak-accounts-service"
 
-type BasicResponse struct {
-    Name string
-}
-
 func main() {
 	port := extractArgs(os.Args)
 	logger := log.New(os.Stdout,serviceName, log.LstdFlags)

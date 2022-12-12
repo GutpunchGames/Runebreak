@@ -2,18 +2,29 @@ syntax="proto3";
 option go_package="/accounts";
 
 service Accounts {
-    rpc GetExample(ExampleRequest) returns (ExampleResponse);
+    rpc Register(UserAuthenticationRequest) returns (UserAuthenticationResponse);
+    rpc Login(UserAuthenticationRequest) returns (UserAuthenticationResponse);
 }
 
-message ExampleRequest {
-    ExampleEnum ParamOne = 1;
+message UserAuthenticationRequest {
+    string username = 1;
+    string password = 2;
 }
 
-message ExampleResponse {
-    float Rate = 1;
+message UserAuthenticationResponse {
+    string user_id = 1;
+    string username = 2;
 }
 
-enum ExampleEnum {
-    ZERO=0;
-    ONE=1;
-}
+// message ExampleRequest {
+//     ExampleEnum ParamOne = 1;
+// }
+
+// message ExampleResponse {
+//     float Rate = 1;
+// }
+
+// enum ExampleEnum {
+//     ZERO=0;
+//     ONE=1;
+// }
