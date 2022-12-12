@@ -58,7 +58,7 @@ func (handler *RegisterHandler) Register(rw http.ResponseWriter, req *http.Reque
 	}
 }
 
-func (handler *RegisterHandler) rpcRegister(username string, password string) (accounts.UserAuthenticationResponse, error) {
+func (handler *RegisterHandler) rpcRegister(username string, password string) (*accounts.UserAuthenticationResponse, error) {
 	conn, err := grpc.Dial("accounts:9090", grpc.WithInsecure())
 	if err != nil {
 		panic(err)

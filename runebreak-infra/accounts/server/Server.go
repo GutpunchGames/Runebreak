@@ -18,10 +18,10 @@ func NewServer(l hclog.Logger) *AccountsServer {
 	return &AccountsServer{Logger: l, UnimplementedAccountsServer: accounts.UnimplementedAccountsServer{}}
 }
 
-func (server AccountsServer) Register(ctx context.Context, req *accounts.UserAuthenticationRequest) (*accounts.UserAuthenticationResponse) {
+func (server AccountsServer) Register(ctx context.Context, req *accounts.UserAuthenticationRequest) (*accounts.UserAuthenticationResponse, error) {
 	server.Logger.Info("Handle Register", "username", req.Username, "pw", req.Password)
 	testDB()
-	return &accounts.UserAuthenticationResponse{UserId: "userid", Username: req.Username}
+	return &accounts.UserAuthenticationResponse{UserId: "userid", Username: req.Username}, nil
 }
 
 func testDB() {
