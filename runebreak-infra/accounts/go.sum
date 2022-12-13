@@ -1,7 +1,7 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
-github.com/GutpunchGames/Runebreak/runebreak-infra/protos v0.0.0-20221123041117-81a93b4dd6b7 h1:BSrbBD2S7M92dbS5i+fgwCU2/U+u8vFiMYfsHjzF8QM=
-github.com/GutpunchGames/Runebreak/runebreak-infra/protos v0.0.0-20221123041117-81a93b4dd6b7/go.mod h1:w54rxhSqd5iyj9EwlNy3MtZ9zW+upvlOpTT1VF/0gm0=
+github.com/GutpunchGames/Runebreak/runebreak-infra/protos v0.0.0-20221212230547-85f0613b7593 h1:MBE42yHXt1CAQXRKVkaMYT20d8pAL7Zc9qiDYB02qc0=
+github.com/GutpunchGames/Runebreak/runebreak-infra/protos v0.0.0-20221212230547-85f0613b7593/go.mod h1:w54rxhSqd5iyj9EwlNy3MtZ9zW+upvlOpTT1VF/0gm0=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

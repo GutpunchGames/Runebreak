@@ -3,7 +3,7 @@ module github.com/GutpunchGames/Runebreak/runebreak-infra/accounts
 go 1.19
 
 require (
-	github.com/GutpunchGames/Runebreak/runebreak-infra/protos v0.0.0-20221123041117-81a93b4dd6b7
+	github.com/GutpunchGames/Runebreak/runebreak-infra/protos v0.0.0-20221212230547-85f0613b7593
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/hashicorp/go-hclog v1.3.1
 	google.golang.org/grpc v1.51.0

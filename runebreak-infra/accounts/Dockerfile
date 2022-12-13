@@ -7,9 +7,6 @@ RUN apt-get upgrade -y
 # todo: don't commit secret keys lol
 RUN git config --global url."https://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:@github.com/".insteadOf "https://github.com/"
 
-# protobuf compiler. TODO: needed???
-# RUN apt-get install -y protobuf-compiler
-
 # mariadb
 RUN apt-get install -y mariadb-server
 
