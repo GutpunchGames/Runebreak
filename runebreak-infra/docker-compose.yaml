@@ -11,8 +11,12 @@ services:
     image: accounts
     ports:
       - "9001:9090"
+    volumes:
+      - accounts-mysql-volume:/var/lib/mysql
   debug-web-client:
     build: ./debug-web-client
     image: debug-web-client
     ports:
       - "3000:3000"
+volumes:
+  accounts-mysql-volume:

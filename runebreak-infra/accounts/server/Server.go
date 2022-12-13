@@ -61,7 +61,7 @@ func (server AccountsServer) insertUserIntoDb(username string, password string) 
 		server.Logger.Error("Error when finding rows affected", "error", err)
 		return err
 	}
-	server.Logger.Info(fmt.Sprintf("%d products created", rows))
+	server.Logger.Info(fmt.Sprintf("%d users created", rows))
 
 	return nil
 }
