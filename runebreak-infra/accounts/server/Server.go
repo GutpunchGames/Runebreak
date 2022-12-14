@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"time"
 
@@ -15,19 +16,18 @@ type AccountsServer struct {
 	accounts.UnimplementedAccountsServer
 }
 
-type registerUserTransaction struct {
-	username string
-	password string
-}
-
 func NewServer(l hclog.Logger) *AccountsServer {
 	return &AccountsServer{Logger: l, UnimplementedAccountsServer: accounts.UnimplementedAccountsServer{}}
 }
 
 func (server AccountsServer) Register(ctx context.Context, req *accounts.UserAuthenticationRequest) (*accounts.UserAuthenticationResponse, error) {
 	server.Logger.Info("Handle Register", "username", req.Username, "pw", req.Password)
-	server.insertUserIntoDb(req.Username, req.Password)
-	return &accounts.UserAuthenticationResponse{UserId: "1234", Username: req.Username}, nil
+	err := server.insertUserIntoDb(req.Username, req.Password)
+	if err == nil {
+		return &accounts.UserAuthenticationResponse{UserId: "1234", Username: req.Username}, nil
+	} else {
+		return nil, err
+	}
 }
 
 func (server AccountsServer) insertUserIntoDb(username string, password string) error {
@@ -38,6 +38,17 @@ func (server AccountsServer) insertUserIntoDb(username string, password string) 
 	if err != nil {
 		fmt.Printf("bad stuff happened 1: %s\n", err)
 		return err
+	}
+
+	doesUserExist, err := server.doesUserExist(username)
+	if err != nil {
+		fmt.Printf("bad stuff happened 2: %s\n", err)
+		return err
+	}
+
+	if (doesUserExist != nil && *doesUserExist) {
+		server.Logger.Error("User with username already exists.", "username", username)
+		return errors.New(fmt.Sprintf("User with username %s already exists.", username))
 	}
 
 	query := "INSERT INTO accounts(user_name, authentication_code) VALUES (?, ?)"
@@ -64,4 +75,29 @@ func (server AccountsServer) insertUserIntoDb(username string, password string) 
 	server.Logger.Info(fmt.Sprintf("%d users created", rows))
 
 	return nil
+}
+
+func (server AccountsServer) doesUserExist(username string) (*bool, error) {
+	fmt.Printf("attempting to interface with db\n")
+	db, err := sql.Open("mysql", "accountsservice:accountsservice_pw@tcp(localhost:3306)/accounts")
+    defer db.Close()
+
+	if err != nil {
+		fmt.Printf("bad stuff happened 1: %s\n", err)
+		return nil, err
+	}
+
+	innerQuery := fmt.Sprintf("SELECT user_id FROM accounts WHERE user_name LIKE '%s'", username)
+	return server.doesRowExist(db, innerQuery)
+}
+
+func (server AccountsServer) doesRowExist(db *sql.DB, innerQuery string) (*bool, error) {
+    var exists bool
+    query := fmt.Sprintf("SELECT exists (%s)", innerQuery)
+    err := db.QueryRow(query).Scan(&exists)
+    if err != nil && err != sql.ErrNoRows {
+		server.Logger.Error("error checking if row exists", "innerQuery", innerQuery, "error", err)
+		return nil, err
+    }
+    return &exists, nil
 }
