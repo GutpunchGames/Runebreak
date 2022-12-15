@@ -31,6 +31,16 @@ func (server AccountsServer) Register(ctx context.Context, req *accounts.UserAut
 	}
 }
 
+func (server AccountsServer) Login(ctx context.Context, req *accounts.UserAuthenticationRequest) (*accounts.UserAuthenticationResponse, error) {
+	server.Logger.Info("Handle Login", "username", req.Username, "pw", req.Password)
+	userId, err := server.loginUser(req.Username, req.Password)
+	if err == nil {
+		return &accounts.UserAuthenticationResponse{UserId: strconv.FormatInt(*userId, 10), Username: req.Username}, nil
+	} else {
+		return nil, err
+	}
+}
+
 func (server AccountsServer) createUser(username string, password string) (*int64, error) {
 	fmt.Printf("attempting to interface with db\n")
 	db, err := sql.Open("mysql", "accountsservice:accountsservice_pw@tcp(localhost:3306)/accounts")
@@ -110,4 +120,57 @@ func (server AccountsServer) doesRowExist(db *sql.DB, innerQuery string) (*bool,
 		return nil, err
     }
     return &exists, nil
+}
+
+type account struct {
+	user_id string
+	user_name string
+	authentication_code string
+}
+
+func NewAccount() account {
+	return account{
+		user_id: "",
+		user_name: "",
+		authentication_code: "",
+	}
+}
+
+func (server AccountsServer) loginUser(username string, password string) (*int64, error) {
+	fmt.Printf("attempting to interface with db\n")
+	db, err := sql.Open("mysql", "accountsservice:accountsservice_pw@tcp(localhost:3306)/accounts")
+    defer db.Close()
+
+	if err != nil {
+		fmt.Printf("bad stuff happened 1: %s\n", err)
+		return nil, err
+	}
+
+	query := fmt.Sprintf("SELECT user_id, user_name, authentication_code FROM accounts WHERE user_name LIKE '%s'", username)
+
+	res := db.QueryRow(query)  
+	account := NewAccount()
+	err = res.Scan(&account.user_id, &account.user_name, &account.authentication_code)
+
+	if err != nil {  
+		server.Logger.Error("Error when selecting user", "error", err)
+		return nil, err
+	}
+
+	server.Logger.Info("got account", "account", account)
+
+	if (password == account.authentication_code) {
+		userId, err := strconv.Atoi(account.user_id)
+
+		if err != nil {  
+			server.Logger.Error("Error converting user_id to int", "user_id", account.user_id, "error", err)
+			return nil, err
+		}
+
+		userId64 := int64(userId)
+		return &userId64, nil
+	} else {
+		server.Logger.Error("invalid password")
+		return nil, errors.New("invalid password")
+	}
 }

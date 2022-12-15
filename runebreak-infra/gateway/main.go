@@ -25,6 +25,7 @@ func main() {
 	serveMux := mux.NewRouter()
 	postRouter := serveMux.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/register", registerHandler.Register)
+	postRouter.HandleFunc("/login", registerHandler.Login)
 
 	originsOk := gorillaHandlers.AllowedOrigins([]string{os.Getenv("ORIGIN_ALLOWED"), "*"})
 	wrapped := gorillaHandlers.CORS(originsOk)(serveMux)
