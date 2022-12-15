@@ -1,12 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-class RegisterForm extends React.Component {
+class PatchUserForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       username: '',
-      password: ''
+      userId: '',
+      token: ''
     };
 
     this.handleTextFieldChange = this.handleTextFieldChange.bind(this);
@@ -14,7 +15,7 @@ class RegisterForm extends React.Component {
   
   onSubmit = (event) => {
     event.preventDefault()
-    this.props.onSubmit(this.state.username, this.state.password);
+    this.props.onSubmit(this.state.username, this.state.userId, this.state.token);
     return false;
   };
 
@@ -29,7 +30,7 @@ class RegisterForm extends React.Component {
   }
 
   render() {
-    const {usernameLabel, passwordLabel} = this.props;
+    const {usernameLabel, userIdLabel, tokenLabel} = this.props;
 
     return (
       <form onSubmit={this.onSubmit}>
@@ -43,11 +44,20 @@ class RegisterForm extends React.Component {
         </label>
         <br />
         <label>
-          {passwordLabel}:
+          {userIdLabel}:
           <input
-            name="password"
+            name="userId"
             type="text"
-            value={this.state.password}
+            value={this.state.userId}
+            onChange={this.handleTextFieldChange} />
+        </label>
+        <br/>
+        <label>
+          {tokenLabel}:
+          <input
+            name="token"
+            type="text"
+            value={this.state.token}
             onChange={this.handleTextFieldChange} />
         </label>
         <br/>
@@ -57,10 +67,11 @@ class RegisterForm extends React.Component {
   }
 }
 
-RegisterForm.propTypes = {
+PatchUserForm.propTypes = {
     usernameLabel: PropTypes.string.isRequired,
-    passwordLabel: PropTypes.string.isRequired,
+    userIdLabel: PropTypes.string.isRequired,
+    tokenLabel: PropTypes.string.isRequired,
     onSubmit: PropTypes.func.isRequired,
 }
 
-export default RegisterForm;
+export default PatchUserForm;

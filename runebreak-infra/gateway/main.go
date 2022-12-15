@@ -21,14 +21,20 @@ func main() {
 	logger := log.New(os.Stdout,serviceName, log.LstdFlags)
 
 	registerHandler := handlers.NewRegisterHandler(logger)
+	accountsHandler := handlers.NewAccountsHandler(logger)
+
+	originsOk := gorillaHandlers.AllowedOrigins([]string{os.Getenv("ORIGIN_ALLOWED"), "*"})
+	headersOk := gorillaHandlers.AllowedHeaders([]string{"X-Session-Token"})
+	methodsOk := gorillaHandlers.AllowedMethods([]string{"POST", "PATCH", "GET"})
 
 	serveMux := mux.NewRouter()
+	wrapped := gorillaHandlers.CORS(originsOk, headersOk, methodsOk)(serveMux)
+
 	postRouter := serveMux.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/register", registerHandler.Register)
 	postRouter.HandleFunc("/login", registerHandler.Login)
-
-	originsOk := gorillaHandlers.AllowedOrigins([]string{os.Getenv("ORIGIN_ALLOWED"), "*"})
-	wrapped := gorillaHandlers.CORS(originsOk)(serveMux)
+	patchRouter := serveMux.Methods(http.MethodPatch).Subrouter()
+	patchRouter.HandleFunc("/accounts/{userId}", accountsHandler.UpdateUser)
 
 	url := fmt.Sprintf(":%s", port)
 	server := &http.Server{
