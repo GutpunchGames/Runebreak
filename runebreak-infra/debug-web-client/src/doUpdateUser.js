@@ -5,7 +5,7 @@ function handleResponse(data) {
 export default function doUpdateUser(username, userId, token) {
     const requestOptions = {
         method: 'PATCH',
-        headers: {'X-Session-Token': token},
+        headers: {'X-Auth-Token': token},
         body: JSON.stringify({username: username})
     };
 

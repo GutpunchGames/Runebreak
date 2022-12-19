@@ -9,13 +9,12 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type AccountsHandler struct {
+type ConnectHandler struct {
 	logger *log.Logger
 }
 
-type PatchUserRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+type ConnectRequest struct {
+
 }
 
 func (request *PatchUserRequest) FromJSON(reader io.Reader) error {

@@ -24,7 +24,7 @@ func main() {
 	accountsHandler := handlers.NewAccountsHandler(logger)
 
 	originsOk := gorillaHandlers.AllowedOrigins([]string{os.Getenv("ORIGIN_ALLOWED"), "*"})
-	headersOk := gorillaHandlers.AllowedHeaders([]string{"X-Session-Token"})
+	headersOk := gorillaHandlers.AllowedHeaders([]string{"X-Auth-Token"})
 	methodsOk := gorillaHandlers.AllowedMethods([]string{"POST", "PATCH", "GET"})
 
 	serveMux := mux.NewRouter()
