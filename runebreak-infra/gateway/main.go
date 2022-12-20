@@ -26,6 +26,7 @@ func main() {
 	registerHandler := handlers.NewRegisterHandler(logger)
 	accountsHandler := handlers.NewAccountsHandler(logger)
 	connectHandler := handlers.NewConnectHandler(connectionManager, logger)
+	messagesHandler := handlers.NewMessagesHandler(connectionManager, logger)
 
 	originsOk := gorillaHandlers.AllowedOrigins([]string{os.Getenv("ORIGIN_ALLOWED"), "*"})
 	headersOk := gorillaHandlers.AllowedHeaders([]string{"X-Auth-Token"})
@@ -36,6 +37,7 @@ func main() {
 	postRouter := serveMux.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/register", registerHandler.Register)
 	postRouter.HandleFunc("/login", registerHandler.Login)
+	postRouter.HandleFunc("/messages", messagesHandler.SendMessage)
 	patchRouter := serveMux.Methods(http.MethodPatch).Subrouter()
 	patchRouter.HandleFunc("/accounts/{userId}", accountsHandler.UpdateUser)
 

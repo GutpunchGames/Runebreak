@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
-	"io"
 	"log"
 	"net/http"
 
@@ -16,11 +14,6 @@ type AccountsHandler struct {
 type PatchUserRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
-}
-
-func (request *PatchUserRequest) FromJSON(reader io.Reader) error {
-	decoder := json.NewDecoder(reader)
-	return decoder.Decode(request)
 }
 
 type PatchUserResponse struct {

@@ -1,6 +1,7 @@
 package connections
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -72,49 +73,35 @@ func pinger(ws *websocket.Conn, logger *log.Logger) {
 				} else {
 					logger.Println("sent ping message")
 				} 
-
-				if err := ws.WriteMessage(websocket.TextMessage, []byte("wassup")); err != nil {
-					return
-				} else {
-					logger.Println("sent wassup message")
-				} 
 			}
 	}
 }
 
-// func serveWs(w http.ResponseWriter, r *http.Request) {
-// 	var upgrader  = websocket.Upgrader{
-// 		ReadBufferSize:  1024,
-// 		WriteBufferSize: 1024,
-// 	}
+type MessageToSend struct {
+	Text string `json:"text"`
+	RecipientId string `json:"recipient_id"` // todo: make optional
+}
 
-// 	ws, err := upgrader.Upgrade(w, r, nil)
+func (connectionManager *ConnectionManager) SendMessage(text string, recipient_id string) {
+	// first, find the connection
+	conn, ok := connectionManager.connections[recipient_id]
+	if !ok {
+		connectionManager.logger.Printf("user was offline: %s\n", recipient_id)
+		return
+	}
 
-// 	if err != nil {
-// 		if _, ok := err.(websocket.HandshakeError); !ok {
-// 			log.Println(err)
-// 		}
-// 		return
-// 	}
+	//debug: create message json
+	json, err := json.Marshal(MessageToSend{Text: text, RecipientId: recipient_id})
+	if (err != nil) {
+		connectionManager.logger.Printf("failed to marshal message to user: %s\n", recipient_id)
+		return
+	}
 
-// 	var lastMod time.Time
-// 	if n, err := strconv.ParseInt(r.FormValue("lastMod"), 16, 64); err == nil {
-// 		lastMod = time.Unix(0, n)
-// 	}
-
-// 	go writer(ws, lastMod)
-// 	reader(ws)
-// }
-
-// func reader(ws *websocket.Conn) {
-// 	defer ws.Close()
-// 	ws.SetReadLimit(512)
-// 	ws.SetReadDeadline(time.Now().Add(pongWait))
-// 	ws.SetPongHandler(func(string) error { ws.SetReadDeadline(time.Now().Add(pongWait)); return nil })
-// 	for {
-// 		_, _, err := ws.ReadMessage()
-// 		if err != nil {
-// 			break
-// 		}
-// 	}
-// }
+	// send the message over the connection
+	if err := conn.SendMessage(Message{payload: json}); err != nil {
+		connectionManager.logger.Printf("failed to deliver message to user: %s\n", recipient_id)
+		return
+	} else {
+		connectionManager.logger.Printf("delivered message to user: %s\n", recipient_id)
+	} 
+}

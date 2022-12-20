@@ -15,16 +15,3 @@ message UserAuthenticationResponse {
     string user_id = 1;
     string username = 2;
 }
-
-// message ExampleRequest {
-//     ExampleEnum ParamOne = 1;
-// }
-
-// message ExampleResponse {
-//     float Rate = 1;
-// }
-
-// enum ExampleEnum {
-//     ZERO=0;
-//     ONE=1;
-// }

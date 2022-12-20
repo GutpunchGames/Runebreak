@@ -4,10 +4,10 @@ import './App.css';
 import React from 'react';
 import doRegister from './doRegister';
 import doLogin from './doLogin';
-import PatchUserForm from './PatchUserForm';
-import doUpdateUser from './doUpdateUser';
 import doAttemptConnect from './doAttemptConnect';
 import AttemptConnectForm from './AttemptConnectForm';
+import SendMessageForm from './SendMessageForm';
+import doSendMessage from './doSendMessage';
 
 function App() {
 
@@ -19,23 +19,31 @@ function App() {
     doLogin(username, password);
   };
 
-  const onSubmitUpdateUser = (username, userId, token) => {
-    doUpdateUser(username, userId, token);
-  };
-
   const onSubmitDoConnect = (userId) => {
     doAttemptConnect(userId, "1234");
   };
 
+  const onSubmitSendMessage = (recipientId, text) => {
+    doSendMessage(recipientId, text, "debug-auth-token");
+  };
+
   return (
     <div className="App">
-      <RegisterForm onSubmit={onSubmitRegister} usernameLabel={'Username'} passwordLabel={'Password'}/>
-      <LoginForm onSubmit={onSubmitLogin} usernameLabel={'Username'} passwordLabel={'Password'}/>
-      <PatchUserForm onSubmit={onSubmitUpdateUser} usernameLabel={'Username'} userIdLabel={'User ID'} tokenLabel={'Token'}/>
+      Register
       <br/>
-      Connect
+      <RegisterForm onSubmit={onSubmitRegister} usernameLabel={'Username'} passwordLabel={'Password'}/>
+      <br/>
+      Log In
+      <br/>
+      <LoginForm onSubmit={onSubmitLogin} usernameLabel={'Username'} passwordLabel={'Password'}/>
+      <br/>
+      Connect to WebSocket
       <br/>
       <AttemptConnectForm onSubmit={onSubmitDoConnect} />
+      <br/>
+      Send Message
+      <br/>
+      <SendMessageForm onSubmit={onSubmitSendMessage} />
     </div>
   );
 }
