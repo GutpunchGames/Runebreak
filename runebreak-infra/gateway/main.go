@@ -36,9 +36,11 @@ func main() {
 	postRouter := serveMux.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/register", registerHandler.Register)
 	postRouter.HandleFunc("/login", registerHandler.Login)
-	postRouter.HandleFunc("/connect/{userId}", connectHandler.Connect)
 	patchRouter := serveMux.Methods(http.MethodPatch).Subrouter()
 	patchRouter.HandleFunc("/accounts/{userId}", accountsHandler.UpdateUser)
+
+	getRouter := serveMux.Methods(http.MethodGet).Subrouter()
+	getRouter.HandleFunc("/connect/{userId}", connectHandler.Connect)
 
 	serveMux.Use(middleware.NewAuthenticationMiddleware(logger).Middleware)
 	wrapped := gorillaHandlers.CORS(originsOk, headersOk, methodsOk)(serveMux)

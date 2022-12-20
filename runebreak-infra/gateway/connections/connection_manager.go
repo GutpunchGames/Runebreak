@@ -17,10 +17,7 @@ type ConnectionManager struct {
 const (
 	// Time allowed to write the file to the client.
 	writeWait = 10 * time.Second
-	// Time allowed to read the next pong message from the client.
-	pongWait = 60 * time.Second
-	// Send pings to client with this period. Must be less than pongWait.
-	pingPeriod = (pongWait * 9) / 10
+	pingPeriod = 5 * time.Second
 )
 
 func NewConnectionManager(logger *log.Logger) *ConnectionManager {
@@ -38,6 +35,10 @@ func (connectionManager *ConnectionManager) CreateConnection(w http.ResponseWrit
 		WriteBufferSize: 1024,
 	}
 
+	upgrader.CheckOrigin = func(r *http.Request) bool {
+		return true
+	}
+
 	ws, err := upgrader.Upgrade(w, r, nil)
 
 	if err != nil {
@@ -45,11 +46,40 @@ func (connectionManager *ConnectionManager) CreateConnection(w http.ResponseWrit
 			log.Println(err)
 		}
 		errorStr := fmt.Sprintf("could not create websocket: %s", err)
+		log.Println(errorStr)
 		http.Error(w, errorStr, http.StatusInternalServerError)
 	}
 	
 	// do something with the ws
 	connectionManager.connections[userId] = NewConnection(ws)
+
+	go pinger(ws, connectionManager.logger)
+}
+
+func pinger(ws *websocket.Conn, logger *log.Logger) {
+	pingTicker := time.NewTicker(pingPeriod)
+	defer func() {
+		pingTicker.Stop()
+		ws.Close()
+	}()
+
+	for {
+		select {
+			case <-pingTicker.C:
+				ws.SetWriteDeadline(time.Now().Add(writeWait))
+				if err := ws.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
+					return
+				} else {
+					logger.Println("sent ping message")
+				} 
+
+				if err := ws.WriteMessage(websocket.TextMessage, []byte("wassup")); err != nil {
+					return
+				} else {
+					logger.Println("sent wassup message")
+				} 
+			}
+	}
 }
 
 // func serveWs(w http.ResponseWriter, r *http.Request) {
@@ -86,23 +116,5 @@ func (connectionManager *ConnectionManager) CreateConnection(w http.ResponseWrit
 // 		if err != nil {
 // 			break
 // 		}
-// 	}
-// }
-
-// func writer(ws *websocket.Conn, lastMod time.Time) {
-// 	pingTicker := time.NewTicker(pingPeriod)
-// 	defer func() {
-// 		pingTicker.Stop()
-// 		ws.Close()
-// 	}()
-
-// 	for {
-// 		select {
-// 			case <-pingTicker.C:
-// 				ws.SetWriteDeadline(time.Now().Add(writeWait))
-// 				if err := ws.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
-// 					return
-// 				}
-// 			}
 // 	}
 // }
