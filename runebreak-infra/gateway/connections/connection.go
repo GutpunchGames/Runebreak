@@ -1,9 +1,15 @@
 package connections
 
-import "golang.org/x/net/websocket"
+import (
+	"github.com/gorilla/websocket"
+)
 
 type Connection struct {
-	ws_conn *websocket.Conn
+	ws *websocket.Conn
+}
+
+func NewConnection(ws *websocket.Conn) *Connection {
+	return &Connection{ws: ws}
 }
 
 func (connection *Connection) SendMessage(mesage Message) {

@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/GutpunchGames/Runebreak/runebreak-infra/gateway/connections"
 	"github.com/GutpunchGames/Runebreak/runebreak-infra/gateway/handlers"
 	"github.com/GutpunchGames/Runebreak/runebreak-infra/gateway/middleware"
 	gorillaHandlers "github.com/gorilla/handlers"
@@ -21,8 +22,10 @@ func main() {
 	port := extractArgs(os.Args)
 	logger := log.New(os.Stdout,serviceName, log.LstdFlags)
 
+	connectionManager := connections.NewConnectionManager(logger)
 	registerHandler := handlers.NewRegisterHandler(logger)
 	accountsHandler := handlers.NewAccountsHandler(logger)
+	connectHandler := handlers.NewConnectHandler(connectionManager, logger)
 
 	originsOk := gorillaHandlers.AllowedOrigins([]string{os.Getenv("ORIGIN_ALLOWED"), "*"})
 	headersOk := gorillaHandlers.AllowedHeaders([]string{"X-Auth-Token"})
@@ -33,6 +36,7 @@ func main() {
 	postRouter := serveMux.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/register", registerHandler.Register)
 	postRouter.HandleFunc("/login", registerHandler.Login)
+	postRouter.HandleFunc("/connect/{userId}", connectHandler.Connect)
 	patchRouter := serveMux.Methods(http.MethodPatch).Subrouter()
 	patchRouter.HandleFunc("/accounts/{userId}", accountsHandler.UpdateUser)
 

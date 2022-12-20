@@ -13,36 +13,17 @@ type ConnectHandler struct {
 	logger *log.Logger
 }
 
-type ConnectRequest struct {
-
+func NewConnectHandler(connectionManager *connections.ConnectionManager, logger *log.Logger) *ConnectHandler {
+	return &ConnectHandler{
+		connectionManager: connectionManager,
+		logger: logger,
+	}
 }
 
-// http POST /register
+// http POST /connect/{userId}
 func (handler *ConnectHandler) Connect(rw http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
 	userId := params["userId"]
-	handler.connectionManager.CreateConnection(userId)
+	// responding in the case of an error is handled internally
+	handler.connectionManager.CreateConnection(rw, req, userId)
 }
-
-// func (request *PatchUserRequest) FromJSON(reader io.Reader) error {
-// 	decoder := json.NewDecoder(reader)
-// 	return decoder.Decode(request)
-// }
-
-// type PatchUserResponse struct {
-// 	UserId string
-// }
-
-// func NewAccountsHandler(logger *log.Logger) *AccountsHandler {
-// 	return &AccountsHandler{logger}
-// }
-
-// // http PATCH /users/{userId}
-// func (handler *AccountsHandler) UpdateUser(rw http.ResponseWriter, req *http.Request) {
-// 	params := mux.Vars(req)
-// 	userId := params["userId"]
-// 	token := req.Header.Get("X-Auth-Token")
-
-// 	handler.logger.Printf("got user id '%s' and token '%s'\n", userId, token)
-// 	rw.Write([]byte("{}"))
-// }
