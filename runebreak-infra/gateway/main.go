@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/GutpunchGames/Runebreak/runebreak-infra/gateway/handlers"
+	"github.com/GutpunchGames/Runebreak/runebreak-infra/gateway/middleware"
 	gorillaHandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
@@ -28,13 +29,15 @@ func main() {
 	methodsOk := gorillaHandlers.AllowedMethods([]string{"POST", "PATCH", "GET"})
 
 	serveMux := mux.NewRouter()
-	wrapped := gorillaHandlers.CORS(originsOk, headersOk, methodsOk)(serveMux)
 
 	postRouter := serveMux.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/register", registerHandler.Register)
 	postRouter.HandleFunc("/login", registerHandler.Login)
 	patchRouter := serveMux.Methods(http.MethodPatch).Subrouter()
 	patchRouter.HandleFunc("/accounts/{userId}", accountsHandler.UpdateUser)
+
+	serveMux.Use(middleware.NewAuthenticationMiddleware(logger).Middleware)
+	wrapped := gorillaHandlers.CORS(originsOk, headersOk, methodsOk)(serveMux)
 
 	url := fmt.Sprintf(":%s", port)
 	server := &http.Server{
