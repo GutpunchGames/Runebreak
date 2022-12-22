@@ -3,8 +3,8 @@ package accounts_provider
 import "log"
 
 type AccountRecord struct {
-	userId   string
-	username string
+	UserId   string
+	Username string
 }
 
 type AccountsProvider interface {

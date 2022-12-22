@@ -6,6 +6,7 @@ class AttemptConnectForm extends React.Component {
     super(props);
     this.state = {
       userId: '',
+      token: '',
     };
 
     this.handleTextFieldChange = this.handleTextFieldChange.bind(this);
@@ -13,7 +14,7 @@ class AttemptConnectForm extends React.Component {
   
   onSubmit = (event) => {
     event.preventDefault()
-    this.props.onSubmit(this.state.userId);
+    this.props.onSubmit(this.state.userId, this.state.token);
     return false;
   };
 
@@ -36,6 +37,15 @@ class AttemptConnectForm extends React.Component {
             name="userId"
             type="text"
             value={this.state.userId}
+            onChange={this.handleTextFieldChange} />
+        </label>
+        <br/>
+        <label>
+          Token:
+          <input
+            name="token"
+            type="text"
+            value={this.state.token}
             onChange={this.handleTextFieldChange} />
         </label>
         <br/>

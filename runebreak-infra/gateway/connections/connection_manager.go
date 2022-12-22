@@ -69,20 +69,19 @@ func pinger(ws *websocket.Conn, logger *log.Logger) {
 				ws.SetWriteDeadline(time.Now().Add(writeWait))
 				if err := ws.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
 					return
-				} else {
-					logger.Println("sent ping message")
-				} 
-			}
+				} 	
+		}
 	}
 }
 
 type MessageToSend struct {
 	AuthorId string `json:"author_id"`
+	AuthorName string `json:"author_name"`
 	Text string `json:"text"`
 	RecipientId string `json:"recipient_id"` // todo: make optional
 }
 
-func (connectionManager *ConnectionManager) SendMessage(authorId string, text string, recipientId string) {
+func (connectionManager *ConnectionManager) SendMessage(authorId string, authorName string, text string, recipientId string) {
 	// first, find the connection
 	conn, ok := connectionManager.connections[recipientId]
 	if !ok {
@@ -90,8 +89,8 @@ func (connectionManager *ConnectionManager) SendMessage(authorId string, text st
 		return
 	}
 
-	//debug: create message json
-	json, err := json.Marshal(MessageToSend{AuthorId: authorId, Text: text, RecipientId: recipientId})
+	//create message json
+	json, err := json.Marshal(MessageToSend{AuthorId: authorId, AuthorName: authorName, Text: text, RecipientId: recipientId})
 	if (err != nil) {
 		connectionManager.logger.Printf("failed to marshal message to user: %s\n", recipientId)
 		return

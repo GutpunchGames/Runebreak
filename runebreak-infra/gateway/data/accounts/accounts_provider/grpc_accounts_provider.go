@@ -23,7 +23,7 @@ func (provider liveAccountsProvider) GetAccount(userId string) (*AccountRecord, 
 		return nil, err
 	}
 
-	return &AccountRecord{userId: account.UserId, username: account.Username}, nil
+	return &AccountRecord{UserId: account.UserId, Username: account.Username}, nil
 }
 
 func (provider liveAccountsProvider) rpcGetAccount(userId string) (*accounts.GetAccountResponse, error) {

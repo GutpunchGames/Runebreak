@@ -11,6 +11,7 @@ import (
 
 	"github.com/GutpunchGames/Runebreak/runebreak-infra/gateway/authentication"
 	"github.com/GutpunchGames/Runebreak/runebreak-infra/gateway/connections"
+	"github.com/GutpunchGames/Runebreak/runebreak-infra/gateway/data/accounts/accounts_provider"
 	"github.com/GutpunchGames/Runebreak/runebreak-infra/gateway/handlers"
 	"github.com/GutpunchGames/Runebreak/runebreak-infra/gateway/middleware"
 	gorillaHandlers "github.com/gorilla/handlers"
@@ -23,12 +24,13 @@ func main() {
 	port := extractArgs(os.Args)
 	logger := log.New(os.Stdout,serviceName, log.LstdFlags)
 	authenticator := authentication.NewTokenAuthenticator(logger)
+	accountsProvider := accounts_provider.NewAccountsProvider(logger)
 
 	connectionManager := connections.NewConnectionManager(logger)
 	authenticationHandler := handlers.NewAuthenticationHandler(authenticator, logger)
 	accountsHandler := handlers.NewAccountsHandler(logger)
 	connectHandler := handlers.NewConnectHandler(connectionManager, logger)
-	messagesHandler := handlers.NewMessagesHandler(connectionManager, logger)
+	messagesHandler := handlers.NewMessagesHandler(accountsProvider, authenticator, connectionManager, logger)
 
 	originsOk := gorillaHandlers.AllowedOrigins([]string{os.Getenv("ORIGIN_ALLOWED"), "*"})
 	headersOk := gorillaHandlers.AllowedHeaders([]string{"X-Auth-Token"})

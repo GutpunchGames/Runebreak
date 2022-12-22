@@ -21,7 +21,7 @@ func NewAuthenticationMiddleware(authenticator authentication.Authenticator, log
 }
 
 func isExcludedRoute(uri string) bool {
-    return strings.Contains(uri, "login") || strings.Contains(uri, "register")
+    return strings.Contains(uri, "login") || strings.Contains(uri, "register") || strings.Contains(uri, "connect")
 }
 
 func (amw *AuthenticationMiddleware) Middleware(next http.Handler) http.Handler {
@@ -33,6 +33,7 @@ func (amw *AuthenticationMiddleware) Middleware(next http.Handler) http.Handler 
 
         userId, err := amw.authenticator.GetUserIdFromRequest(r)
         if err != nil {
+            amw.logger.Printf("forbidden request: %s\n", r.RequestURI)
             http.Error(w, "Forbidden", http.StatusForbidden)
             return
         } else {

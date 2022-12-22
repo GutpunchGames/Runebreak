@@ -31,9 +31,12 @@ func (e *TokenNotFoundError) Error() string {
 
 func (authenticator TokenAuthenticator) GetUserIdFromRequest(r *http.Request) (*string, error) {
 	token := r.Header.Get("X-Auth-Token")
+	authenticator.logger.Printf("got token: %s\n", token)
 	if userId, found := authenticator.tokensToUsers[token]; !found {
+		authenticator.logger.Printf("could not find user for token")
 		return nil, &TokenNotFoundError{}
 	} else {
+		authenticator.logger.Printf("found user for token")
 		return &userId, nil
 	}
 }

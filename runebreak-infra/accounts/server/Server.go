@@ -25,7 +25,8 @@ func (server AccountsServer) Register(ctx context.Context, req *accounts.UserAut
 	server.Logger.Info("Handle Register", "username", req.Username, "pw", req.Password)
 	userId, err := server.createUser(req.Username, req.Password)
 	if err == nil {
-		return &accounts.UserAuthenticationResponse{UserId: strconv.FormatInt(*userId, 10), Username: req.Username}, nil
+		account := accounts.Account{UserId: strconv.FormatInt(*userId, 10), Username: req.Username}
+		return &accounts.UserAuthenticationResponse{Account: &account}, nil
 	} else {
 		return nil, err
 	}
@@ -35,10 +36,34 @@ func (server AccountsServer) Login(ctx context.Context, req *accounts.UserAuthen
 	server.Logger.Info("Handle Login", "username", req.Username, "pw", req.Password)
 	userId, err := server.loginUser(req.Username, req.Password)
 	if err == nil {
-		return &accounts.UserAuthenticationResponse{UserId: strconv.FormatInt(*userId, 10), Username: req.Username}, nil
+		account := accounts.Account{UserId: strconv.FormatInt(*userId, 10), Username: req.Username}
+		return &accounts.UserAuthenticationResponse{Account: &account}, nil
 	} else {
 		return nil, err
 	}
+}
+
+func (server AccountsServer) GetAccount(ctx context.Context, req *accounts.GetAccountRequest) (*accounts.GetAccountResponse, error) {
+	fmt.Printf("attempting to interface with db\n")
+	db, err := sql.Open("mysql", "accountsservice:accountsservice_pw@tcp(localhost:3306)/accounts")
+    defer db.Close()
+
+	if err != nil {
+		fmt.Printf("failed to establish db connection: %s\n", err)
+		return nil, err
+	}
+
+	query := fmt.Sprintf("SELECT user_id, user_name FROM accounts WHERE user_id LIKE '%s'", req.UserId)
+
+	res := db.QueryRow(query)  
+	account := NewAccount()
+	err = res.Scan(&account.user_id, &account.user_name)
+	if err != nil {
+		fmt.Printf("failed to unmarshal user: %s\n", err)
+		return nil, err
+	}
+
+	return &accounts.GetAccountResponse{UserId: account.user_id, Username: account.user_name}, nil
 }
 
 func (server AccountsServer) createUser(username string, password string) (*int64, error) {

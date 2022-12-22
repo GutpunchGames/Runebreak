@@ -23,8 +23,8 @@ function App() {
     doAttemptConnect(userId, "1234");
   };
 
-  const onSubmitSendMessage = (recipientId, text) => {
-    doSendMessage(recipientId, text, "debug-auth-token");
+  const onSubmitSendMessage = (recipientId, text, token) => {
+    doSendMessage(recipientId, text, token);
   };
 
   return (

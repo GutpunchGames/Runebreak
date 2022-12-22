@@ -14,6 +14,6 @@ export default function doSendMessage(recipientId, text, token) {
 
     const url = `http://localhost:9000/messages`
     fetch(url, requestOptions)
-        .then(response => response.json())
-        .then(data => handleResponse(data));
+        // .then(response => response.json())
+        // .then(data => handleResponse(data));
 }

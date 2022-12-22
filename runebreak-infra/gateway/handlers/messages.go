@@ -8,16 +8,20 @@ import (
 
 	"github.com/GutpunchGames/Runebreak/runebreak-infra/gateway/authentication"
 	"github.com/GutpunchGames/Runebreak/runebreak-infra/gateway/connections"
+	"github.com/GutpunchGames/Runebreak/runebreak-infra/gateway/data/accounts/accounts_provider"
 )
 
 type MessagesHandler struct {
+	accountsProvider accounts_provider.AccountsProvider
 	authenticator authentication.Authenticator
 	connections *connections.ConnectionManager
 	logger *log.Logger
 }
 
-func NewMessagesHandler(connections *connections.ConnectionManager, logger *log.Logger) *MessagesHandler {
+func NewMessagesHandler(accountsProvider accounts_provider.AccountsProvider, authenticator authentication.Authenticator, connections *connections.ConnectionManager, logger *log.Logger) *MessagesHandler {
 	return &MessagesHandler{
+		accountsProvider: accountsProvider,
+		authenticator: authenticator,
 		connections: connections,
 		logger: logger,
 	}
@@ -36,22 +40,41 @@ func (request *SendMessageRequest) FromJSON(reader io.Reader) error {
 
 // http POST /messages
 func (handler *MessagesHandler) SendMessage(rw http.ResponseWriter, req *http.Request) {
+	handler.logger.Printf("======== CHECKPOINT 1 ==========")
 	requestBody := SendMessageRequest{}
 	err := requestBody.FromJSON(req.Body)
 	if err != nil {
 		http.Error(rw, "unable to unmarshal send message request ", http.StatusBadRequest)
 		return
 	}
-	userId, err := handler.authenticator.GetUserIdFromRequest(req)
+
+	handler.logger.Printf("======== CHECKPOINT 2 ==========")
+
+	authorId, err := handler.authenticator.GetUserIdFromRequest(req)
 	if err != nil {
 		http.Error(rw, "unable to unmarshal send message request ", http.StatusBadRequest)
 		return
-	} else {
-		handler.logger.Printf("got request body: %s\n", requestBody)
-		rw.Write([]byte("{}"))
 	}
+
+	handler.logger.Printf("======== CHECKPOINT 3 ==========")
+
+	recipient, err := handler.accountsProvider.GetAccount(*authorId)
+	if err != nil {
+		http.Error(rw, "unable to find recipient", http.StatusInternalServerError)
+		return
+	} 
+
+	handler.logger.Printf("======== CHECKPOINT 4 ==========")
 
 	// okay pretend we are in the "messages service"... need to communicate to sessions service that a message was
 	// created. currently, the gateway service is serving as a sessions service, which happens to be where we are.
-	handler.connections.SendMessage(*userId, requestBody.Text, requestBody.RecipientId)
+	if authorId == nil {
+		handler.logger.Printf("author ID was nil\n")
+		http.Error(rw, "very weird error", http.StatusInternalServerError)
+		return
+	} else {
+		handler.connections.SendMessage(*authorId, recipient.Username, requestBody.Text, requestBody.RecipientId)
+	}
+
+	handler.logger.Printf("======== CHECKPOINT 5 ==========")
 }

@@ -41,7 +41,6 @@ func NewAuthenticationHandler(authenticator authentication.Authenticator, logger
 
 // http POST /register
 func (handler *AuthenticationHandler) Register(rw http.ResponseWriter, req *http.Request) {
-	handler.logger.Printf("checkpoint 1\n")
 	requestBody := AuthenticationRequest{}
 	err := requestBody.FromJSON(req.Body)
 	if err != nil {
@@ -49,16 +48,16 @@ func (handler *AuthenticationHandler) Register(rw http.ResponseWriter, req *http
 		return
 	}
 
-	handler.logger.Printf("checkpoint 2\n")
 	rpcResponse, err := handler.rpcRegister(requestBody.Username, requestBody.Password)
 	if err == nil {
-		handler.logger.Printf("checkpoint 3\n")
 		token := uuid.NewString()
-		resp := &AuthenticationResponse{UserId: rpcResponse.UserId, Token: token}
+		userId := rpcResponse.Account.UserId
+		handler.authenticator.AssociateToken(token, userId)
+
+		resp := &AuthenticationResponse{UserId: userId, Token: token}
 		respJson, _ := json.Marshal(resp)
 		rw.Write(respJson)
 	} else {
-		handler.logger.Printf("checkpoint 4\n")
 		http.Error(rw, fmt.Sprintf("couldn't make rpc call: %s", err), http.StatusInternalServerError)
 	}
 }
@@ -87,7 +86,6 @@ func (handler *AuthenticationHandler) rpcRegister(username string, password stri
 
 // http POST /login
 func (handler *AuthenticationHandler) Login (rw http.ResponseWriter, req *http.Request) {
-	handler.logger.Printf("checkpoint 1\n")
 	requestBody := AuthenticationRequest{}
 	err := requestBody.FromJSON(req.Body)
 	if err != nil {
@@ -95,17 +93,16 @@ func (handler *AuthenticationHandler) Login (rw http.ResponseWriter, req *http.R
 		return
 	}
 
-	handler.logger.Printf("checkpoint 2\n")
 	rpcResponse, err := handler.rpcLogin(requestBody.Username, requestBody.Password)
 	if err == nil {
-		handler.logger.Printf("checkpoint 3\n")
 		token := uuid.NewString()
-		resp := &AuthenticationResponse{UserId: rpcResponse.UserId, Token: token}
+		userId := rpcResponse.Account.UserId
+		handler.authenticator.AssociateToken(token, userId)
+		resp := &AuthenticationResponse{UserId: userId, Token: token}
 
 		respJson, _ := json.Marshal(resp)
 		rw.Write(respJson)
 	} else {
-		handler.logger.Printf("checkpoint 4\n")
 		http.Error(rw, fmt.Sprintf("couldn't make rpc call: %s", err), http.StatusInternalServerError)
 	}
 }

@@ -7,6 +7,7 @@ class SendMessageForm extends React.Component {
     this.state = {
       recipientId: '',
       text: '',
+      token: '',
     };
 
     this.handleTextFieldChange = this.handleTextFieldChange.bind(this);
@@ -14,7 +15,7 @@ class SendMessageForm extends React.Component {
   
   onSubmit = (event) => {
     event.preventDefault()
-    this.props.onSubmit(this.state.recipientId, this.state.text);
+    this.props.onSubmit(this.state.recipientId, this.state.text, this.state.token);
     return false;
   };
 
@@ -46,6 +47,15 @@ class SendMessageForm extends React.Component {
             name="text"
             type="text"
             value={this.state.text}
+            onChange={this.handleTextFieldChange} />
+        </label>
+        <br/>
+        <label>
+          Token:
+          <input
+            name="token"
+            type="text"
+            value={this.state.token}
             onChange={this.handleTextFieldChange} />
         </label>
         <br/>
