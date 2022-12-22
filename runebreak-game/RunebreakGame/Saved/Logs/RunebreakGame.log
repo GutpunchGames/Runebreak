@@ -1651,3 +1651,16 @@ LogConfig: Set CVar [[r.Shadow.DetectVertexShaderLayerAtRuntime:1]]
 [2022.12.22-21.50.40:450][777]PIE: Server logged in
 [2022.12.22-21.50.40:451][777]PIE: Play in editor total start time 0.714 seconds.
 [2022.12.22-21.50.41:372][820]LogMeshUtilities: Finished distance field build in 1.0s - 126x126x126 sparse distance field, 1.8Mb total, 0.1Mb always loaded, 50% occupied, 96 triangles, StaticMesh_HLOD0_Instancing_1
+[2022.12.22-22.20.28:433][919]LogSlate: Updating window title bar state: overlay mode, drag disabled, window buttons hidden, title bar hidden
+[2022.12.22-22.20.28:433][919]LogWorld: BeginTearingDown for /Temp/UEDPIE_0_Untitled_1
+[2022.12.22-22.20.28:445][919]LogWorld: UWorld::CleanupWorld for Untitled_1, bSessionEnded=true, bCleanupResources=true
+[2022.12.22-22.20.28:446][919]LogSlate: InvalidateAllWidgets triggered.  All widgets were invalidated
+[2022.12.22-22.20.28:447][919]LogContentBundle: [Container: Untitled_1] Deleting container.
+[2022.12.22-22.20.28:453][919]LogPlayLevel: Display: Shutting down PIE online subsystems
+[2022.12.22-22.20.28:458][919]LogSlate: InvalidateAllWidgets triggered.  All widgets were invalidated
+[2022.12.22-22.20.28:466][919]LogSlate: Updating window title bar state: overlay mode, drag disabled, window buttons hidden, title bar hidden
+[2022.12.22-22.20.28:472][919]LogAudioMixer: FMixerPlatformXAudio2::StopAudioStream() called. InstanceID=2
+[2022.12.22-22.20.28:474][919]LogAudioMixer: FMixerPlatformXAudio2::StopAudioStream() called. InstanceID=2
+[2022.12.22-22.20.28:500][919]LogUObjectHash: Compacting FUObjectHashTables data took   0.68ms
+[2022.12.22-22.20.28:540][920]LogPlayLevel: Display: Destroying online subsystem :Context_2
+[2022.12.22-22.20.32:855][391]LogUObjectHash: Compacting FUObjectHashTables data took   0.51ms
