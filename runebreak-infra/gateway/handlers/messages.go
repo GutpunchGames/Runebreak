@@ -6,10 +6,12 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/GutpunchGames/Runebreak/runebreak-infra/gateway/authentication"
 	"github.com/GutpunchGames/Runebreak/runebreak-infra/gateway/connections"
 )
 
 type MessagesHandler struct {
+	authenticator authentication.Authenticator
 	connections *connections.ConnectionManager
 	logger *log.Logger
 }
@@ -39,6 +41,11 @@ func (handler *MessagesHandler) SendMessage(rw http.ResponseWriter, req *http.Re
 	if err != nil {
 		http.Error(rw, "unable to unmarshal send message request ", http.StatusBadRequest)
 		return
+	}
+	userId, err := handler.authenticator.GetUserIdFromRequest(req)
+	if err != nil {
+		http.Error(rw, "unable to unmarshal send message request ", http.StatusBadRequest)
+		return
 	} else {
 		handler.logger.Printf("got request body: %s\n", requestBody)
 		rw.Write([]byte("{}"))
@@ -46,5 +53,5 @@ func (handler *MessagesHandler) SendMessage(rw http.ResponseWriter, req *http.Re
 
 	// okay pretend we are in the "messages service"... need to communicate to sessions service that a message was
 	// created. currently, the gateway service is serving as a sessions service, which happens to be where we are.
-	handler.connections.SendMessage(requestBody.Text, requestBody.RecipientId)
+	handler.connections.SendMessage(*userId, requestBody.Text, requestBody.RecipientId)
 }

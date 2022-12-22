@@ -16,7 +16,6 @@ type ConnectionManager struct {
 }
 
 const (
-	// Time allowed to write the file to the client.
 	writeWait = 10 * time.Second
 	pingPeriod = 5 * time.Second
 )
@@ -78,30 +77,31 @@ func pinger(ws *websocket.Conn, logger *log.Logger) {
 }
 
 type MessageToSend struct {
+	AuthorId string `json:"author_id"`
 	Text string `json:"text"`
 	RecipientId string `json:"recipient_id"` // todo: make optional
 }
 
-func (connectionManager *ConnectionManager) SendMessage(text string, recipient_id string) {
+func (connectionManager *ConnectionManager) SendMessage(authorId string, text string, recipientId string) {
 	// first, find the connection
-	conn, ok := connectionManager.connections[recipient_id]
+	conn, ok := connectionManager.connections[recipientId]
 	if !ok {
-		connectionManager.logger.Printf("user was offline: %s\n", recipient_id)
+		connectionManager.logger.Printf("user was offline: %s\n", recipientId)
 		return
 	}
 
 	//debug: create message json
-	json, err := json.Marshal(MessageToSend{Text: text, RecipientId: recipient_id})
+	json, err := json.Marshal(MessageToSend{AuthorId: authorId, Text: text, RecipientId: recipientId})
 	if (err != nil) {
-		connectionManager.logger.Printf("failed to marshal message to user: %s\n", recipient_id)
+		connectionManager.logger.Printf("failed to marshal message to user: %s\n", recipientId)
 		return
 	}
 
 	// send the message over the connection
 	if err := conn.SendMessage(Message{payload: json}); err != nil {
-		connectionManager.logger.Printf("failed to deliver message to user: %s\n", recipient_id)
+		connectionManager.logger.Printf("failed to deliver message to user: %s\n", recipientId)
 		return
 	} else {
-		connectionManager.logger.Printf("delivered message to user: %s\n", recipient_id)
+		connectionManager.logger.Printf("delivered message to user: %s\n", recipientId)
 	} 
 }

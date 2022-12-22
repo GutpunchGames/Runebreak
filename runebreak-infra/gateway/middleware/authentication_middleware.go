@@ -3,36 +3,41 @@ package middleware
 import (
 	"log"
 	"net/http"
+	"strings"
+
+	"github.com/GutpunchGames/Runebreak/runebreak-infra/gateway/authentication"
 )
 
 type AuthenticationMiddleware struct {
-	// map of user ID to token
-	userTokenMap map[string]string
+	authenticator authentication.Authenticator
 	logger *log.Logger
 }
 
-func NewAuthenticationMiddleware(logger *log.Logger) *AuthenticationMiddleware {
+func NewAuthenticationMiddleware(authenticator authentication.Authenticator, logger *log.Logger) *AuthenticationMiddleware {
 	return &AuthenticationMiddleware{
-		userTokenMap: make(map[string]string),
+        authenticator: authenticator,
 		logger: logger,
 	}
 }
 
-// Middleware function, which will be called for each request
+func isExcludedRoute(uri string) bool {
+    return strings.Contains(uri, "login") || strings.Contains(uri, "register")
+}
+
 func (amw *AuthenticationMiddleware) Middleware(next http.Handler) http.Handler {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        token := r.Header.Get("X-Auth-Token")
-		amw.logger.Printf("Got auth token: %s\n", token)
+        if (isExcludedRoute(r.RequestURI)) {
+            next.ServeHTTP(w, r)
+            return
+        }
 
-		next.ServeHTTP(w, r)
-        // if user, found := amw.userTokenMap[token]; found {
-        // 	// We found the token in our map
-        // 	log.Printf("Authenticated user %s\n", user)
-        // 	// Pass down the request to the next middleware (or final handler)
-        // 	next.ServeHTTP(w, r)
-        // } else {
-        // 	// Write an error and stop the handler chain
-        // 	http.Error(w, "Forbidden", http.StatusForbidden)
-        // }
+        userId, err := amw.authenticator.GetUserIdFromRequest(r)
+        if err != nil {
+            http.Error(w, "Forbidden", http.StatusForbidden)
+            return
+        } else {
+            amw.logger.Printf("Authenticated user %s\n", *userId)
+            next.ServeHTTP(w, r)
+        }
     })
 }

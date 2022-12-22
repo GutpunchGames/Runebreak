@@ -9,11 +9,14 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/GutpunchGames/Runebreak/runebreak-infra/gateway/authentication"
 	"github.com/GutpunchGames/Runebreak/runebreak-infra/protos/accounts"
+	"github.com/google/uuid"
 	"google.golang.org/grpc"
 )
 
-type RegisterHandler struct {
+type AuthenticationHandler struct {
+	authenticator authentication.Authenticator
 	logger *log.Logger
 }
 
@@ -28,15 +31,16 @@ func (request *AuthenticationRequest) FromJSON(reader io.Reader) error {
 }
 
 type AuthenticationResponse struct {
-	UserId string
+	UserId string `json:"user_id"`
+	Token string `json:"token"`
 }
 
-func NewRegisterHandler(logger *log.Logger) *RegisterHandler {
-	return &RegisterHandler{logger}
+func NewAuthenticationHandler(authenticator authentication.Authenticator, logger *log.Logger) *AuthenticationHandler {
+	return &AuthenticationHandler{authenticator: authenticator, logger: logger}
 }
 
 // http POST /register
-func (handler *RegisterHandler) Register(rw http.ResponseWriter, req *http.Request) {
+func (handler *AuthenticationHandler) Register(rw http.ResponseWriter, req *http.Request) {
 	handler.logger.Printf("checkpoint 1\n")
 	requestBody := AuthenticationRequest{}
 	err := requestBody.FromJSON(req.Body)
@@ -49,7 +53,8 @@ func (handler *RegisterHandler) Register(rw http.ResponseWriter, req *http.Reque
 	rpcResponse, err := handler.rpcRegister(requestBody.Username, requestBody.Password)
 	if err == nil {
 		handler.logger.Printf("checkpoint 3\n")
-		resp := &AuthenticationResponse{UserId: rpcResponse.UserId}
+		token := uuid.NewString()
+		resp := &AuthenticationResponse{UserId: rpcResponse.UserId, Token: token}
 		respJson, _ := json.Marshal(resp)
 		rw.Write(respJson)
 	} else {
@@ -58,7 +63,7 @@ func (handler *RegisterHandler) Register(rw http.ResponseWriter, req *http.Reque
 	}
 }
 
-func (handler *RegisterHandler) rpcRegister(username string, password string) (*accounts.UserAuthenticationResponse, error) {
+func (handler *AuthenticationHandler) rpcRegister(username string, password string) (*accounts.UserAuthenticationResponse, error) {
 	conn, err := grpc.Dial("accounts:9090", grpc.WithInsecure())
 	if err != nil {
 		panic(err)
@@ -81,7 +86,7 @@ func (handler *RegisterHandler) rpcRegister(username string, password string) (*
 }
 
 // http POST /login
-func (handler *RegisterHandler) Login (rw http.ResponseWriter, req *http.Request) {
+func (handler *AuthenticationHandler) Login (rw http.ResponseWriter, req *http.Request) {
 	handler.logger.Printf("checkpoint 1\n")
 	requestBody := AuthenticationRequest{}
 	err := requestBody.FromJSON(req.Body)
@@ -94,7 +99,9 @@ func (handler *RegisterHandler) Login (rw http.ResponseWriter, req *http.Request
 	rpcResponse, err := handler.rpcLogin(requestBody.Username, requestBody.Password)
 	if err == nil {
 		handler.logger.Printf("checkpoint 3\n")
-		resp := &AuthenticationResponse{UserId: rpcResponse.UserId}
+		token := uuid.NewString()
+		resp := &AuthenticationResponse{UserId: rpcResponse.UserId, Token: token}
+
 		respJson, _ := json.Marshal(resp)
 		rw.Write(respJson)
 	} else {
@@ -103,7 +110,7 @@ func (handler *RegisterHandler) Login (rw http.ResponseWriter, req *http.Request
 	}
 }
 
-func (handler *RegisterHandler) rpcLogin(username string, password string) (*accounts.UserAuthenticationResponse, error) {
+func (handler *AuthenticationHandler) rpcLogin(username string, password string) (*accounts.UserAuthenticationResponse, error) {
 	conn, err := grpc.Dial("accounts:9090", grpc.WithInsecure())
 	if err != nil {
 		panic(err)
@@ -126,6 +133,6 @@ func (handler *RegisterHandler) rpcLogin(username string, password string) (*acc
 }
 
 // http POST /logout
-func (handler *RegisterHandler) Logout (rw http.ResponseWriter, req *http.Request) {
+func (handler *AuthenticationHandler) Logout (rw http.ResponseWriter, req *http.Request) {
 	rw.Write([]byte("hello logout"))
 }

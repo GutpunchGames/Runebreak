@@ -4,14 +4,30 @@ option go_package="/accounts";
 service Accounts {
     rpc Register(UserAuthenticationRequest) returns (UserAuthenticationResponse);
     rpc Login(UserAuthenticationRequest) returns (UserAuthenticationResponse);
+    rpc GetAccount(GetAccountRequest) returns (GetAccountResponse);
 }
 
+// types
+message Account {
+    string user_id = 1;
+    string username = 2;
+}
+
+// requests/responses
 message UserAuthenticationRequest {
     string username = 1;
     string password = 2;
 }
 
 message UserAuthenticationResponse {
+    Account account = 1;
+}
+
+message GetAccountRequest {
+    string user_id = 1;
+}
+
+message GetAccountResponse {
     string user_id = 1;
     string username = 2;
 }

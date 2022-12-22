@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/GutpunchGames/Runebreak/runebreak-infra/gateway/authentication"
 	"github.com/GutpunchGames/Runebreak/runebreak-infra/gateway/connections"
 	"github.com/GutpunchGames/Runebreak/runebreak-infra/gateway/handlers"
 	"github.com/GutpunchGames/Runebreak/runebreak-infra/gateway/middleware"
@@ -21,9 +22,10 @@ const serviceName = "runebreak-gateway-service"
 func main() {
 	port := extractArgs(os.Args)
 	logger := log.New(os.Stdout,serviceName, log.LstdFlags)
+	authenticator := authentication.NewTokenAuthenticator(logger)
 
 	connectionManager := connections.NewConnectionManager(logger)
-	registerHandler := handlers.NewRegisterHandler(logger)
+	authenticationHandler := handlers.NewAuthenticationHandler(authenticator, logger)
 	accountsHandler := handlers.NewAccountsHandler(logger)
 	connectHandler := handlers.NewConnectHandler(connectionManager, logger)
 	messagesHandler := handlers.NewMessagesHandler(connectionManager, logger)
@@ -35,16 +37,17 @@ func main() {
 	serveMux := mux.NewRouter()
 
 	postRouter := serveMux.Methods(http.MethodPost).Subrouter()
-	postRouter.HandleFunc("/register", registerHandler.Register)
-	postRouter.HandleFunc("/login", registerHandler.Login)
+	postRouter.HandleFunc("/register", authenticationHandler.Register)
+	postRouter.HandleFunc("/login", authenticationHandler.Login)
 	postRouter.HandleFunc("/messages", messagesHandler.SendMessage)
+
 	patchRouter := serveMux.Methods(http.MethodPatch).Subrouter()
 	patchRouter.HandleFunc("/accounts/{userId}", accountsHandler.UpdateUser)
 
 	getRouter := serveMux.Methods(http.MethodGet).Subrouter()
 	getRouter.HandleFunc("/connect/{userId}", connectHandler.Connect)
 
-	serveMux.Use(middleware.NewAuthenticationMiddleware(logger).Middleware)
+	serveMux.Use(middleware.NewAuthenticationMiddleware(authenticator, logger).Middleware)
 	wrapped := gorillaHandlers.CORS(originsOk, headersOk, methodsOk)(serveMux)
 
 	url := fmt.Sprintf(":%s", port)
