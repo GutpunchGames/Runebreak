@@ -1,0 +1,15 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-RunebreakGame.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Intermediate\Build\Win64\RunebreakGameEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.obj"
+"C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Intermediate\Build\Win64\UnrealEditor\Development\RunebreakGame\RunebreakGame.init.gen.cpp.obj"
+"C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Intermediate\Build\Win64\UnrealEditor\Development\RunebreakGame\RunebreakGameGameModeBase.gen.cpp.obj"
+"C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Intermediate\Build\Win64\UnrealEditor\Development\RunebreakGame\RunebreakGame.cpp.obj"
+"C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Intermediate\Build\Win64\UnrealEditor\Development\RunebreakGame\RunebreakGameGameModeBase.cpp.obj"
+"C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Intermediate\Build\Win64\UnrealEditor\Development\RunebreakGame\Default.rc2.res"
+/OUT:"C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Intermediate\Build\Win64\UnrealEditor\Development\RunebreakGame\UnrealEditor-RunebreakGame.lib"
