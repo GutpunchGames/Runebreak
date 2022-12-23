@@ -1,0 +1,2 @@
+C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Intermediate\Build\Win64\UE4Editor\Development\RunebreakGame\Definitions.RunebreakGame.h
+C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Source\RunebreakGame\RunebreakGame.h

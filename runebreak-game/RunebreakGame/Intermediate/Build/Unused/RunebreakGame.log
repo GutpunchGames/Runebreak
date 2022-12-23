@@ -1,0 +1,2 @@
+﻿UnrealBuildTool : error : Unable to start regular build while Live Coding is active. Press Ctrl+Alt+F11 to trigger a Live Coding compile.
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.MakeFile.Targets(45,5): error MSB3073: The command ""C:\Unreal Engine\UE_4.27\Engine\Build\BatchFiles\Build.bat" RunebreakGameEditor Win64 Development -Project="C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\RunebreakGame.uproject" -WaitMutex -FromMsBuild" exited with code 6.
