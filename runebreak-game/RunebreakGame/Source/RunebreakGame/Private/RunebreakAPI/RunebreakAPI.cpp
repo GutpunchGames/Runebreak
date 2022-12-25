@@ -3,9 +3,28 @@
 
 #include "RunebreakAPI/RunebreakAPI.h"
 #include "HTTP.h"
+#include <string>
+#include "RunebreakAPI/Models/APIState.h"
 
 URunebreakAPI::URunebreakAPI() {
 	UE_LOG(LogTemp, Warning, TEXT("Created Runebreak API"));
+}
+
+void URunebreakAPI::TestJsonSerialization() {
+	EConnectionStatus connectionStatus = EConnectionStatus::Connecting;
+	FString s = FString("hello");
+	switch (connectionStatus) {
+		case EConnectionStatus::Uninitialized:
+			s = FString("Uninitialized");
+			break;
+		case EConnectionStatus::Connecting:
+			s = FString("Connecting");
+			break;
+		case EConnectionStatus::Connected:
+			s = FString("Connected");
+			break;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("Test Method Called. Connection Status: %s"), *s);
 }
 
 void URunebreakAPI::DoThing() {
@@ -18,7 +37,6 @@ void URunebreakAPI::DoThing() {
 }
 
 void URunebreakAPI::Login() {
-	UE_LOG(LogTemp, Warning, TEXT("DoThing2 called in Runebreak API"));
 	FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
 
 	TSharedRef<FJsonObject> RequestObj = MakeShared<FJsonObject>();

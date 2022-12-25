@@ -21,8 +21,8 @@ void EmptyLinkFunctionForGeneratedCodeRunebreakGame_init() {}
 				nullptr,
 				0,
 				PKG_CompiledIn | 0x00000000,
-				0xED08B632,
-				0x1806DD16,
+				0xBCCA65C0,
+				0xDDA28BA0,
 				METADATA_PARAMS(nullptr, 0)
 			};
 			UE4CodeGen_Private::ConstructUPackage(ReturnPackage, PackageParams);

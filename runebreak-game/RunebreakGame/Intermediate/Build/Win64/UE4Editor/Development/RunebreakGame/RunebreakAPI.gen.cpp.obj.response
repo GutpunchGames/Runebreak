@@ -235,6 +235,8 @@
 /I C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Intermediate\Build\Win64\UE4Editor\Inc\RunebreakGame
 /I C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Source
 /I C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Source\RunebreakGame\Public
+/I ..\Intermediate\Build\Win64\UE4Editor\Inc\JsonUtilities
+/I Runtime\JsonUtilities\Public
 /I ThirdParty\PhysX3\PxShared\include
 /I ThirdParty\PhysX3\PxShared\include\cudamanager
 /I ThirdParty\PhysX3\PxShared\include\filebuf

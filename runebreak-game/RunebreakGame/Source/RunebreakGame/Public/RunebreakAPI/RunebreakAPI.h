@@ -24,5 +24,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Login();
 
+	UFUNCTION(BlueprintCallable)
+	void TestJsonSerialization();
+
 	void OnResponseReceived(FHttpRequestPtr request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
 };

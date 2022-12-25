@@ -18,6 +18,13 @@ void EmptyLinkFunctionForGeneratedCodeRunebreakAPI() {}
 	COREUOBJECT_API UClass* Z_Construct_UClass_UObject();
 	UPackage* Z_Construct_UPackage__Script_RunebreakGame();
 // End Cross Module References
+	DEFINE_FUNCTION(URunebreakAPI::execTestJsonSerialization)
+	{
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		P_THIS->TestJsonSerialization();
+		P_NATIVE_END;
+	}
 	DEFINE_FUNCTION(URunebreakAPI::execLogin)
 	{
 		P_FINISH;
@@ -38,6 +45,7 @@ void EmptyLinkFunctionForGeneratedCodeRunebreakAPI() {}
 		static const FNameNativePtrPair Funcs[] = {
 			{ "DoThing", &URunebreakAPI::execDoThing },
 			{ "Login", &URunebreakAPI::execLogin },
+			{ "TestJsonSerialization", &URunebreakAPI::execTestJsonSerialization },
 		};
 		FNativeFunctionRegistrar::RegisterFunctions(Class, Funcs, UE_ARRAY_COUNT(Funcs));
 	}
@@ -85,6 +93,28 @@ void EmptyLinkFunctionForGeneratedCodeRunebreakAPI() {}
 		}
 		return ReturnFunction;
 	}
+	struct Z_Construct_UFunction_URunebreakAPI_TestJsonSerialization_Statics
+	{
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UE4CodeGen_Private::FFunctionParams FuncParams;
+	};
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_URunebreakAPI_TestJsonSerialization_Statics::Function_MetaDataParams[] = {
+		{ "ModuleRelativePath", "Public/RunebreakAPI/RunebreakAPI.h" },
+	};
+#endif
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_URunebreakAPI_TestJsonSerialization_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_URunebreakAPI, nullptr, "TestJsonSerialization", nullptr, nullptr, 0, nullptr, 0, RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_URunebreakAPI_TestJsonSerialization_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_URunebreakAPI_TestJsonSerialization_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_URunebreakAPI_TestJsonSerialization()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_URunebreakAPI_TestJsonSerialization_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
 	UClass* Z_Construct_UClass_URunebreakAPI_NoRegister()
 	{
 		return URunebreakAPI::StaticClass();
@@ -106,6 +136,7 @@ void EmptyLinkFunctionForGeneratedCodeRunebreakAPI() {}
 	const FClassFunctionLinkInfo Z_Construct_UClass_URunebreakAPI_Statics::FuncInfo[] = {
 		{ &Z_Construct_UFunction_URunebreakAPI_DoThing, "DoThing" }, // 145054829
 		{ &Z_Construct_UFunction_URunebreakAPI_Login, "Login" }, // 379618836
+		{ &Z_Construct_UFunction_URunebreakAPI_TestJsonSerialization, "TestJsonSerialization" }, // 3930589029
 	};
 #if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_URunebreakAPI_Statics::Class_MetaDataParams[] = {
@@ -141,7 +172,7 @@ void EmptyLinkFunctionForGeneratedCodeRunebreakAPI() {}
 		}
 		return OuterClass;
 	}
-	IMPLEMENT_CLASS(URunebreakAPI, 1788471723);
+	IMPLEMENT_CLASS(URunebreakAPI, 2103794156);
 	template<> RUNEBREAKGAME_API UClass* StaticClass<URunebreakAPI>()
 	{
 		return URunebreakAPI::StaticClass();

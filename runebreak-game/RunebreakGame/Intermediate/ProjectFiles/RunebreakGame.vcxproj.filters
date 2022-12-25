@@ -3,7 +3,7 @@
   <ItemGroup>
     <None Include="..\..\RunebreakGame.uproject" />
     <Filter Include="Source">
-      <UniqueIdentifier>{1F3EB892-19E3-4AD7-AFA1-EF0FF878C0E0}</UniqueIdentifier>
+      <UniqueIdentifier>{9FF62370-B5EB-4469-A898-98925BBA1FB4}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Source\RunebreakGame.Target.cs">
       <Filter>Source</Filter>
@@ -12,7 +12,7 @@
       <Filter>Source</Filter>
     </None>
     <Filter Include="Config">
-      <UniqueIdentifier>{7C7331B2-9242-4900-9F20-2938CC078C0A}</UniqueIdentifier>
+      <UniqueIdentifier>{F47485BB-D72A-4E42-9220-4D812A9B75E3}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Config\DefaultEditor.ini">
       <Filter>Config</Filter>
@@ -24,7 +24,7 @@
       <Filter>Config</Filter>
     </None>
     <Filter Include="Source\RunebreakGame">
-      <UniqueIdentifier>{2F934136-D778-405A-8BED-4E15C663CA4D}</UniqueIdentifier>
+      <UniqueIdentifier>{0F5C6AC5-D67D-4CAE-83C3-7D21E2E13A2A}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Source\RunebreakGame\RunebreakGame.Build.cs">
       <Filter>Source\RunebreakGame</Filter>
@@ -42,52 +42,70 @@
       <Filter>Source\RunebreakGame</Filter>
     </ClInclude>
     <Filter Include="Source\RunebreakGame\Private">
-      <UniqueIdentifier>{43494E85-DD93-446D-845A-D4696D6CB475}</UniqueIdentifier>
+      <UniqueIdentifier>{3604EF60-E0B1-47BA-8DD8-5FA54EEF0DA8}</UniqueIdentifier>
     </Filter>
     <ClCompile Include="..\..\Source\RunebreakGame\Private\MyInterface.cpp">
       <Filter>Source\RunebreakGame\Private</Filter>
     </ClCompile>
     <Filter Include="Source\RunebreakGame\Private\GameInstance">
-      <UniqueIdentifier>{6E69358B-E3F5-4FD1-B9F2-A53EEF75C744}</UniqueIdentifier>
+      <UniqueIdentifier>{FB53DC22-CD57-4609-B5E1-B36CC3B7EFF8}</UniqueIdentifier>
     </Filter>
     <ClCompile Include="..\..\Source\RunebreakGame\Private\GameInstance\RunebreakGameInstance.cpp">
       <Filter>Source\RunebreakGame\Private\GameInstance</Filter>
     </ClCompile>
     <Filter Include="Source\RunebreakGame\Private\RunebreakAPI">
-      <UniqueIdentifier>{07AF145F-F457-40D3-AE58-4915A5DF0135}</UniqueIdentifier>
+      <UniqueIdentifier>{E81FBA77-0A7B-47FA-863C-5E6A7B980749}</UniqueIdentifier>
     </Filter>
     <ClCompile Include="..\..\Source\RunebreakGame\Private\RunebreakAPI\RunebreakAPI.cpp">
       <Filter>Source\RunebreakGame\Private\RunebreakAPI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\RunebreakGame\Private\RunebreakAPI\RunebreakAPIState.cpp">
+      <Filter>Source\RunebreakGame\Private\RunebreakAPI</Filter>
+    </ClCompile>
     <Filter Include="Source\RunebreakGame\Private\TestObject">
-      <UniqueIdentifier>{A16C9579-E504-455B-A6FA-9984D7DEF7DF}</UniqueIdentifier>
+      <UniqueIdentifier>{B92A5FBF-FC3E-400F-9381-C6097A92A630}</UniqueIdentifier>
     </Filter>
     <ClCompile Include="..\..\Source\RunebreakGame\Private\TestObject\TestObject.cpp">
       <Filter>Source\RunebreakGame\Private\TestObject</Filter>
     </ClCompile>
     <Filter Include="Source\RunebreakGame\Public">
-      <UniqueIdentifier>{1B059AEF-8E5C-4F60-855D-09AD516F1B8E}</UniqueIdentifier>
+      <UniqueIdentifier>{5E711A4E-B7DE-45BB-BC81-DFE7644F16AA}</UniqueIdentifier>
     </Filter>
     <ClInclude Include="..\..\Source\RunebreakGame\Public\MyInterface.h">
       <Filter>Source\RunebreakGame\Public</Filter>
     </ClInclude>
     <Filter Include="Source\RunebreakGame\Public\GameInstance">
-      <UniqueIdentifier>{0D209027-C713-4922-A44B-574964820A96}</UniqueIdentifier>
+      <UniqueIdentifier>{DAE8DFE9-2621-4A80-A840-733F4E737C66}</UniqueIdentifier>
     </Filter>
     <ClInclude Include="..\..\Source\RunebreakGame\Public\GameInstance\RunebreakGameInstance.h">
       <Filter>Source\RunebreakGame\Public\GameInstance</Filter>
     </ClInclude>
     <Filter Include="Source\RunebreakGame\Public\RunebreakAPI">
-      <UniqueIdentifier>{830F3FE3-E802-47B2-8380-B079C70A6CB4}</UniqueIdentifier>
+      <UniqueIdentifier>{32C51C97-A7FA-4ACE-9E63-51D5C2539BB7}</UniqueIdentifier>
     </Filter>
     <ClInclude Include="..\..\Source\RunebreakGame\Public\RunebreakAPI\RunebreakAPI.h">
       <Filter>Source\RunebreakGame\Public\RunebreakAPI</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\RunebreakGame\Public\RunebreakAPI\RunebreakAPIState.h">
+      <Filter>Source\RunebreakGame\Public\RunebreakAPI</Filter>
+    </ClInclude>
     <Filter Include="Source\RunebreakGame\Public\TestObject">
-      <UniqueIdentifier>{74E20F3E-A99E-473C-B5A0-E871DEAF4BA8}</UniqueIdentifier>
+      <UniqueIdentifier>{5B464012-4AE9-4BAC-9045-6D72B23D60DA}</UniqueIdentifier>
     </Filter>
     <ClInclude Include="..\..\Source\RunebreakGame\Public\TestObject\TestObject.h">
       <Filter>Source\RunebreakGame\Public\TestObject</Filter>
+    </ClInclude>
+    <Filter Include="Source\RunebreakGame\RunebreakAPI">
+      <UniqueIdentifier>{E4F45363-F8CA-4AE8-88DC-44C6A3E6AD3D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\RunebreakGame\RunebreakAPI\Models">
+      <UniqueIdentifier>{A2F9738C-004F-4FAE-95C1-51AAC55D484A}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\RunebreakGame\RunebreakAPI\Models\APIState.cpp">
+      <Filter>Source\RunebreakGame\RunebreakAPI\Models</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\RunebreakGame\RunebreakAPI\Models\APIState.h">
+      <Filter>Source\RunebreakGame\RunebreakAPI\Models</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
