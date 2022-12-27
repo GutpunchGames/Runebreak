@@ -115,7 +115,6 @@ static struct FScriptStruct_RunebreakGame_StaticRegisterNativesFApiState
 	};
 #if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FApiState_Statics::Struct_MetaDataParams[] = {
-		{ "BlueprintType", "true" },
 		{ "ModuleRelativePath", "Public/RunebreakAPI/Models/APIState.h" },
 	};
 #endif
@@ -125,19 +124,17 @@ static struct FScriptStruct_RunebreakGame_StaticRegisterNativesFApiState
 	}
 #if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FApiState_Statics::NewProp_authToken_MetaData[] = {
-		{ "Category", "ApiState" },
 		{ "ModuleRelativePath", "Public/RunebreakAPI/Models/APIState.h" },
 	};
 #endif
-	const UE4CodeGen_Private::FStrPropertyParams Z_Construct_UScriptStruct_FApiState_Statics::NewProp_authToken = { "authToken", nullptr, (EPropertyFlags)0x0010000000000004, UE4CodeGen_Private::EPropertyGenFlags::Str, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(FApiState, authToken), METADATA_PARAMS(Z_Construct_UScriptStruct_FApiState_Statics::NewProp_authToken_MetaData, UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FApiState_Statics::NewProp_authToken_MetaData)) };
+	const UE4CodeGen_Private::FStrPropertyParams Z_Construct_UScriptStruct_FApiState_Statics::NewProp_authToken = { "authToken", nullptr, (EPropertyFlags)0x0010000000000000, UE4CodeGen_Private::EPropertyGenFlags::Str, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(FApiState, authToken), METADATA_PARAMS(Z_Construct_UScriptStruct_FApiState_Statics::NewProp_authToken_MetaData, UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FApiState_Statics::NewProp_authToken_MetaData)) };
 	const UE4CodeGen_Private::FBytePropertyParams Z_Construct_UScriptStruct_FApiState_Statics::NewProp_connectionStatus_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UE4CodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, 1, 0, nullptr, METADATA_PARAMS(nullptr, 0) };
 #if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FApiState_Statics::NewProp_connectionStatus_MetaData[] = {
-		{ "Category", "ApiState" },
 		{ "ModuleRelativePath", "Public/RunebreakAPI/Models/APIState.h" },
 	};
 #endif
-	const UE4CodeGen_Private::FEnumPropertyParams Z_Construct_UScriptStruct_FApiState_Statics::NewProp_connectionStatus = { "connectionStatus", nullptr, (EPropertyFlags)0x0010000000000004, UE4CodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(FApiState, connectionStatus), Z_Construct_UEnum_RunebreakGame_EConnectionStatus, METADATA_PARAMS(Z_Construct_UScriptStruct_FApiState_Statics::NewProp_connectionStatus_MetaData, UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FApiState_Statics::NewProp_connectionStatus_MetaData)) };
+	const UE4CodeGen_Private::FEnumPropertyParams Z_Construct_UScriptStruct_FApiState_Statics::NewProp_connectionStatus = { "connectionStatus", nullptr, (EPropertyFlags)0x0010000000000000, UE4CodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(FApiState, connectionStatus), Z_Construct_UEnum_RunebreakGame_EConnectionStatus, METADATA_PARAMS(Z_Construct_UScriptStruct_FApiState_Statics::NewProp_connectionStatus_MetaData, UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FApiState_Statics::NewProp_connectionStatus_MetaData)) };
 	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FApiState_Statics::PropPointers[] = {
 		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FApiState_Statics::NewProp_authToken,
 		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FApiState_Statics::NewProp_connectionStatus_Underlying,
@@ -171,7 +168,7 @@ static struct FScriptStruct_RunebreakGame_StaticRegisterNativesFApiState
 		}
 		return ReturnStruct;
 	}
-	uint32 Get_Z_Construct_UScriptStruct_FApiState_Hash() { return 1619523965U; }
+	uint32 Get_Z_Construct_UScriptStruct_FApiState_Hash() { return 3572848083U; }
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 #ifdef _MSC_VER
 #pragma warning (pop)

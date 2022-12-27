@@ -2,10 +2,10 @@
   Using Visual Studio 2019 14.29.30146 toolchain (C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133) and Windows 10.0.16299.0 SDK (C:\Program Files (x86)\Windows Kits\10).
   Building 4 actions with 32 processes...
     [1/4] RunebreakAPI.cpp
-    [2/4] UE4Editor-RunebreakGame.lib
-       Creating library C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Intermediate\Build\Win64\UE4Editor\Development\RunebreakGame\UE4Editor-RunebreakGame.lib and object C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Intermediate\Build\Win64\UE4Editor\Development\RunebreakGame\UE4Editor-RunebreakGame.exp
-    [3/4] UE4Editor-RunebreakGame.dll
-       Creating library C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Intermediate\Build\Win64\UE4Editor\Development\RunebreakGame\UE4Editor-RunebreakGame.suppressed.lib and object C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Intermediate\Build\Win64\UE4Editor\Development\RunebreakGame\UE4Editor-RunebreakGame.suppressed.exp
-    [4/4] RunebreakGameEditor.target
-  Total time in Parallel executor: 1.99 seconds
-  Total execution time: 2.47 seconds
+C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Source\RunebreakGame\Private\RunebreakAPI\RunebreakAPI.cpp(16): error C2039: 'FromJson_TEST': is not a member of 'FLoginRequestBody'
+    C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Source\RunebreakGame/Public/RunebreakAPI/REST/LoginRequestBody.h(12): note: see declaration of 'FLoginRequestBody'
+C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Source\RunebreakGame\Private\RunebreakAPI\RunebreakAPI.cpp(16): error C3861: 'FromJson_TEST': identifier not found
+C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Source\RunebreakGame\Private\RunebreakAPI\RunebreakAPI.cpp(17): error C2039: 'ToJson_TEST': is not a member of 'FLoginRequestBody'
+    C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Source\RunebreakGame/Public/RunebreakAPI/REST/LoginRequestBody.h(12): note: see declaration of 'FLoginRequestBody'
+C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Source\RunebreakGame\Private\RunebreakAPI\RunebreakAPI.cpp(17): error C3861: 'ToJson_TEST': identifier not found
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.MakeFile.Targets(45,5): error MSB3073: The command ""C:\Unreal Engine\UE_4.27\Engine\Build\BatchFiles\Build.bat" RunebreakGameEditor Win64 Development -Project="C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\RunebreakGame.uproject" -WaitMutex -FromMsBuild" exited with code 6.

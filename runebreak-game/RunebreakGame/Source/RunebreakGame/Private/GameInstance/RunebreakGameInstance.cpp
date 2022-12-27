@@ -2,7 +2,6 @@
 
 
 #include "GameInstance/RunebreakGameInstance.h"
-#include <RunebreakGame/Public/TestObject/TestObject.h>
 
 URunebreakGameInstance::URunebreakGameInstance() {
 	// todo: should this be CreateDefaultSubobject? and what does the Name param do?

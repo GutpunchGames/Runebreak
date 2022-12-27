@@ -13,7 +13,7 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 #endif
 #define RUNEBREAKGAME_APIState_generated_h
 
-#define RunebreakGame_Source_RunebreakGame_Public_RunebreakAPI_Models_APIState_h_21_GENERATED_BODY \
+#define RunebreakGame_Source_RunebreakGame_Public_RunebreakAPI_Models_APIState_h_19_GENERATED_BODY \
 	friend struct Z_Construct_UScriptStruct_FApiState_Statics; \
 	RUNEBREAKGAME_API static class UScriptStruct* StaticStruct();
 

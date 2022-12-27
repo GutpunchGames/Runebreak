@@ -16,6 +16,4 @@ C:\Unreal Engine\UE_4.27\Engine\Source\Runtime\Online\HTTP\Public\PlatformHttp.h
 C:\Unreal Engine\UE_4.27\Engine\Source\Runtime\Online\HTTP\Public\Windows/WindowsPlatformHttp.h
 C:\Unreal Engine\UE_4.27\Engine\Source\Runtime\Online\HTTP\Public\GenericPlatform/GenericPlatformHttp.h
 C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Intermediate\Build\Win64\UE4Editor\Inc\RunebreakGame\RunebreakAPI.generated.h
-C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Source\RunebreakGame/Public/TestObject/TestObject.h
-C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Intermediate\Build\Win64\UE4Editor\Inc\RunebreakGame\TestObject.generated.h
 C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Intermediate\Build\Win64\UE4Editor\Inc\RunebreakGame\RunebreakGameInstance.generated.h

@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include<string>
 #include "CoreMinimal.h"
 #include "APIState.generated.h"
 
@@ -14,25 +13,21 @@ enum class EConnectionStatus: uint8
 	Connected = 0x2
 };
 
-
-USTRUCT(BlueprintType)
+USTRUCT()
 struct FApiState
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY()
 		FString authToken;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY()
 		EConnectionStatus connectionStatus;
-};
 
-///**
-// * 
-// */
-//class RUNEBREAKGAME_API APIState
-//{
-//public:
-//	APIState();
-//	~APIState();
-//};
+	FString ToString() {
+		return FString(
+			+ "\tauthToken: " + authToken + "\n"
+			+ "\thello second line: " + "poop" + '\n'
+		);
+	}
+};

@@ -27,3 +27,8 @@ C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.2
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE\cctype
 C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Source\RunebreakGame\Public\RunebreakAPI/Models/APIState.h
 C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Intermediate\Build\Win64\UE4Editor\Inc\RunebreakGame\APIState.generated.h
+C:\Unreal Engine\UE_4.27\Engine\Source\Runtime/JsonUtilities/Public/JsonObjectConverter.h
+C:\Unreal Engine\UE_4.27\Engine\Source\Runtime\JsonUtilities\Public\JsonObjectWrapper.h
+C:\Unreal Engine\UE_4.27\Engine\Intermediate\Build\Win64\UE4Editor\Inc\JsonUtilities\JsonObjectWrapper.generated.h
+C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Source\RunebreakGame/Public/RunebreakAPI/REST/LoginRequestBody.h
+C:\Users\Andy\Development\Runebreak\runebreak-game\RunebreakGame\Intermediate\Build\Win64\UE4Editor\Inc\RunebreakGame\LoginRequestBody.generated.h

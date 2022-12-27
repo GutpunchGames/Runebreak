@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include <RunebreakGame/Public/RunebreakAPI/RunebreakAPI.h>
-#include <RunebreakGame/Public/TestObject/TestObject.h>
 #include "RunebreakGameInstance.generated.h"
 
 UCLASS()
