@@ -17,15 +17,13 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 #define RunebreakGame_Source_RunebreakGame_Public_RunebreakAPI_RunebreakAPI_h_16_RPC_WRAPPERS \
  \
 	DECLARE_FUNCTION(execTestJsonSerialization); \
-	DECLARE_FUNCTION(execLogin); \
-	DECLARE_FUNCTION(execDoThing);
+	DECLARE_FUNCTION(execLogin);
 
 
 #define RunebreakGame_Source_RunebreakGame_Public_RunebreakAPI_RunebreakAPI_h_16_RPC_WRAPPERS_NO_PURE_DECLS \
  \
 	DECLARE_FUNCTION(execTestJsonSerialization); \
-	DECLARE_FUNCTION(execLogin); \
-	DECLARE_FUNCTION(execDoThing);
+	DECLARE_FUNCTION(execLogin);
 
 
 #define RunebreakGame_Source_RunebreakGame_Public_RunebreakAPI_RunebreakAPI_h_16_INCLASS_NO_PURE_DECLS \

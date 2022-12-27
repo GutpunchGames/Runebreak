@@ -19,9 +19,6 @@ public:
 	URunebreakAPI();
 
 	UFUNCTION(BlueprintCallable)
-	void DoThing();
-
-	UFUNCTION(BlueprintCallable)
 	void Login();
 
 	UFUNCTION(BlueprintCallable)

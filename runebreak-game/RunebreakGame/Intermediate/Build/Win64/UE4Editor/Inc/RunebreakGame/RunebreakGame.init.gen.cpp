@@ -21,7 +21,7 @@ void EmptyLinkFunctionForGeneratedCodeRunebreakGame_init() {}
 				nullptr,
 				0,
 				PKG_CompiledIn | 0x00000000,
-				0x184DA6CB,
+				0x4B475786,
 				0x4734B8FF,
 				METADATA_PARAMS(nullptr, 0)
 			};
