@@ -75,10 +75,10 @@ func pinger(ws *websocket.Conn, logger *log.Logger) {
 }
 
 type MessageToSend struct {
-	AuthorId string `json:"author_id"`
-	AuthorName string `json:"author_name"`
+	AuthorId string `json:"authorId"`
+	AuthorName string `json:"authorName"`
 	Text string `json:"text"`
-	RecipientId string `json:"recipient_id"` // todo: make optional
+	RecipientId string `json:"recipientId"` // todo: make optional
 }
 
 func (connectionManager *ConnectionManager) SendMessage(authorId string, authorName string, text string, recipientId string) {

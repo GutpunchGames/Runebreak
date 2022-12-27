@@ -30,7 +30,7 @@ func NewMessagesHandler(accountsProvider accounts_provider.AccountsProvider, aut
 // todo: add message type
 type SendMessageRequest struct {
 	Text string `json:"text"`
-	RecipientId string `json:"recipient_id"` // todo: make optional
+	RecipientId string `json:"recipientId"` // todo: make optional
 }
 
 func (request *SendMessageRequest) FromJSON(reader io.Reader) error {

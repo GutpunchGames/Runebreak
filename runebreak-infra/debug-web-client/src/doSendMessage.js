@@ -7,7 +7,7 @@ export default function doSendMessage(recipientId, text, token) {
     const requestOptions = {
         method: 'POST',
         headers: {'X-Auth-Token': token},
-        body: JSON.stringify({recipient_id: recipientId, text: text})
+        body: JSON.stringify({recipientId: recipientId, text: text})
     };
 
     console.log(`body: ${requestOptions.body}`)

@@ -7,30 +7,24 @@
 #include "RunebreakAPI/Models/APIState.h"
 #include <Runtime/JsonUtilities/Public/JsonObjectConverter.h>
 #include <RunebreakGame/Public/RunebreakAPI/REST/LoginRequestBody.h>
+#include <RunebreakGame/Public/RunebreakAPI/REST/LoginResponseBody.h>
+#include <RunebreakGame/Public/RunebreakAPI/Utilities/JsonUtils.h>
 
 URunebreakAPI::URunebreakAPI() {
 	UE_LOG(LogTemp, Warning, TEXT("Created Runebreak API"));
 }
 
-void URunebreakAPI::TestJsonSerialization() {
-	URunebreakAPI::Login();
-}
-
 void URunebreakAPI::Login() {
-	FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
-
-	FLoginRequestBody body;
-	body.username = "andy1";
-	body.password = "password";
-	FJsonObject requestJsonObject = FLoginRequestBody::ToJsonObject(body);
-
+	FLoginRequestBody body = FLoginRequestBody("andy1", "password");
+	FJsonObject requestJsonObject = ToJsonObject(body);
 	TSharedRef<FJsonObject> test = MakeShareable(&requestJsonObject);
-	
+
 	FString serializedRequestBody;
 	TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&serializedRequestBody);
 	FJsonSerializer::Serialize(test, Writer);
 
-	Request->OnProcessRequestComplete().BindUObject(this, &URunebreakAPI::OnResponseReceived);
+	FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
+	Request->OnProcessRequestComplete().BindUObject(this, &URunebreakAPI::OnLoginResponseReceived);
 	Request->SetURL("http://localhost:9000/login");
 	Request->SetContentAsString(serializedRequestBody);
 	Request->SetVerb("POST");
@@ -38,6 +32,9 @@ void URunebreakAPI::Login() {
 	Request->ProcessRequest();
 }
 
-void URunebreakAPI::OnResponseReceived(FHttpRequestPtr request, FHttpResponsePtr Response, bool bConnectedSuccessfully) {
-	UE_LOG(LogTemp, Warning, TEXT("response received: %s"), *Response->GetContentAsString());
+void URunebreakAPI::OnLoginResponseReceived(FHttpRequestPtr request, FHttpResponsePtr Response, bool bConnectedSuccessfully) {
+	FString respJson = *Response->GetContentAsString();
+	FLoginResponseBody resp;
+	FromJson(respJson, &resp);
+	UE_LOG(LogTemp, Warning, TEXT("response received: %s"), *resp.ToString());
 }

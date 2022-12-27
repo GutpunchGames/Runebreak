@@ -31,7 +31,7 @@ func (request *AuthenticationRequest) FromJSON(reader io.Reader) error {
 }
 
 type AuthenticationResponse struct {
-	UserId string `json:"user_id"`
+	UserId string `json:"userId"`
 	Token string `json:"token"`
 }
 
