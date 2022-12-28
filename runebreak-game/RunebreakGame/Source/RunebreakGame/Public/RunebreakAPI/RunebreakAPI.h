@@ -21,5 +21,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Login();
 
+	UFUNCTION(BlueprintCallable)
+	void ConnectToWebSocket(FString& userId);
+
 	void OnLoginResponseReceived(FHttpRequestPtr request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
 };
