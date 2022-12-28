@@ -5,9 +5,11 @@
     "\\runebreak-game\\RunebreakGame",
     "\\runebreak-game\\RunebreakGame\\Source",
     "\\runebreak-game\\RunebreakGame\\Source\\RunebreakGame",
+    "\\runebreak-game\\RunebreakGame\\Source\\RunebreakGame\\Public",
     "\\runebreak-game\\RunebreakGame\\Source\\RunebreakGame\\Public\\RunebreakAPI",
-    "\\runebreak-game\\RunebreakGame\\Source\\RunebreakGame\\Public\\RunebreakAPI\\Models"
+    "\\runebreak-game\\RunebreakGame\\Source\\RunebreakGame\\Public\\RunebreakAPI\\REST",
+    "\\runebreak-game\\RunebreakGame\\Source\\RunebreakGame\\Public\\RunebreakAPI\\Utilities"
   ],
-  "SelectedNode": "\\runebreak-game\\RunebreakGame\\Source\\RunebreakGame\\Public",
+  "SelectedNode": "\\runebreak-game\\RunebreakGame\\RunebreakGame.sln",
   "PreviewInSolutionExplorer": false
 }

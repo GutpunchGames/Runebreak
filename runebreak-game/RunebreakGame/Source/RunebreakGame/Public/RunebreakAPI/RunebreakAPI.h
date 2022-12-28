@@ -7,9 +7,6 @@
 #include "HTTP.h"
 #include "RunebreakAPI.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class RUNEBREAKGAME_API URunebreakAPI : public UObject
 {
@@ -23,6 +20,4 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ConnectToWebSocket(FString& userId);
-
-	void OnLoginResponseReceived(FHttpRequestPtr request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
 };
