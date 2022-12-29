@@ -6,9 +6,8 @@
 #include <Runtime/JsonUtilities/Public/JsonObjectConverter.h>
 
 template<typename InStructType>
-static FJsonObject ToJsonObject(InStructType& inStruct) {
-	TSharedPtr<FJsonObject> jsonObj = FJsonObjectConverter::UStructToJsonObject(inStruct);
-	return *jsonObj;
+static TSharedPtr<FJsonObject> ToJsonObject(InStructType& inStruct) {
+	return FJsonObjectConverter::UStructToJsonObject(inStruct);
 }
 
 // todo: add better error handling?

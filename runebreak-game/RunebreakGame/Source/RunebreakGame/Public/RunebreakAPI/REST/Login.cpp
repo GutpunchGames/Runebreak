@@ -9,9 +9,10 @@ ULoginTransaction::ULoginTransaction() {
 }
 
 void ULoginTransaction::Login() {
-	FLoginRequestBody body = FLoginRequestBody("andy1", "password");
-	FJsonObject requestJsonObject = ToJsonObject(body);
-	TSharedRef<FJsonObject> test = MakeShareable(&requestJsonObject);
+	FLoginRequestBody body = FLoginRequestBody("andy2", "password");
+	TSharedPtr<FJsonObject> requestJsonObject = ToJsonObject(body);
+	UE_LOG(LogTemp, Warning, TEXT("got json: %s"), *(*requestJsonObject).GetStringField("username"))
+	TSharedRef<FJsonObject> test = requestJsonObject.ToSharedRef();
 
 	FString serializedRequestBody;
 	TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&serializedRequestBody);
@@ -30,5 +31,6 @@ void ULoginTransaction::OnLoginResponseReceived(FHttpRequestPtr request, FHttpRe
 	FString respJson = *Response->GetContentAsString();
 	FLoginResponseBody* resp = new FLoginResponseBody();
 	FromJson(respJson, resp);
+	UE_LOG(LogTemp, Warning, TEXT("deserialized resp successfully with userId: %s"), *resp->userId);
 	OnSuccess(*resp);
 }

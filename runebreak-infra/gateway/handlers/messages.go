@@ -56,9 +56,17 @@ func (handler *MessagesHandler) SendMessage(rw http.ResponseWriter, req *http.Re
 		return
 	}
 
+	// okay pretend we are in the "messages service"... need to communicate to sessions service that a message was
+	// created. currently, the gateway service is serving as a sessions service, which happens to be where we are.
+	if authorId == nil {
+		handler.logger.Printf("author ID was nil\n")
+		http.Error(rw, "very weird error", http.StatusInternalServerError)
+		return
+	}
+
 	handler.logger.Printf("======== CHECKPOINT 3 ==========")
 
-	recipient, err := handler.accountsProvider.GetAccount(*authorId)
+	recipient, err := handler.accountsProvider.GetAccount(requestBody.RecipientId)
 	if err != nil {
 		http.Error(rw, "unable to find recipient", http.StatusInternalServerError)
 		return
@@ -66,15 +74,10 @@ func (handler *MessagesHandler) SendMessage(rw http.ResponseWriter, req *http.Re
 
 	handler.logger.Printf("======== CHECKPOINT 4 ==========")
 
-	// okay pretend we are in the "messages service"... need to communicate to sessions service that a message was
-	// created. currently, the gateway service is serving as a sessions service, which happens to be where we are.
-	if authorId == nil {
-		handler.logger.Printf("author ID was nil\n")
-		http.Error(rw, "very weird error", http.StatusInternalServerError)
-		return
-	} else {
-		handler.connections.SendMessage(*authorId, recipient.Username, requestBody.Text, requestBody.RecipientId)
-	}
-
-	handler.logger.Printf("======== CHECKPOINT 5 ==========")
+	handler.connections.SendMessage(
+		*authorId, 
+		recipient.Username,
+		requestBody.Text,
+		requestBody.RecipientId,
+	)
 }

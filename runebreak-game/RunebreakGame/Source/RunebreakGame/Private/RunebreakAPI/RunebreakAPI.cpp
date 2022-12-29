@@ -2,71 +2,45 @@
 
 
 #include "RunebreakAPI/RunebreakAPI.h"
-#include "HTTP.h"
-#include <string>
-#include "RunebreakAPI/Models/APIState.h"
-#include <Runtime/JsonUtilities/Public/JsonObjectConverter.h>
 #include <RunebreakGame/Public/RunebreakAPI/REST/Login.h>
-#include <RunebreakGame/Public/RunebreakAPI/Utilities/JsonUtils.h>
-#include <Runtime/Online/WebSockets/Public/WebSocketsModule.h>
-#include <Runtime/Online/WebSockets/Public/IWebSocket.h>
+#include <RunebreakGame/Public/RunebreakAPI/State/StateManager.h>
+#include <RunebreakGame/Public/RunebreakAPI/RBSocket/RBSocket.h>
 
 URunebreakAPI::URunebreakAPI() {
-	UE_LOG(LogTemp, Warning, TEXT("Created Runebreak API"));
+	UE_LOG(LogTemp, Warning, TEXT("Created Runebreak API"))
+	stateManager = new StateManager();
+	stateManager->OnStateChanged = [this](RBState state) {
+		UE_LOG(LogTemp, Warning, TEXT("got new state. token: %s -- connection state: %d -- num messages received: %d"), *state.authToken, state.connectionStatus, state.numMessagesReceived)
+	};
 }
 
 void URunebreakAPI::Login() {
 	ULoginTransaction* loginTransaction = NewObject<ULoginTransaction>(this);
 
-	loginTransaction->OnSuccess =  [this](FLoginResponseBody resp) {
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *resp.ToString())
-			// todo: connect to websocket
-			ConnectToWebSocket(resp.userId);
+	loginTransaction->OnSuccess = [this](FLoginResponseBody resp) {
+		HandleAuthenticated(resp.userId, resp.token);
 	};
 
 	loginTransaction->Login();
 }
 
+void URunebreakAPI::HandleAuthenticated(FString& userId, FString& token) {
+	stateManager->HandleAuthenticated(token);
+	ConnectToWebSocket(userId);
+}
+
 void URunebreakAPI::ConnectToWebSocket(FString& userId) {
 	const FString ServerURL = FString::Printf(TEXT("ws://localhost:9000/connect/%s"), *userId);
-	const FString ServerProtocol = TEXT("ws");
-	UE_LOG(LogTemp, Warning, TEXT("server URL: %s"), *ServerURL)
+	rbSocket = new RBSocket(ServerURL);
+	rbSocket->OnStateChanged = [this](EConnectionStatus connectionStatus) {
+		HandleSocketConnectionStatusChanged(connectionStatus);
+	};
+	rbSocket->OnChatMessageReceived = [this](FChatMessage* message) {
+		stateManager->HandleMessageReceived(message);
+	};
+	rbSocket->Connect();
+}
 
-	TSharedPtr<IWebSocket> Socket = FWebSocketsModule::Get().CreateWebSocket(ServerURL, ServerProtocol);
-
-	// We bind all available events
-	Socket->OnConnected().AddLambda([]() -> void {
-		UE_LOG(LogTemp, Warning, TEXT("OnConnected()"))
-			// This code will run once connected.
-		});
-
-	Socket->OnConnectionError().AddLambda([](const FString& Error) -> void {
-		UE_LOG(LogTemp, Warning, TEXT("OnConnectionError()"))
-			// This code will run if the connection failed. Check Error to see what happened.
-		});
-
-	Socket->OnClosed().AddLambda([](int32 StatusCode, const FString& Reason, bool bWasClean) -> void {
-		UE_LOG(LogTemp, Warning, TEXT("OnClosed()"))
-			// This code will run when the connection to the server has been terminated.
-			// Because of an error or a call to Socket->Close().
-		});
-
-	Socket->OnMessage().AddLambda([](const FString& Message) -> void {
-		UE_LOG(LogTemp, Warning, TEXT("OnMessage(%s)"), *Message);
-		// This code will run when we receive a string message from the server.
-		});
-
-	Socket->OnRawMessage().AddLambda([](const void* Data, SIZE_T Size, SIZE_T BytesRemaining) -> void {
-		//UE_LOG(LogTemp, Warning, TEXT("OnRawMessage()"))
-		// This code will run when we receive a raw (binary) message from the server.
-		// leave this commented out for now...
-		});
-
-	Socket->OnMessageSent().AddLambda([](const FString& MessageString) -> void {
-		UE_LOG(LogTemp, Warning, TEXT("OnMessageSent()"))
-			// This code is called after we sent a message to the server.
-		});
-
-	// And we finally connect to the server. 
-	Socket->Connect();
+void URunebreakAPI::HandleSocketConnectionStatusChanged(EConnectionStatus& status) {
+	stateManager->HandleSocketConnectionStatusChanged(status);
 }

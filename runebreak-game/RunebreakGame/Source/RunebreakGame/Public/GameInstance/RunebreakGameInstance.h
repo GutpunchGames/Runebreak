@@ -17,4 +17,10 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	URunebreakAPI* api;
+
+	// this attempts to fix a bug, detailed here: 
+	// https://forums.unrealengine.com/t/pig-of-a-crash-pure-virtual-function-being-called-while-application-was-running/155116/13
+	virtual void Init() override {};
+	virtual void Shutdown() override {};
+	virtual void StartGameInstance() override {};
 };

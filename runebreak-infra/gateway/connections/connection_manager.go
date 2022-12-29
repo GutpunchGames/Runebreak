@@ -78,7 +78,6 @@ type MessageToSend struct {
 	AuthorId string `json:"authorId"`
 	AuthorName string `json:"authorName"`
 	Text string `json:"text"`
-	RecipientId string `json:"recipientId"` // todo: make optional
 }
 
 func (connectionManager *ConnectionManager) SendMessage(authorId string, authorName string, text string, recipientId string) {
@@ -90,7 +89,7 @@ func (connectionManager *ConnectionManager) SendMessage(authorId string, authorN
 	}
 
 	//create message json
-	json, err := json.Marshal(MessageToSend{AuthorId: authorId, AuthorName: authorName, Text: text, RecipientId: recipientId})
+	json, err := json.Marshal(MessageToSend{AuthorId: authorId, AuthorName: authorName, Text: text})
 	if (err != nil) {
 		connectionManager.logger.Printf("failed to marshal message to user: %s\n", recipientId)
 		return
