@@ -4,10 +4,22 @@
 
 #include <RunebreakGame/Public/RunebreakAPI/Models/ChatMessage.h>
 #include <RunebreakGame/Public/RunebreakAPI/Models/ConnectionStatus.h>
+#include "StateManager.generated.h"
 
-struct RBState {
+USTRUCT(BlueprintType)
+struct FRBState {
+
+	GENERATED_BODY()
+
+public:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Authentication")
 	FString authToken = "";
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	EConnectionStatus connectionStatus = EConnectionStatus::Uninitialized;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int numMessagesReceived = 0;
 };
 
@@ -18,7 +30,7 @@ public:
 	StateManager();
 	~StateManager();
 
-	TFunction<void(RBState)> OnStateChanged;
+	TFunction<void(FRBState)> OnStateChanged;
 
 	// all the methods for handling updates
 	void HandleAuthenticated(FString token);
@@ -26,6 +38,6 @@ public:
 	void HandleMessageReceived(FChatMessage* message);
 
 private:
-	RBState state;
+	FRBState state;
 	void PublishState();
 };

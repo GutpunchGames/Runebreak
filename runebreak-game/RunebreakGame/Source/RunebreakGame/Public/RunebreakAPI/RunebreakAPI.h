@@ -9,25 +9,21 @@
 #include "RunebreakAPI/State/StateManager.h"
 #include "RunebreakAPI.generated.h"
 
-class RBListener
+UINTERFACE(MinimalAPI, Blueprintable)
+class URBListenerBP : public UInterface
 {
-
-public:
-	RBListener() {}
-	virtual ~RBListener() {}
-	virtual void OnStateChange(RBState state) {};
+	GENERATED_BODY()
 };
 
-class RBListenerImpl : public RBListener
+class IRBListenerBP
 {
+	GENERATED_BODY()
 
 public:
-	RBListenerImpl() {}
-	~RBListenerImpl() {}
+	UFUNCTION(BlueprintNativeEvent)
+	void OnStateChange(FRBState state);
 
-	FString subscriberName = "testSubscriber";
-
-	void OnStateChange(RBState state) {
+	void OnStateChange_Implementation(FRBState state) {
 		UE_LOG(LogTemp, Warning, TEXT("OnStateChange: %d"), state.connectionStatus)
 	}
 };
@@ -40,7 +36,7 @@ class RUNEBREAKGAME_API URunebreakAPI : public UObject
 private:
 	RBSocket* rbSocket;
 	StateManager* stateManager;
-	TSet<RBListener*> listeners;
+	TSet<IRBListenerBP*> listeners;
 
 public:
 	URunebreakAPI();
@@ -48,12 +44,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Login();
 
-	void AddListener(RBListener* listener);
+	void AddListener(IRBListenerBP* listener);
 
 private:
 	void HandleAuthenticated(FString& userId, FString& token);
 	void HandleSocketConnectionStatusChanged(EConnectionStatus& status);
 	void ConnectToWebSocket(FString& userId);
 
-	void NotifyListeners(RBState state);
+	void NotifyListeners(FRBState state);
 };

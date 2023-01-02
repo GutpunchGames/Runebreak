@@ -9,12 +9,10 @@
 URunebreakAPI::URunebreakAPI() {
 	UE_LOG(LogTemp, Warning, TEXT("Created Runebreak API"))
 	stateManager = new StateManager();
-	stateManager->OnStateChanged = [this](RBState state) {
+	stateManager->OnStateChanged = [this](FRBState state) {
 		NotifyListeners(state);
 		UE_LOG(LogTemp, Warning, TEXT("got new state. token: %s -- connection state: %d -- num messages received: %d"), *state.authToken, state.connectionStatus, state.numMessagesReceived)
 	};
-	RBListener* testListener = new RBListenerImpl();
-	listeners.Add(testListener);
 }
 
 void URunebreakAPI::Login() {
@@ -48,11 +46,11 @@ void URunebreakAPI::HandleSocketConnectionStatusChanged(EConnectionStatus& statu
 	stateManager->HandleSocketConnectionStatusChanged(status);
 }
 
-void URunebreakAPI::AddListener(RBListener* listener) {
+void URunebreakAPI::AddListener(IRBListenerBP* listener) {
 	listeners.Add(listener);
 }
 
-void URunebreakAPI::NotifyListeners(RBState state) {
+void URunebreakAPI::NotifyListeners(FRBState state) {
 	for (auto& listener : listeners) {
 		listener->OnStateChange(state);
 	}
