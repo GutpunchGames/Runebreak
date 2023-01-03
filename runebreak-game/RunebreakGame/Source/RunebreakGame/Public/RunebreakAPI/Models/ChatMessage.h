@@ -4,16 +4,16 @@
 #include "UObject/NoExportTypes.h"
 #include "ChatMessage.generated.h"
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FChatMessage
 {
 	GENERATED_BODY()
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 		FString authorId;
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 		FString authorName;
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 		FString text;
 
 	FChatMessage() {}

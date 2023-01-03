@@ -20,7 +20,7 @@ public:
 	EConnectionStatus connectionStatus = EConnectionStatus::Uninitialized;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	int numMessagesReceived = 0;
+	FChatMessage mostRecentMessage;
 };
 
 class StateManager
@@ -35,7 +35,7 @@ public:
 	// all the methods for handling updates
 	void HandleAuthenticated(FString token);
 	void HandleSocketConnectionStatusChanged(EConnectionStatus status);
-	void HandleMessageReceived(FChatMessage* message);
+	void HandleMessageReceived(FChatMessage message);
 
 private:
 	FRBState state;

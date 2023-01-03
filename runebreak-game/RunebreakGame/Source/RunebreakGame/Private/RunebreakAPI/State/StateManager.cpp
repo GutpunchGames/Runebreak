@@ -21,8 +21,8 @@ void StateManager::HandleSocketConnectionStatusChanged(EConnectionStatus status)
 	PublishState();
 }
 
-void StateManager::HandleMessageReceived(FChatMessage* status) {
-	state.numMessagesReceived++;
+void StateManager::HandleMessageReceived(FChatMessage message) {
+	state.mostRecentMessage = message;
 	PublishState();
 }
 

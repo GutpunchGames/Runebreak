@@ -9,23 +9,19 @@
 #include "RunebreakAPI/State/StateManager.h"
 #include "RunebreakAPI.generated.h"
 
-UINTERFACE(MinimalAPI, Blueprintable)
-class URBListenerBP : public UInterface
+UINTERFACE(Blueprintable)
+class URBObserver : public UInterface
 {
 	GENERATED_BODY()
 };
 
-class IRBListenerBP
+class RUNEBREAKGAME_API IRBObserver
 {
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintNativeEvent)
-	void OnStateChange(FRBState state);
-
-	void OnStateChange_Implementation(FRBState state) {
-		UE_LOG(LogTemp, Warning, TEXT("OnStateChange: %d"), state.connectionStatus)
-	}
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void OnStateChanged(const FRBState& state);
 };
 
 UCLASS()
@@ -36,7 +32,7 @@ class RUNEBREAKGAME_API URunebreakAPI : public UObject
 private:
 	RBSocket* rbSocket;
 	StateManager* stateManager;
-	TSet<IRBListenerBP*> listeners;
+	TSet<UObject*> listeners;
 
 public:
 	URunebreakAPI();
@@ -44,7 +40,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Login();
 
-	void AddListener(IRBListenerBP* listener);
+	UFUNCTION(BlueprintCallable)
+	void AddListener(UObject* listener);
 
 private:
 	void HandleAuthenticated(FString& userId, FString& token);

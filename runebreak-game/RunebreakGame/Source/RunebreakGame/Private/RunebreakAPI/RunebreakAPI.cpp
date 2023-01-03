@@ -11,7 +11,7 @@ URunebreakAPI::URunebreakAPI() {
 	stateManager = new StateManager();
 	stateManager->OnStateChanged = [this](FRBState state) {
 		NotifyListeners(state);
-		UE_LOG(LogTemp, Warning, TEXT("got new state. token: %s -- connection state: %d -- num messages received: %d"), *state.authToken, state.connectionStatus, state.numMessagesReceived)
+		UE_LOG(LogTemp, Warning, TEXT("got new state. token: %s -- connection state: %d"), *state.authToken, state.connectionStatus)
 	};
 }
 
@@ -37,7 +37,7 @@ void URunebreakAPI::ConnectToWebSocket(FString& userId) {
 		HandleSocketConnectionStatusChanged(connectionStatus);
 	};
 	rbSocket->OnChatMessageReceived = [this](FChatMessage* message) {
-		stateManager->HandleMessageReceived(message);
+		stateManager->HandleMessageReceived(*message);
 	};
 	rbSocket->Connect();
 }
@@ -46,12 +46,12 @@ void URunebreakAPI::HandleSocketConnectionStatusChanged(EConnectionStatus& statu
 	stateManager->HandleSocketConnectionStatusChanged(status);
 }
 
-void URunebreakAPI::AddListener(IRBListenerBP* listener) {
+void URunebreakAPI::AddListener(UObject* listener) {
 	listeners.Add(listener);
 }
 
 void URunebreakAPI::NotifyListeners(FRBState state) {
 	for (auto& listener : listeners) {
-		listener->OnStateChange(state);
+		IRBObserver::Execute_OnStateChanged(listener, state);
 	}
 }
