@@ -1,0 +1,45 @@
+syntax="proto3";
+option go_package="/lobbies";
+
+service Lobbies {
+    rpc Create(CreateLobbyRequest) returns (Lobby);
+    rpc Join(JoinLobbyRequest) returns (Lobby);
+    rpc GetLobby(GetLobbyRequest) returns (Lobby);
+    rpc GetAllLobbies(GetAllLobbiesRequest) returns (GetAllLobbiesResponse);
+}
+
+// types
+message Lobby {
+    string lobby_id = 1;
+    string lobby_name = 2;
+    string owner_id = 3;
+    repeated User users = 4;
+}
+
+message User {
+    string user_id = 1;
+    string user_name = 2;
+}
+
+// requests/responses
+message CreateLobbyRequest {
+    string user_id = 1;
+    string lobby_name = 2;
+}
+
+message JoinLobbyRequest {
+    string user_id = 1;
+    string lobby_id = 2;
+}
+
+message GetLobbyRequest {
+    string lobby_id = 1;
+}
+
+message GetAllLobbiesRequest {
+
+}
+
+message GetAllLobbiesResponse {
+    repeated Lobby lobbies = 1;
+}
