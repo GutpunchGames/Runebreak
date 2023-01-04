@@ -10,6 +10,5 @@ RUN git config --global url."https://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:@g
 # now we're podracing
 WORKDIR /lobbies
 COPY . .
-RUN chmod 777 ./cmd.sh
 RUN go mod tidy
-CMD ["./cmd.sh"]
+CMD ["go", "run", "main.go", "9090"]

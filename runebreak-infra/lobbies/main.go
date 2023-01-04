@@ -9,8 +9,11 @@ import (
 	"os/signal"
 	"time"
 
+	lobbiesServer "github.com/GutpunchGames/Runebreak/runebreak-infra/lobbies/server"
+	lobbiesPbs "github.com/GutpunchGames/Runebreak/runebreak-infra/protos/lobbies"
 	"github.com/hashicorp/go-hclog"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 const serviceName = "runebreak-lobbies-service"
@@ -23,9 +26,9 @@ func main() {
 	grpcServer := grpc.NewServer(opts...)
 
 	logger2 := hclog.Default()
-	// accServer := accountsServer.NewServer(logger2)
-	// accountsPbs.RegisterAccountsServer(grpcServer, accServer)
-	// reflection.Register(grpcServer)
+	lobbiesServer := lobbiesServer.NewServer(logger2)
+	lobbiesPbs.RegisterLobbiesServer(grpcServer, lobbiesServer)
+	reflection.Register(grpcServer)
 
 	endpoint := fmt.Sprintf(":%s", port)
 	lis, err := net.Listen("tcp", endpoint)

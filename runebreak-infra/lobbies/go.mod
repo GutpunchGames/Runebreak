@@ -3,6 +3,8 @@ module github.com/GutpunchGames/Runebreak/runebreak-infra/lobbies
 go 1.19
 
 require (
+	github.com/GutpunchGames/Runebreak/runebreak-infra/protos v0.0.0-20230104201744-ea22a772d67f
+	github.com/google/uuid v1.3.0
 	github.com/hashicorp/go-hclog v1.4.0
 	google.golang.org/grpc v1.51.0
 )

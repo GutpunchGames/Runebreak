@@ -3,7 +3,7 @@ module github.com/GutpunchGames/Runebreak/runebreak-infra/gateway
 go 1.19
 
 require (
-	github.com/GutpunchGames/Runebreak/runebreak-infra/protos v0.0.0-20221222003644-c167dcb54a07
+	github.com/GutpunchGames/Runebreak/runebreak-infra/protos v0.0.0-20230104201744-ea22a772d67f
 	github.com/google/uuid v1.3.0
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0

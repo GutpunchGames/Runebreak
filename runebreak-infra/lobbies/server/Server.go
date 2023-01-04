@@ -1,201 +1,88 @@
-// package server
+package server
 
-// import (
-// 	"context"
-// 	"database/sql"
-// 	"errors"
-// 	"fmt"
-// 	"strconv"
-// 	"time"
+import (
+	"context"
+	"log"
+	"os"
 
-// 	"github.com/GutpunchGames/Runebreak/runebreak-infra/protos/accounts"
-// 	"github.com/hashicorp/go-hclog"
-// )
+	"github.com/GutpunchGames/Runebreak/runebreak-infra/gateway/data/accounts/accounts_provider"
+	"github.com/GutpunchGames/Runebreak/runebreak-infra/protos/lobbies"
+	"github.com/google/uuid"
+	"github.com/hashicorp/go-hclog"
+)
 
-// type AccountsServer struct {
-// 	Logger hclog.Logger
-// 	accounts.UnimplementedAccountsServer
-// }
+type LobbiesServer struct {
+	Logger hclog.Logger
+	accountsProvider accounts_provider.AccountsProvider
+	lobbies.UnimplementedLobbiesServer
+}
 
-// func NewServer(l hclog.Logger) *AccountsServer {
-// 	return &AccountsServer{Logger: l, UnimplementedAccountsServer: accounts.UnimplementedAccountsServer{}}
-// }
+func NewServer(l hclog.Logger) *LobbiesServer {
+	tLogger := log.New(os.Stdout, "lobbies server", log.LstdFlags)
+	accountsProvider := accounts_provider.NewAccountsProvider(tLogger)
+	return &LobbiesServer{Logger: l, accountsProvider: accountsProvider, UnimplementedLobbiesServer: lobbies.UnimplementedLobbiesServer{}}
+}
 
-// func (server AccountsServer) Register(ctx context.Context, req *accounts.UserAuthenticationRequest) (*accounts.UserAuthenticationResponse, error) {
-// 	server.Logger.Info("Handle Register", "username", req.Username, "pw", req.Password)
-// 	userId, err := server.createUser(req.Username, req.Password)
-// 	if err == nil {
-// 		account := accounts.Account{UserId: strconv.FormatInt(*userId, 10), Username: req.Username}
-// 		return &accounts.UserAuthenticationResponse{Account: &account}, nil
-// 	} else {
-// 		return nil, err
-// 	}
-// }
+func (server LobbiesServer) Create(ctx context.Context, req *lobbies.CreateLobbyRequest) (*lobbies.Lobby, error) {
+	server.Logger.Info("Handle Create", "username", req.UserId, "lobby name", req.LobbyName)
+	lobby, err := server.create(req.UserId, req.LobbyName)
+	if err != nil {
+		return nil, err
+	}
 
-// func (server AccountsServer) Login(ctx context.Context, req *accounts.UserAuthenticationRequest) (*accounts.UserAuthenticationResponse, error) {
-// 	server.Logger.Info("Handle Login", "username", req.Username, "pw", req.Password)
-// 	userId, err := server.loginUser(req.Username, req.Password)
-// 	if err == nil {
-// 		account := accounts.Account{UserId: strconv.FormatInt(*userId, 10), Username: req.Username}
-// 		return &accounts.UserAuthenticationResponse{Account: &account}, nil
-// 	} else {
-// 		return nil, err
-// 	}
-// }
+	user, err := server.accountsProvider.GetAccount(req.UserId)
 
-// func (server AccountsServer) GetAccount(ctx context.Context, req *accounts.GetAccountRequest) (*accounts.GetAccountResponse, error) {
-// 	fmt.Printf("attempting to interface with db\n")
-// 	db, err := sql.Open("mysql", "accountsservice:accountsservice_pw@tcp(localhost:3306)/accounts")
-//     defer db.Close()
+	if err != nil {
+		return nil, err
+	}
 
-// 	if err != nil {
-// 		fmt.Printf("failed to establish db connection: %s\n", err)
-// 		return nil, err
-// 	}
+	if err == nil {
+		lobbyResp := lobbies.Lobby{}
+		lobbyResp.LobbyId = lobby.lobbyId
+		lobbyResp.LobbyName = lobby.lobbyName
+		lobbyResp.OwnerId = lobby.ownerId
 
-// 	query := fmt.Sprintf("SELECT user_id, user_name FROM accounts WHERE user_id LIKE '%s'", req.UserId)
+		// add the creator to the lobby
+		respUser := lobbies.User{}
+		respUser.UserId = req.UserId
+		respUser.UserName = user.Username
+		lobbyResp.Users = []*lobbies.User{&respUser}
 
-// 	res := db.QueryRow(query)  
-// 	account := NewAccount()
-// 	err = res.Scan(&account.user_id, &account.user_name)
-// 	if err != nil {
-// 		fmt.Printf("failed to unmarshal user: %s\n", err)
-// 		return nil, err
-// 	}
+		return &lobbyResp, nil
+	} else {
+		return nil, err
+	}
+}
 
-// 	return &accounts.GetAccountResponse{UserId: account.user_id, Username: account.user_name}, nil
-// }
+func Join(context.Context, *lobbies.JoinLobbyRequest) (*lobbies.Lobby, error) {
+	return &lobbies.Lobby{}, nil
+}
 
-// func (server AccountsServer) createUser(username string, password string) (*int64, error) {
-// 	fmt.Printf("attempting to interface with db\n")
-// 	db, err := sql.Open("mysql", "accountsservice:accountsservice_pw@tcp(localhost:3306)/accounts")
-//     defer db.Close()
+func GetLobby(context.Context, *lobbies.GetLobbyRequest) (*lobbies.Lobby, error) {
+	return &lobbies.Lobby{}, nil
+}
 
-// 	if err != nil {
-// 		fmt.Printf("bad stuff happened 1: %s\n", err)
-// 		return nil, err
-// 	}
+func GetAllLobbies(context.Context, *lobbies.GetAllLobbiesRequest) (*lobbies.GetAllLobbiesResponse, error) {
+	return &lobbies.GetAllLobbiesResponse{}, nil
+}
 
-// 	doesUserExist, err := server.doesUserExist(username)
-// 	if err != nil {
-// 		fmt.Printf("bad stuff happened 2: %s\n", err)
-// 		return nil, err
-// 	}
+func (server LobbiesServer) create(userId string, lobbyName string) (lobby, error) {
+	// todo: ensure ID uniqueness. ring buffer of ints? dedicated lobbies?
+	var lobbyId string = uuid.NewString()
+	lobby := newLobby(userId, lobbyId, lobbyName)
+	return lobby, nil
+}
 
-// 	if (doesUserExist != nil && *doesUserExist) {
-// 		server.Logger.Error("User with username already exists.", "username", username)
-// 		return nil, errors.New(fmt.Sprintf("User with username %s already exists.", username))
-// 	}
+type lobby struct {
+	ownerId string
+	lobbyId string
+	lobbyName string
+}
 
-// 	query := "INSERT INTO accounts(user_name, authentication_code) VALUES (?, ?)"
-// 	ctx, cancelfunc := context.WithTimeout(context.Background(), 5 * time.Second)
-//     defer cancelfunc()
-
-//     stmt, err := db.PrepareContext(ctx, query)
-//     if err != nil {
-// 		server.Logger.Error("Error when preparing SQL statement", "error", err)
-// 		return nil, err
-//     }
-//     defer stmt.Close()
-
-// 	res, err := stmt.ExecContext(ctx, username, password)  
-// 	if err != nil {  
-// 		server.Logger.Error("Error when inserting row into accounts table", "error", err)
-// 		return nil, err
-// 	}
-// 	rows, err := res.RowsAffected()  
-// 	if err != nil {  
-// 		server.Logger.Error("Error when finding rows affected", "error", err)
-// 		return nil, err
-// 	}
-// 	server.Logger.Info(fmt.Sprintf("%d users created", rows))
-
-//     var newUserId int64
-//     query = "SELECT LAST_INSERT_ID()"
-//     err = db.QueryRow(query).Scan(&newUserId)
-
-// 	if (err != nil) {
-// 		server.Logger.Error("Error accessing new user", "error", err)
-// 		return nil, err
-// 	}
-
-// 	return &newUserId, nil
-// }
-
-// func (server AccountsServer) doesUserExist(username string) (*bool, error) {
-// 	fmt.Printf("attempting to interface with db\n")
-// 	db, err := sql.Open("mysql", "accountsservice:accountsservice_pw@tcp(localhost:3306)/accounts")
-//     defer db.Close()
-
-// 	if err != nil {
-// 		fmt.Printf("bad stuff happened 1: %s\n", err)
-// 		return nil, err
-// 	}
-
-// 	innerQuery := fmt.Sprintf("SELECT user_id FROM accounts WHERE user_name LIKE '%s'", username)
-// 	return server.doesRowExist(db, innerQuery)
-// }
-
-// func (server AccountsServer) doesRowExist(db *sql.DB, innerQuery string) (*bool, error) {
-//     var exists bool
-//     query := fmt.Sprintf("SELECT exists (%s)", innerQuery)
-//     err := db.QueryRow(query).Scan(&exists)
-//     if err != nil && err != sql.ErrNoRows {
-// 		server.Logger.Error("error checking if row exists", "innerQuery", innerQuery, "error", err)
-// 		return nil, err
-//     }
-//     return &exists, nil
-// }
-
-// type account struct {
-// 	user_id string
-// 	user_name string
-// 	authentication_code string
-// }
-
-// func NewAccount() account {
-// 	return account{
-// 		user_id: "",
-// 		user_name: "",
-// 		authentication_code: "",
-// 	}
-// }
-
-// func (server AccountsServer) loginUser(username string, password string) (*int64, error) {
-// 	fmt.Printf("attempting to interface with db\n")
-// 	db, err := sql.Open("mysql", "accountsservice:accountsservice_pw@tcp(localhost:3306)/accounts")
-//     defer db.Close()
-
-// 	if err != nil {
-// 		fmt.Printf("bad stuff happened 1: %s\n", err)
-// 		return nil, err
-// 	}
-
-// 	query := fmt.Sprintf("SELECT user_id, user_name, authentication_code FROM accounts WHERE user_name LIKE '%s'", username)
-
-// 	res := db.QueryRow(query)  
-// 	account := NewAccount()
-// 	err = res.Scan(&account.user_id, &account.user_name, &account.authentication_code)
-
-// 	if err != nil {  
-// 		server.Logger.Error("Error when selecting user", "error", err)
-// 		return nil, err
-// 	}
-
-// 	server.Logger.Info("got account", "account", account)
-
-// 	if (password == account.authentication_code) {
-// 		userId, err := strconv.Atoi(account.user_id)
-
-// 		if err != nil {  
-// 			server.Logger.Error("Error converting user_id to int", "user_id", account.user_id, "error", err)
-// 			return nil, err
-// 		}
-
-// 		userId64 := int64(userId)
-// 		return &userId64, nil
-// 	} else {
-// 		server.Logger.Error("invalid password")
-// 		return nil, errors.New("invalid password")
-// 	}
-// }
+func newLobby(ownerId string, lobbyId string, lobbyName string) lobby {
+	return lobby{
+		ownerId: ownerId,
+		lobbyId: lobbyId,
+		lobbyName: lobbyName,
+	}
+}
