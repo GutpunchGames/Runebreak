@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/GutpunchGames/Runebreak/runebreak-infra/protos/accounts"
@@ -63,7 +64,51 @@ func (server AccountsServer) GetAccount(ctx context.Context, req *accounts.GetAc
 		return nil, err
 	}
 
-	return &accounts.GetAccountResponse{UserId: account.user_id, Username: account.user_name}, nil
+	accountResp := accounts.Account{}
+	accountResp.UserId = account.user_id
+	accountResp.Username = account.user_name
+	return &accounts.GetAccountResponse{Account: &accountResp}, nil
+}
+
+func (server AccountsServer) GetAccounts(ctx context.Context, req *accounts.GetAccountsRequest) (*accounts.GetAccountsResponse, error) {
+	fmt.Printf("attempting to interface with db\n")
+	db, err := sql.Open("mysql", "accountsservice:accountsservice_pw@tcp(localhost:3306)/accounts")
+    defer db.Close()
+
+	if err != nil {
+		fmt.Printf("failed to establish db connection: %s\n", err)
+		return nil, err
+	}
+
+	output := "'" + strings.Join(req.UserId, "', '") + "'"
+	query := fmt.Sprintf("SELECT user_id, user_name FROM accounts WHERE user_id IN (%s)", output)
+	fmt.Printf("query: %s", query)
+
+	rows, err := db.Query(query)  
+	if err != nil {
+		fmt.Printf("failed to query db: %s\n", err)
+		return nil, err
+	}
+
+	accountsResp := []*accounts.Account{}
+	for rows.Next() {
+		var userId string
+		var username string
+		err = rows.Scan(&userId, &username)
+		if err != nil {
+			// todo: handle this error
+			fmt.Printf("error while processing results: %s\n", err)
+			return nil, err
+		}
+
+		// have account
+		acc := accounts.Account{}
+		acc.UserId = userId
+		acc.Username = username
+		accountsResp = append(accountsResp, &acc)
+	}
+
+	return &accounts.GetAccountsResponse{Accounts: accountsResp}, nil
 }
 
 func (server AccountsServer) createUser(username string, password string) (*int64, error) {
