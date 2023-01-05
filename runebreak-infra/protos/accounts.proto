@@ -5,6 +5,7 @@ service Accounts {
     rpc Register(UserAuthenticationRequest) returns (UserAuthenticationResponse);
     rpc Login(UserAuthenticationRequest) returns (UserAuthenticationResponse);
     rpc GetAccount(GetAccountRequest) returns (GetAccountResponse);
+    rpc GetAccounts(GetAccountsRequest) returns (GetAccountsResponse);
 }
 
 // types
@@ -28,6 +29,13 @@ message GetAccountRequest {
 }
 
 message GetAccountResponse {
-    string user_id = 1;
-    string username = 2;
+    Account account = 1;
+}
+
+message GetAccountsRequest {
+    repeated string user_id = 1;
+}
+
+message GetAccountsResponse {
+    repeated Account accounts = 1;
 }
