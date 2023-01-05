@@ -6,7 +6,9 @@ import (
 	"os"
 
 	"github.com/GutpunchGames/Runebreak/runebreak-infra/gateway/data/accounts/accounts_provider"
-	"github.com/GutpunchGames/Runebreak/runebreak-infra/protos/lobbies"
+	"github.com/GutpunchGames/Runebreak/runebreak-infra/lobbies/lobbiesmanager"
+	"github.com/GutpunchGames/Runebreak/runebreak-infra/lobbies/types"
+	lobbiesPbs "github.com/GutpunchGames/Runebreak/runebreak-infra/protos/lobbies"
 	"github.com/google/uuid"
 	"github.com/hashicorp/go-hclog"
 )
@@ -14,16 +16,17 @@ import (
 type LobbiesServer struct {
 	Logger hclog.Logger
 	accountsProvider accounts_provider.AccountsProvider
-	lobbies.UnimplementedLobbiesServer
+	lobbiesManager lobbiesmanager.LobbiesManager
+	lobbiesPbs.UnimplementedLobbiesServer
 }
 
 func NewServer(l hclog.Logger) *LobbiesServer {
 	tLogger := log.New(os.Stdout, "lobbies server", log.LstdFlags)
 	accountsProvider := accounts_provider.NewAccountsProvider(tLogger)
-	return &LobbiesServer{Logger: l, accountsProvider: accountsProvider, UnimplementedLobbiesServer: lobbies.UnimplementedLobbiesServer{}}
+	return &LobbiesServer{Logger: l, accountsProvider: accountsProvider, UnimplementedLobbiesServer: lobbiesPbs.UnimplementedLobbiesServer{}}
 }
 
-func (server LobbiesServer) Create(ctx context.Context, req *lobbies.CreateLobbyRequest) (*lobbies.Lobby, error) {
+func (server LobbiesServer) Create(ctx context.Context, req *lobbiesPbs.CreateLobbyRequest) (*lobbiesPbs.Lobby, error) {
 	server.Logger.Info("Handle Create", "username", req.UserId, "lobby name", req.LobbyName)
 	lobby, err := server.create(req.UserId, req.LobbyName)
 	if err != nil {
@@ -37,16 +40,16 @@ func (server LobbiesServer) Create(ctx context.Context, req *lobbies.CreateLobby
 	}
 
 	if err == nil {
-		lobbyResp := lobbies.Lobby{}
-		lobbyResp.LobbyId = lobby.lobbyId
-		lobbyResp.LobbyName = lobby.lobbyName
-		lobbyResp.OwnerId = lobby.ownerId
+		lobbyResp := lobbiesPbs.Lobby{}
+		lobbyResp.LobbyId = lobby.LobbyId
+		lobbyResp.LobbyName = lobby.LobbyName
+		lobbyResp.OwnerId = lobby.OwnerId
 
 		// add the creator to the lobby
 		respUser := lobbies.User{}
 		respUser.UserId = req.UserId
 		respUser.UserName = user.Username
-		lobbyResp.Users = []*lobbies.User{&respUser}
+		lobbyResp.Users = []*lobbiesPbs.User{&respUser}
 
 		return &lobbyResp, nil
 	} else {
@@ -54,35 +57,21 @@ func (server LobbiesServer) Create(ctx context.Context, req *lobbies.CreateLobby
 	}
 }
 
-func Join(context.Context, *lobbies.JoinLobbyRequest) (*lobbies.Lobby, error) {
+func Join(context.Context, *lobbies.JoinLobbyRequest) (*lobbiesPbs.Lobby, error) {
 	return &lobbies.Lobby{}, nil
 }
 
-func GetLobby(context.Context, *lobbies.GetLobbyRequest) (*lobbies.Lobby, error) {
+func GetLobby(context.Context, *lobbies.GetLobbyRequest) (*lobbiesPbs.Lobby, error) {
 	return &lobbies.Lobby{}, nil
 }
 
-func GetAllLobbies(context.Context, *lobbies.GetAllLobbiesRequest) (*lobbies.GetAllLobbiesResponse, error) {
+func GetAllLobbies(context.Context, *lobbies.GetAllLobbiesRequest) (*lobbiesPbs.GetAllLobbiesResponse, error) {
 	return &lobbies.GetAllLobbiesResponse{}, nil
 }
 
-func (server LobbiesServer) create(userId string, lobbyName string) (lobby, error) {
+func (server LobbiesServer) create(userId string, lobbyName string) (types.Lobby, error) {
 	// todo: ensure ID uniqueness. ring buffer of ints? dedicated lobbies?
 	var lobbyId string = uuid.NewString()
-	lobby := newLobby(userId, lobbyId, lobbyName)
+	lobby := types.NewLobby(userId, lobbyId, lobbyName)
 	return lobby, nil
-}
-
-type lobby struct {
-	ownerId string
-	lobbyId string
-	lobbyName string
-}
-
-func newLobby(ownerId string, lobbyId string, lobbyName string) lobby {
-	return lobby{
-		ownerId: ownerId,
-		lobbyId: lobbyId,
-		lobbyName: lobbyName,
-	}
 }
