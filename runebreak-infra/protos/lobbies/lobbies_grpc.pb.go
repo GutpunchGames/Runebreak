@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type LobbiesClient interface {
 	Create(ctx context.Context, in *CreateLobbyRequest, opts ...grpc.CallOption) (*Lobby, error)
 	Join(ctx context.Context, in *JoinLobbyRequest, opts ...grpc.CallOption) (*Lobby, error)
+	Leave(ctx context.Context, in *LeaveLobbyRequest, opts ...grpc.CallOption) (*LeaveLobbyResponse, error)
 	GetLobby(ctx context.Context, in *GetLobbyRequest, opts ...grpc.CallOption) (*Lobby, error)
 	GetAllLobbies(ctx context.Context, in *GetAllLobbiesRequest, opts ...grpc.CallOption) (*GetAllLobbiesResponse, error)
 }
@@ -54,6 +55,15 @@ func (c *lobbiesClient) Join(ctx context.Context, in *JoinLobbyRequest, opts ...
 	return out, nil
 }
 
+func (c *lobbiesClient) Leave(ctx context.Context, in *LeaveLobbyRequest, opts ...grpc.CallOption) (*LeaveLobbyResponse, error) {
+	out := new(LeaveLobbyResponse)
+	err := c.cc.Invoke(ctx, "/Lobbies/Leave", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *lobbiesClient) GetLobby(ctx context.Context, in *GetLobbyRequest, opts ...grpc.CallOption) (*Lobby, error) {
 	out := new(Lobby)
 	err := c.cc.Invoke(ctx, "/Lobbies/GetLobby", in, out, opts...)
@@ -78,6 +88,7 @@ func (c *lobbiesClient) GetAllLobbies(ctx context.Context, in *GetAllLobbiesRequ
 type LobbiesServer interface {
 	Create(context.Context, *CreateLobbyRequest) (*Lobby, error)
 	Join(context.Context, *JoinLobbyRequest) (*Lobby, error)
+	Leave(context.Context, *LeaveLobbyRequest) (*LeaveLobbyResponse, error)
 	GetLobby(context.Context, *GetLobbyRequest) (*Lobby, error)
 	GetAllLobbies(context.Context, *GetAllLobbiesRequest) (*GetAllLobbiesResponse, error)
 	mustEmbedUnimplementedLobbiesServer()
@@ -92,6 +103,9 @@ func (UnimplementedLobbiesServer) Create(context.Context, *CreateLobbyRequest) (
 }
 func (UnimplementedLobbiesServer) Join(context.Context, *JoinLobbyRequest) (*Lobby, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Join not implemented")
+}
+func (UnimplementedLobbiesServer) Leave(context.Context, *LeaveLobbyRequest) (*LeaveLobbyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Leave not implemented")
 }
 func (UnimplementedLobbiesServer) GetLobby(context.Context, *GetLobbyRequest) (*Lobby, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetLobby not implemented")
@@ -148,6 +162,24 @@ func _Lobbies_Join_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Lobbies_Leave_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LeaveLobbyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LobbiesServer).Leave(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Lobbies/Leave",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LobbiesServer).Leave(ctx, req.(*LeaveLobbyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Lobbies_GetLobby_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetLobbyRequest)
 	if err := dec(in); err != nil {
@@ -198,6 +230,10 @@ var Lobbies_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Join",
 			Handler:    _Lobbies_Join_Handler,
+		},
+		{
+			MethodName: "Leave",
+			Handler:    _Lobbies_Leave_Handler,
 		},
 		{
 			MethodName: "GetLobby",

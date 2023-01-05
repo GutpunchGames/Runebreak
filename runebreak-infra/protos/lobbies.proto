@@ -4,6 +4,7 @@ option go_package="/lobbies";
 service Lobbies {
     rpc Create(CreateLobbyRequest) returns (Lobby);
     rpc Join(JoinLobbyRequest) returns (Lobby);
+    rpc Leave(LeaveLobbyRequest) returns (LeaveLobbyResponse);
     rpc GetLobby(GetLobbyRequest) returns (Lobby);
     rpc GetAllLobbies(GetAllLobbiesRequest) returns (GetAllLobbiesResponse);
 }
@@ -30,6 +31,14 @@ message CreateLobbyRequest {
 message JoinLobbyRequest {
     string user_id = 1;
     string lobby_id = 2;
+}
+
+message LeaveLobbyRequest {
+    string user_id = 1;
+    string lobby_id = 2;
+}
+
+message LeaveLobbyResponse {
 }
 
 message GetLobbyRequest {
