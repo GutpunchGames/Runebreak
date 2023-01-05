@@ -1,4 +1,4 @@
-package lobbiesserver
+package server
 
 import (
 	"context"

@@ -9,7 +9,7 @@ import (
 	"os/signal"
 	"time"
 
-	lobbiesServer "github.com/GutpunchGames/Runebreak/runebreak-infra/lobbies/lobbiesserver"
+	lobbiesServer "github.com/GutpunchGames/Runebreak/runebreak-infra/lobbies/server"
 	lobbiesPbs "github.com/GutpunchGames/Runebreak/runebreak-infra/protos/lobbies"
 	"github.com/hashicorp/go-hclog"
 	"google.golang.org/grpc"
