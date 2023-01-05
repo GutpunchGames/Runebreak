@@ -21,6 +21,10 @@ func NewLobbiesManager(l hclog.Logger) *LobbiesManager {
 }
 
 func (manager LobbiesManager) CreateLobby(ownerId string, lobbyName string) (*types.Lobby, error) {
+	err := validateLobbyName(lobbyName)
+	if (err != nil) {
+		return nil, err
+	}
 	// todo: ensure ID uniqueness. ring buffer of ints?
 	lobbyId := uuid.NewString()
 	lobby := types.NewLobby(ownerId, lobbyId, lobbyName)
@@ -57,5 +61,31 @@ func (manager LobbiesManager) LeaveLobby(lobbyId string, userId string) error {
 	if (len(lobby.Users) == 0) {
 		delete(manager.lobbies, lobby.LobbyId)
 	}
+	return nil
+}
+
+func (manager LobbiesManager) GetLobby(lobbyId string) (*types.Lobby, error) {
+	lobby, exists := manager.lobbies[lobbyId]
+	if !exists {
+		return nil, errors.New("lobby does not exist")
+	}
+	return &lobby, nil
+}
+
+func (manager LobbiesManager) GetAllLobbies() ([]*types.Lobby, error) {
+	var lobbies []*types.Lobby
+	for _, lobby := range manager.lobbies {
+		lobbies = append(lobbies, &lobby)
+	}
+
+	return lobbies, nil
+}
+
+func validateLobbyName(lobbyName string) error {
+	length := len(lobbyName)
+	if (length < 2 || length > 32) {
+		return errors.New("lobby name must be between 2 and 32 characters")
+	}
+
 	return nil
 }
