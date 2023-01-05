@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/GutpunchGames/Runebreak/runebreak-infra/gateway v0.0.0-20230104214339-0da6ce50071e
-	github.com/GutpunchGames/Runebreak/runebreak-infra/protos v0.0.0-20230104214339-0da6ce50071e
+	github.com/GutpunchGames/Runebreak/runebreak-infra/protos v0.0.0-20230105010310-8100efc34a5a
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/go-hclog v1.4.0
 	google.golang.org/grpc v1.51.0

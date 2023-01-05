@@ -16,6 +16,7 @@ type LobbiesManager struct {
 func NewLobbiesManager(l hclog.Logger) *LobbiesManager {
 	return &LobbiesManager{
 		Logger: l,
+		lobbies: make(map[string]types.Lobby),
 	}
 }
 
