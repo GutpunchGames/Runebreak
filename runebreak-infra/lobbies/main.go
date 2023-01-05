@@ -9,7 +9,7 @@ import (
 	"os/signal"
 	"time"
 
-	lobbiesServer "github.com/GutpunchGames/Runebreak/runebreak-infra/lobbies/server"
+	lobbiesServer "github.com/GutpunchGames/Runebreak/runebreak-infra/lobbies/lobbiesserver"
 	lobbiesPbs "github.com/GutpunchGames/Runebreak/runebreak-infra/protos/lobbies"
 	"github.com/hashicorp/go-hclog"
 	"google.golang.org/grpc"
@@ -26,8 +26,8 @@ func main() {
 	grpcServer := grpc.NewServer(opts...)
 
 	logger2 := hclog.Default()
-	lobbiesServer := lobbiesServer.NewServer(logger2)
-	lobbiesPbs.RegisterLobbiesServer(grpcServer, lobbiesServer)
+	ls := lobbiesServer.NewServer(logger2)
+	lobbiesPbs.RegisterLobbiesServer(grpcServer, ls)
 	reflection.Register(grpcServer)
 
 	endpoint := fmt.Sprintf(":%s", port)
