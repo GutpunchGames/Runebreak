@@ -28,7 +28,6 @@ func NewServer(l hclog.Logger) *LobbiesServer {
 }
 
 func (server LobbiesServer) Create(ctx context.Context, req *lobbiesPbs.CreateLobbyRequest) (*lobbiesPbs.Lobby, error) {
-	server.Logger.Info("Handle Create", "user id", req.UserId, "lobby name", req.LobbyName)
 	lobby, err := server.lobbiesManager.CreateLobby(req.UserId, req.LobbyName)
 	if err != nil {
 		return nil, err
@@ -49,7 +48,6 @@ func (server LobbiesServer) Create(ctx context.Context, req *lobbiesPbs.CreateLo
 }
 
 func (server LobbiesServer) Join(ctx context.Context, req *lobbiesPbs.JoinLobbyRequest) (*lobbiesPbs.Lobby, error) {
-	server.Logger.Info("Handle Join", "user id", req.UserId, "lobby id", req.LobbyId)
 	lobby, err := server.lobbiesManager.JoinLobby(req.LobbyId, req.UserId)
 
 	if (err != nil) {
@@ -66,15 +64,42 @@ func (server LobbiesServer) Join(ctx context.Context, req *lobbiesPbs.JoinLobbyR
 }
 
 func (server LobbiesServer) Leave(ctx context.Context, req *lobbiesPbs.LeaveLobbyRequest) (*lobbiesPbs.LeaveLobbyResponse, error) {
-	server.Logger.Info("Handle Leave", "user id", req.UserId, "lobby id", req.LobbyId)
 	server.lobbiesManager.LeaveLobby(req.LobbyId, req.UserId)
 	return &lobbiesPbs.LeaveLobbyResponse{}, nil
 }
 
 func (server LobbiesServer) GetLobby(ctx context.Context, req *lobbiesPbs.GetLobbyRequest) (*lobbiesPbs.Lobby, error) {
-	return nil, nil
+	lobby, err := server.lobbiesManager.GetLobby(req.LobbyId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	lobbyResp := lobbiesPbs.Lobby{}
+	lobbyResp.LobbyId = lobby.LobbyId
+	lobbyResp.LobbyName = lobby.LobbyName
+	lobbyResp.OwnerId = lobby.OwnerId
+	lobbyResp.Users = []*lobbiesPbs.User{}
+
+	return &lobbyResp, nil
 }
 
 func (server LobbiesServer) GetAllLobbies(ctx context.Context, req *lobbiesPbs.GetAllLobbiesRequest) (*lobbiesPbs.GetAllLobbiesResponse, error) {
-	return nil, nil
+	lobbies, err := server.lobbiesManager.GetAllLobbies()
+	if err != nil {
+		return nil, err
+	}
+
+	lobbiesRpcResp := make([]*lobbiesPbs.Lobby, 0)
+	for _, lobby := range lobbies {
+		rpcLobby := lobbiesPbs.Lobby{}
+		rpcLobby.LobbyId = lobby.LobbyId
+		rpcLobby.LobbyName = lobby.LobbyName
+		rpcLobby.OwnerId = lobby.OwnerId
+		rpcLobby.Users = []*lobbiesPbs.User{}
+
+		lobbiesRpcResp = append(lobbiesRpcResp, &rpcLobby)
+	}
+
+	return &lobbiesPbs.GetAllLobbiesResponse{Lobbies: lobbiesRpcResp}, nil
 }

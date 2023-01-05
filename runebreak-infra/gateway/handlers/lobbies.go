@@ -67,6 +67,29 @@ type JoinLobbyResponse struct {
 	 Lobby lobby `json:"lobby"`
 }
 
+type LeaveLobbyRequest struct {
+	LobbyId string `json:"lobbyId"`
+}
+func (request *LeaveLobbyRequest) FromJSON(reader io.Reader) error {
+	decoder := json.NewDecoder(reader)
+	return decoder.Decode(request)
+}
+
+type GetLobbyRequest struct {
+	LobbyId string `json:"lobbyId"`
+}
+func (request *GetLobbyRequest) FromJSON(reader io.Reader) error {
+	decoder := json.NewDecoder(reader)
+	return decoder.Decode(request)
+}
+type GetLobbyResponse struct {
+	 Lobby lobby `json:"lobby"`
+}
+
+type ListLobbiesResponse struct {
+	 Lobbies []lobby `json:"lobbies"`
+}
+
 // http POST /lobbies
 func (handler *LobbiesHandler) CreateLobby(rw http.ResponseWriter, req *http.Request) {
 	userId, err := handler.authenticator.GetUserIdFromRequest(req)
@@ -99,7 +122,7 @@ func (handler *LobbiesHandler) CreateLobby(rw http.ResponseWriter, req *http.Req
 	}
 }
 
-// http PATCH /lobbies/loin
+// http PATCH /lobbies/join
 func (handler *LobbiesHandler) JoinLobby(rw http.ResponseWriter, req *http.Request) {
 	userId, err := handler.authenticator.GetUserIdFromRequest(req)
 	if err != nil {
@@ -127,6 +150,97 @@ func (handler *LobbiesHandler) JoinLobby(rw http.ResponseWriter, req *http.Reque
 		}
 	} else {
 		msg := fmt.Sprintf("error joining lobby: %s", err)
+		http.Error(rw, msg, http.StatusBadRequest)
+	}
+}
+
+// http PATCH /lobbies/leave
+func (handler *LobbiesHandler) LeaveLobby(rw http.ResponseWriter, req *http.Request) {
+	userId, err := handler.authenticator.GetUserIdFromRequest(req)
+	if err != nil {
+		http.Error(rw, "unable to get user from request", http.StatusBadRequest)
+	}
+
+	leaveLobbyRequest := LeaveLobbyRequest{}
+	leaveLobbyRequest.FromJSON(req.Body)
+
+	rpcRequest := lobbies.LeaveLobbyRequest{UserId: *userId, LobbyId: leaveLobbyRequest.LobbyId}
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	client, conn := handler.createLobbiesClient()
+	defer conn.Close()
+
+	_, err = client.Leave(ctx, &rpcRequest)
+	if err == nil {
+		rw.Write([]byte{})
+	} else {
+		msg := fmt.Sprintf("error leaving lobby: %s", err)
+		http.Error(rw, msg, http.StatusBadRequest)
+	}
+}
+
+// http GET /lobbies
+func (handler *LobbiesHandler) GetLobby(rw http.ResponseWriter, req *http.Request) {
+	_, err := handler.authenticator.GetUserIdFromRequest(req)
+	if err != nil {
+		http.Error(rw, "unable to get user from request", http.StatusBadRequest)
+	}
+
+	getLobbyRequest := GetLobbyRequest{}
+	getLobbyRequest.FromJSON(req.Body)
+
+	rpcRequest := lobbies.GetLobbyRequest{LobbyId: getLobbyRequest.LobbyId}
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	client, conn := handler.createLobbiesClient()
+	defer conn.Close()
+
+	rpcResp, err := client.GetLobby(ctx, &rpcRequest)
+	if err == nil {
+		restResp := GetLobbyResponse{fromRPCLobby(rpcResp)}
+		respJson, err := json.Marshal(restResp)
+		if err != nil {
+			http.Error(rw, "unable to marshal response", http.StatusInternalServerError)
+		} else {
+			rw.Write(respJson)
+		}
+	} else {
+		msg := fmt.Sprintf("error getting lobby: %s", err)
+		http.Error(rw, msg, http.StatusBadRequest)
+	}
+}
+
+// http GET /lobbies/list
+func (handler *LobbiesHandler) ListLobbies(rw http.ResponseWriter, req *http.Request) {
+	_, err := handler.authenticator.GetUserIdFromRequest(req)
+	if err != nil {
+		http.Error(rw, "unable to get user from request", http.StatusBadRequest)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	client, conn := handler.createLobbiesClient()
+	defer conn.Close()
+
+	rpcResp, err := client.GetAllLobbies(ctx, &lobbies.GetAllLobbiesRequest{})
+	if err == nil {
+		lobbies := make([]lobby, len(rpcResp.Lobbies))
+		for i, rpcLobby := range rpcResp.Lobbies {
+			lobbies[i] = fromRPCLobby(rpcLobby)
+		}
+
+		restResp := ListLobbiesResponse{Lobbies: lobbies}
+		respJson, err := json.Marshal(restResp)
+		if err != nil {
+			http.Error(rw, "unable to marshal response", http.StatusInternalServerError)
+		} else {
+			rw.Write(respJson)
+		}
+	} else {
+		msg := fmt.Sprintf("error leaving lobby: %s", err)
 		http.Error(rw, msg, http.StatusBadRequest)
 	}
 }

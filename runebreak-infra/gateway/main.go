@@ -48,9 +48,12 @@ func main() {
 	patchRouter := serveMux.Methods(http.MethodPatch).Subrouter()
 	patchRouter.HandleFunc("/accounts/{userId}", accountsHandler.UpdateUser)
 	patchRouter.HandleFunc("/lobbies/join", lobbiesHandler.JoinLobby)
+	patchRouter.HandleFunc("/lobbies/leave", lobbiesHandler.LeaveLobby)
 
 	getRouter := serveMux.Methods(http.MethodGet).Subrouter()
 	getRouter.HandleFunc("/connect/{userId}", connectHandler.Connect)
+	getRouter.HandleFunc("/lobbies", lobbiesHandler.GetLobby)
+	getRouter.HandleFunc("/lobbies/list", lobbiesHandler.ListLobbies)
 
 	serveMux.Use(middleware.NewAuthenticationMiddleware(authenticator, logger).Middleware)
 	wrapped := gorillaHandlers.CORS(originsOk, headersOk, methodsOk)(serveMux)
