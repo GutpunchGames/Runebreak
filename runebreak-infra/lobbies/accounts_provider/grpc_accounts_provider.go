@@ -18,12 +18,12 @@ func newLiveAccountsProvider(logger *log.Logger) liveAccountsProvider {
 }
 
 func (provider liveAccountsProvider) GetAccount(userId string) (*AccountRecord, error) {
-	account, err := provider.rpcGetAccount(userId)
+	resp, err := provider.rpcGetAccount(userId)
 	if err != nil {
 		return nil, err
 	}
 
-	return &AccountRecord{UserId: account.UserId, Username: account.Username}, nil
+	return &AccountRecord{UserId: resp.Account.UserId, Username: resp.Account.Username}, nil
 }
 
 func (provider liveAccountsProvider) rpcGetAccount(userId string) (*accounts.GetAccountResponse, error) {
