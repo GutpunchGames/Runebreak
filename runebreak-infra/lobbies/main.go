@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/GutpunchGames/Runebreak/runebreak-infra/lobbies/accounts_provider"
 	lobbiesServer "github.com/GutpunchGames/Runebreak/runebreak-infra/lobbies/server"
 	lobbiesPbs "github.com/GutpunchGames/Runebreak/runebreak-infra/protos/lobbies"
 	"github.com/hashicorp/go-hclog"
@@ -25,8 +26,10 @@ func main() {
 	var opts []grpc.ServerOption
 	grpcServer := grpc.NewServer(opts...)
 
+	ap := accounts_provider.NewAccountsProvider(logger)
+
 	logger2 := hclog.Default()
-	ls := lobbiesServer.NewServer(logger2)
+	ls := lobbiesServer.NewServer(logger2, ap)
 	lobbiesPbs.RegisterLobbiesServer(grpcServer, ls)
 	reflection.Register(grpcServer)
 

@@ -45,7 +45,6 @@ func (server AccountsServer) Login(ctx context.Context, req *accounts.UserAuthen
 }
 
 func (server AccountsServer) GetAccount(ctx context.Context, req *accounts.GetAccountRequest) (*accounts.GetAccountResponse, error) {
-	fmt.Printf("attempting to interface with db\n")
 	db, err := sql.Open("mysql", "accountsservice:accountsservice_pw@tcp(localhost:3306)/accounts")
     defer db.Close()
 
@@ -71,7 +70,6 @@ func (server AccountsServer) GetAccount(ctx context.Context, req *accounts.GetAc
 }
 
 func (server AccountsServer) GetAccounts(ctx context.Context, req *accounts.GetAccountsRequest) (*accounts.GetAccountsResponse, error) {
-	fmt.Printf("attempting to interface with db\n")
 	db, err := sql.Open("mysql", "accountsservice:accountsservice_pw@tcp(localhost:3306)/accounts")
     defer db.Close()
 
@@ -82,7 +80,6 @@ func (server AccountsServer) GetAccounts(ctx context.Context, req *accounts.GetA
 
 	output := "'" + strings.Join(req.UserId, "', '") + "'"
 	query := fmt.Sprintf("SELECT user_id, user_name FROM accounts WHERE user_id IN (%s)", output)
-	fmt.Printf("query: %s", query)
 
 	rows, err := db.Query(query)  
 	if err != nil {
@@ -112,7 +109,6 @@ func (server AccountsServer) GetAccounts(ctx context.Context, req *accounts.GetA
 }
 
 func (server AccountsServer) createUser(username string, password string) (*int64, error) {
-	fmt.Printf("attempting to interface with db\n")
 	db, err := sql.Open("mysql", "accountsservice:accountsservice_pw@tcp(localhost:3306)/accounts")
     defer db.Close()
 
@@ -168,7 +164,6 @@ func (server AccountsServer) createUser(username string, password string) (*int6
 }
 
 func (server AccountsServer) doesUserExist(username string) (*bool, error) {
-	fmt.Printf("attempting to interface with db\n")
 	db, err := sql.Open("mysql", "accountsservice:accountsservice_pw@tcp(localhost:3306)/accounts")
     defer db.Close()
 
@@ -207,7 +202,6 @@ func NewAccount() account {
 }
 
 func (server AccountsServer) loginUser(username string, password string) (*int64, error) {
-	fmt.Printf("attempting to interface with db\n")
 	db, err := sql.Open("mysql", "accountsservice:accountsservice_pw@tcp(localhost:3306)/accounts")
     defer db.Close()
 

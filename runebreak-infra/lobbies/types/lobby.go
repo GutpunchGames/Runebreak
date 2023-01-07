@@ -6,11 +6,11 @@ type Lobby struct {
 	OwnerId   string
 	LobbyId   string
 	LobbyName string
-	Users     map[string]struct{}
+	Users     map[string]interface{}
 }
 
 func NewLobby(ownerId string, lobbyId string, lobbyName string) Lobby {
-	users := make(map[string]struct{}, 1)
+	users := make(map[string]interface{}, 1)
 	return Lobby{
 		OwnerId:   ownerId,
 		LobbyId:   lobbyId,

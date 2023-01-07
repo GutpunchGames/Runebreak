@@ -10,13 +10,13 @@ import (
 
 type LobbiesManager struct {
 	Logger hclog.Logger
-	lobbies map[string] types.Lobby
+	lobbies map[string]*types.Lobby
 }
 
 func NewLobbiesManager(l hclog.Logger) *LobbiesManager {
 	return &LobbiesManager{
 		Logger: l,
-		lobbies: make(map[string]types.Lobby),
+		lobbies: make(map[string]*types.Lobby),
 	}
 }
 
@@ -29,7 +29,7 @@ func (manager LobbiesManager) CreateLobby(ownerId string, lobbyName string) (*ty
 	lobbyId := uuid.NewString()
 	lobby := types.NewLobby(ownerId, lobbyId, lobbyName)
 	lobby.AddUser(ownerId)
-	manager.lobbies[lobbyId] = lobby
+	manager.lobbies[lobbyId] = &lobby
 	return &lobby, nil
 }
 
@@ -44,7 +44,7 @@ func (manager LobbiesManager) JoinLobby(lobbyId string, userId string) (*types.L
 		return nil, err
 	}
 
-	return &lobby, nil
+	return lobby, nil
 }
 
 func (manager LobbiesManager) LeaveLobby(lobbyId string, userId string) error {
@@ -69,13 +69,13 @@ func (manager LobbiesManager) GetLobby(lobbyId string) (*types.Lobby, error) {
 	if !exists {
 		return nil, errors.New("lobby does not exist")
 	}
-	return &lobby, nil
+	return lobby, nil
 }
 
 func (manager LobbiesManager) GetAllLobbies() ([]*types.Lobby, error) {
-	var lobbies []*types.Lobby
+	var lobbies []*types.Lobby 
 	for _, lobby := range manager.lobbies {
-		lobbies = append(lobbies, &lobby)
+		lobbies = append(lobbies, lobby)
 	}
 
 	return lobbies, nil

@@ -33,15 +33,23 @@ type lobby struct {
 	OwnerId   string `json:"ownerId"`
 	LobbyId   string `json:"lobbyId"`
 	LobbyName string `json:"lobbyName"`
-	Users     []interface{} `json:"users"`
+	Users     []lobbyUser `json:"users"`
 }
 
 func fromRPCLobby(rpcLobby *lobbies.Lobby) lobby {
+	users := make([]lobbyUser, len(rpcLobby.Users))
+	for i, user := range rpcLobby.Users {
+		lobbyUser := lobbyUser{}
+		lobbyUser.UserId = user.UserId
+		lobbyUser.Username = user.UserName
+		users[i] = lobbyUser
+	}
+
 	return lobby{
 		OwnerId: rpcLobby.OwnerId,
 		LobbyId: rpcLobby.LobbyId,
 		LobbyName: rpcLobby.LobbyName,
-		Users: make([]interface{}, 0),
+		Users: users,
 	}
 }
 
@@ -88,6 +96,11 @@ type GetLobbyResponse struct {
 
 type ListLobbiesResponse struct {
 	 Lobbies []lobby `json:"lobbies"`
+}
+
+type lobbyUser struct {
+	Username string `json:"username"`
+	UserId string `json:"userId"`
 }
 
 // http POST /lobbies

@@ -40,15 +40,12 @@ func (request *SendMessageRequest) FromJSON(reader io.Reader) error {
 
 // http POST /messages
 func (handler *MessagesHandler) SendMessage(rw http.ResponseWriter, req *http.Request) {
-	handler.logger.Printf("======== CHECKPOINT 1 ==========")
 	requestBody := SendMessageRequest{}
 	err := requestBody.FromJSON(req.Body)
 	if err != nil {
 		http.Error(rw, "unable to unmarshal send message request ", http.StatusBadRequest)
 		return
 	}
-
-	handler.logger.Printf("======== CHECKPOINT 2 ==========")
 
 	authorId, err := handler.authenticator.GetUserIdFromRequest(req)
 	if err != nil {
@@ -64,15 +61,11 @@ func (handler *MessagesHandler) SendMessage(rw http.ResponseWriter, req *http.Re
 		return
 	}
 
-	handler.logger.Printf("======== CHECKPOINT 3 ==========")
-
 	recipient, err := handler.accountsProvider.GetAccount(requestBody.RecipientId)
 	if err != nil {
 		http.Error(rw, "unable to find recipient", http.StatusInternalServerError)
 		return
 	} 
-
-	handler.logger.Printf("======== CHECKPOINT 4 ==========")
 
 	handler.connections.SendMessage(
 		*authorId, 
