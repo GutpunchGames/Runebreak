@@ -2,7 +2,6 @@ package gatewaygrpcserver
 
 import (
 	"context"
-	"errors"
 
 	"github.com/GutpunchGames/Runebreak/runebreak-infra/gateway/connections"
 	gatewayPbs "github.com/GutpunchGames/Runebreak/runebreak-infra/protos/gateway"
@@ -23,6 +22,14 @@ func NewServer(l hclog.Logger, connectionManager *connections.ConnectionManager)
 	}
 }
 
-func (server GatewayGRPCServer) Create(ctx context.Context, req *gatewayPbs.DispatchMessageRequest) (*gatewayPbs.DispatchMessageResponse, error) {
-	return nil, errors.New("unimplemented")
+func (server GatewayGRPCServer) DispatchWSMessage(
+	ctx context.Context,
+	req *gatewayPbs.DispatchMessageRequest,
+) (*gatewayPbs.DispatchMessageResponse, error) {
+	server.connectionManager.DispatchBulk(
+		req.Recipients,
+		connections.WSMessageType(req.Message.Type),
+		req.Message.Payload,
+	)
+	return &gatewayPbs.DispatchMessageResponse{}, nil
 }

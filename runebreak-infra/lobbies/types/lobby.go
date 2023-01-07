@@ -3,7 +3,7 @@ package types
 import "errors"
 
 type Lobby struct {
-	OwnerId   string
+	OwnerId   string 
 	LobbyId   string
 	LobbyName string
 	Users     map[string]interface{}

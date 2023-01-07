@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/GutpunchGames/Runebreak/runebreak-infra/lobbies/accounts_provider"
+	gatewaydispatcher "github.com/GutpunchGames/Runebreak/runebreak-infra/lobbies/gateway_dispatcher"
 	lobbiesServer "github.com/GutpunchGames/Runebreak/runebreak-infra/lobbies/server"
 	lobbiesPbs "github.com/GutpunchGames/Runebreak/runebreak-infra/protos/lobbies"
 	"github.com/hashicorp/go-hclog"
@@ -29,7 +30,8 @@ func main() {
 	ap := accounts_provider.NewAccountsProvider(logger)
 
 	logger2 := hclog.Default()
-	ls := lobbiesServer.NewServer(logger2, ap)
+	gd := gatewaydispatcher.NewDispatcher(logger2)
+	ls := lobbiesServer.NewServer(logger2, ap, gd)
 	lobbiesPbs.RegisterLobbiesServer(grpcServer, ls)
 	reflection.Register(grpcServer)
 

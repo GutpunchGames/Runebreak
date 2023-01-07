@@ -36,6 +36,11 @@ type lobby struct {
 	Users     []lobbyUser `json:"users"`
 }
 
+type lobbyUser struct {
+	Username string `json:"username"`
+	UserId string `json:"userId"`
+}
+
 func fromRPCLobby(rpcLobby *lobbies.Lobby) lobby {
 	users := make([]lobbyUser, len(rpcLobby.Users))
 	for i, user := range rpcLobby.Users {
@@ -96,11 +101,6 @@ type GetLobbyResponse struct {
 
 type ListLobbiesResponse struct {
 	 Lobbies []lobby `json:"lobbies"`
-}
-
-type lobbyUser struct {
-	Username string `json:"username"`
-	UserId string `json:"userId"`
 }
 
 // http POST /lobbies

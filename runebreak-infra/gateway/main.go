@@ -116,7 +116,7 @@ type netConfig struct {
 
 func extractArgs(args []string) netConfig {
 	return netConfig{
-		restPort: args[0],
-		grpcPort: args[1], 
+		restPort: args[1],
+		grpcPort: args[2], 
 	}
 }

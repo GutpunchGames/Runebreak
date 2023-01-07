@@ -47,21 +47,23 @@ func (manager LobbiesManager) JoinLobby(lobbyId string, userId string) (*types.L
 	return lobby, nil
 }
 
-func (manager LobbiesManager) LeaveLobby(lobbyId string, userId string) error {
+func (manager LobbiesManager) LeaveLobby(lobbyId string, userId string) (*types.Lobby, error) {
 	lobby, exists := manager.lobbies[lobbyId]
 	if !exists {
-		return errors.New("lobby does not exist")
+		return nil, errors.New("lobby does not exist")
 	}
 
 	err := lobby.RemoveUser(userId)
 	if (err != nil) {
-		return err
+		return nil, err
 	}
 
 	if (len(lobby.Users) == 0) {
 		delete(manager.lobbies, lobby.LobbyId)
+		return nil, nil
+	} else {
+		return lobby, nil
 	}
-	return nil
 }
 
 func (manager LobbiesManager) GetLobby(lobbyId string) (*types.Lobby, error) {

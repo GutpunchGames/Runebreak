@@ -68,10 +68,24 @@ func (connectionManager *ConnectionManager) DispatchMessageCreate(authorId strin
 		return
 	}
 
-	connectionManager.Dispatch(recipientId, json)
+	connectionManager.Dispatch(recipientId, MessageCreate, json)
 }
 
-func (connectionManager *ConnectionManager) Dispatch(userId string, payload []byte) {
+func (connectionManager *ConnectionManager) DispatchBulk(
+	userIds[] string,
+	messageType WSMessageType,
+	payload []byte,
+) {
+	for _, userId := range userIds {
+		connectionManager.Dispatch(userId, messageType, payload)
+	}
+}
+
+func (connectionManager *ConnectionManager) Dispatch(
+	userId string,
+	messageType WSMessageType,
+	payload []byte,
+) {
 	// first, find the connection
 	conn, ok := connectionManager.connections[userId]
 	if !ok {
