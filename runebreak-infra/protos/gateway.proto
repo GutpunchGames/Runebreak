@@ -1,0 +1,24 @@
+syntax="proto3";
+option go_package="/lobbies";
+
+service Gateway {
+    rpc DispatchWSMessage(DispatchMessageRequest) returns (DispatchMessageResponse);
+}
+
+// types
+enum Type {
+    MESSAGE_CREATE = 0;
+    LOBBY_UPDATE = 1;
+}
+
+message Message {
+    Type type = 1;
+    bytes payload = 2;
+}
+
+message DispatchMessageRequest {
+    Message message = 1;
+}
+
+message DispatchMessageResponse {
+}

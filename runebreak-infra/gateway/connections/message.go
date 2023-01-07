@@ -1,5 +1,5 @@
 package connections
 
-type Message struct {
+type WSMessage struct {
 	payload []byte
 }

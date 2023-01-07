@@ -14,7 +14,7 @@ func NewConnection(ws *websocket.Conn) *Connection {
 	return &Connection{ws: ws}
 }
 
-func (connection *Connection) SendMessage(message Message) error {
+func (connection *Connection) WriteMessage(message WSMessage) error {
 	err := connection.ws.WriteMessage(websocket.TextMessage, message.payload)
 	if (err != nil) {
 		log.Printf("failed to send message: %s\n", message.payload)

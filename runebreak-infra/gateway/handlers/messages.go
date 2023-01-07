@@ -67,7 +67,7 @@ func (handler *MessagesHandler) SendMessage(rw http.ResponseWriter, req *http.Re
 		return
 	} 
 
-	handler.connections.SendMessage(
+	handler.connections.DispatchMessageCreate(
 		*authorId, 
 		recipient.Username,
 		requestBody.Text,
