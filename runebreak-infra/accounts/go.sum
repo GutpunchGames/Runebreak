@@ -6,6 +6,8 @@ github.com/GutpunchGames/Runebreak/runebreak-infra/protos v0.0.0-20230105010310-
 github.com/GutpunchGames/Runebreak/runebreak-infra/protos v0.0.0-20230105010310-8100efc34a5a/go.mod h1:w54rxhSqd5iyj9EwlNy3MtZ9zW+upvlOpTT1VF/0gm0=
 github.com/GutpunchGames/Runebreak/runebreak-infra/protos v0.0.0-20230105031518-770f787f096a h1:vloQyfJ5uUFtln0LKtXGrdSwltlTPr1D4kefC9c/KFA=
 github.com/GutpunchGames/Runebreak/runebreak-infra/protos v0.0.0-20230105031518-770f787f096a/go.mod h1:w54rxhSqd5iyj9EwlNy3MtZ9zW+upvlOpTT1VF/0gm0=
+github.com/GutpunchGames/Runebreak/runebreak-infra/protos v0.0.0-20230107191155-55deeb71eecd h1:wvB6PIREltK7kDWp2T9x7eDVUkh7Pmb/dyRvRPMM2Nw=
+github.com/GutpunchGames/Runebreak/runebreak-infra/protos v0.0.0-20230107191155-55deeb71eecd/go.mod h1:w54rxhSqd5iyj9EwlNy3MtZ9zW+upvlOpTT1VF/0gm0=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

@@ -1,5 +1,5 @@
 syntax="proto3";
-option go_package="/lobbies";
+option go_package="/gateway";
 
 service Gateway {
     rpc DispatchWSMessage(DispatchMessageRequest) returns (DispatchMessageResponse);
