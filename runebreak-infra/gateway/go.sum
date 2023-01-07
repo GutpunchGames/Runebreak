@@ -6,6 +6,8 @@ github.com/GutpunchGames/Runebreak/runebreak-infra/protos v0.0.0-20230105010310-
 github.com/GutpunchGames/Runebreak/runebreak-infra/protos v0.0.0-20230105010310-8100efc34a5a/go.mod h1:w54rxhSqd5iyj9EwlNy3MtZ9zW+upvlOpTT1VF/0gm0=
 github.com/GutpunchGames/Runebreak/runebreak-infra/protos v0.0.0-20230105044517-95afbabbeecd h1:I2LEIxILo5RMeuTn9JdwfpxJqkAE2/Q1yV5rP2dadD0=
 github.com/GutpunchGames/Runebreak/runebreak-infra/protos v0.0.0-20230105044517-95afbabbeecd/go.mod h1:w54rxhSqd5iyj9EwlNy3MtZ9zW+upvlOpTT1VF/0gm0=
+github.com/GutpunchGames/Runebreak/runebreak-infra/protos v0.0.0-20230107191751-21e20eb19425 h1:NjgSmiZk0EG1ogpeU1kuGujtNyc+PmEqEY5rr8BVcRA=
+github.com/GutpunchGames/Runebreak/runebreak-infra/protos v0.0.0-20230107191751-21e20eb19425/go.mod h1:w54rxhSqd5iyj9EwlNy3MtZ9zW+upvlOpTT1VF/0gm0=
 github.com/felixge/httpsnoop v1.0.1/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
 github.com/felixge/httpsnoop v1.0.3 h1:s/nj+GCswXYzN5v2DpNMuMQYe+0DDwt5WVCU6CWBdXk=
 github.com/felixge/httpsnoop v1.0.3/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=

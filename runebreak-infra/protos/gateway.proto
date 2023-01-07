@@ -18,6 +18,7 @@ message Message {
 
 message DispatchMessageRequest {
     Message message = 1;
+    repeated string recipients = 2;
 }
 
 message DispatchMessageResponse {

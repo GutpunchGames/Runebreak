@@ -5,4 +5,4 @@ RUN apt-get install -y protobuf-compiler
 RUN git config --global url."https://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:@github.com/".insteadOf "https://github.com/"
 WORKDIR /gateway
 COPY . .
-CMD ["go", "run", "main.go", "9090"]
+CMD ["go", "run", "main.go", "9090", "9091"]
