@@ -69,7 +69,7 @@ public:
 public:
 	ULoginTransaction();
 
-	void Login();
+	void Login(FString username, FString password);
 
 private:
 	void OnLoginResponseReceived(FHttpRequestPtr request, FHttpResponsePtr Response, bool bConnectedSuccessfully);

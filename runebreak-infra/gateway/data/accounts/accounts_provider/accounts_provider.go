@@ -9,6 +9,7 @@ type AccountRecord struct {
 
 type AccountsProvider interface {
 	GetAccount(userId string) (*AccountRecord, error)
+	GetAccounts(userIds []string) ([]*AccountRecord, error)
 }
 
 func NewAccountsProvider(logger *log.Logger) AccountsProvider {

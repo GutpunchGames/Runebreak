@@ -38,7 +38,7 @@ public:
 	URunebreakAPI();
 
 	UFUNCTION(BlueprintCallable)
-	void Login();
+	void Login(FString username, FString userId);
 
 	UFUNCTION(BlueprintCallable)
 	void AddListener(UObject* listener);

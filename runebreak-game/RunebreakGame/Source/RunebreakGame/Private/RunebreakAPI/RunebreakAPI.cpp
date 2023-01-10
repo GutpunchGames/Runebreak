@@ -15,14 +15,14 @@ URunebreakAPI::URunebreakAPI() {
 	};
 }
 
-void URunebreakAPI::Login() {
+void URunebreakAPI::Login(FString username, FString userId) {
 	ULoginTransaction* loginTransaction = NewObject<ULoginTransaction>(this);
 
 	loginTransaction->OnSuccess = [this](FLoginResponseBody resp) {
 		HandleAuthenticated(resp.userId, resp.token);
 	};
 
-	loginTransaction->Login();
+	loginTransaction->Login(username, userId);
 }
 
 void URunebreakAPI::HandleAuthenticated(FString& userId, FString& token) {
