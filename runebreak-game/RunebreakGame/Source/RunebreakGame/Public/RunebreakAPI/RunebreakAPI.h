@@ -38,7 +38,10 @@ public:
 	URunebreakAPI();
 
 	UFUNCTION(BlueprintCallable)
-	void Login(FString username, FString userId);
+	void Login(FString username, FString userId, UObject* resultHandler);
+
+	UFUNCTION(BlueprintCallable)
+	void FetchLobbies(UObject* resultHandler);
 
 	UFUNCTION(BlueprintCallable)
 	void AddListener(UObject* listener);

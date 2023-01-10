@@ -37,6 +37,8 @@ public:
 	void HandleSocketConnectionStatusChanged(EConnectionStatus status);
 	void HandleMessageReceived(FChatMessage message);
 
+	FRBState GetState();
+
 private:
 	FRBState state;
 	void PublishState();

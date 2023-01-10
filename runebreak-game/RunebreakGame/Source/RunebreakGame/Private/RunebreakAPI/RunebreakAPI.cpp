@@ -5,6 +5,7 @@
 #include <RunebreakGame/Public/RunebreakAPI/REST/Login.h>
 #include <RunebreakGame/Public/RunebreakAPI/State/StateManager.h>
 #include <RunebreakGame/Public/RunebreakAPI/RBSocket/RBSocket.h>
+#include <RunebreakGame/Public/RunebreakAPI/REST/Lobbies.h>
 
 URunebreakAPI::URunebreakAPI() {
 	UE_LOG(LogTemp, Warning, TEXT("Created Runebreak API"))
@@ -15,14 +16,29 @@ URunebreakAPI::URunebreakAPI() {
 	};
 }
 
-void URunebreakAPI::Login(FString username, FString userId) {
+void URunebreakAPI::Login(FString username, FString userId, UObject* resultHandler) {
 	ULoginTransaction* loginTransaction = NewObject<ULoginTransaction>(this);
 
-	loginTransaction->OnSuccess = [this](FLoginResponseBody resp) {
+	loginTransaction->OnSuccess = [this, resultHandler](FLoginResponseBody resp) {
 		HandleAuthenticated(resp.userId, resp.token);
+		if (resultHandler) {
+			ILoginResultHandler::Execute_OnLoginSuccess(resultHandler);
+		}
 	};
 
 	loginTransaction->Login(username, userId);
+}
+
+void URunebreakAPI::FetchLobbies(UObject* resultHandler) {
+	UFetchLobbiesTransaction* transaction = NewObject<UFetchLobbiesTransaction>(this);
+
+	transaction->OnSuccess = [this, resultHandler](FFetchLobbiesResponseBody resp) {
+		if (resultHandler) {
+			IFetchLobbiesResultHandler::Execute_OnSuccess(resultHandler, resp);
+		}
+	};
+
+	transaction->Execute(stateManager->GetState().authToken);
 }
 
 void URunebreakAPI::HandleAuthenticated(FString& userId, FString& token) {

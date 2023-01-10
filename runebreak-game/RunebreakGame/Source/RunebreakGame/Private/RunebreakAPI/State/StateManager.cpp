@@ -11,6 +11,10 @@ StateManager::~StateManager()
 {
 }
 
+FRBState StateManager::GetState() {
+	return state;
+}
+
 void StateManager::HandleAuthenticated(FString token) {
 	state.authToken = token;
 	PublishState();
