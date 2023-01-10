@@ -61,15 +61,25 @@ func (handler *MessagesHandler) SendMessage(rw http.ResponseWriter, req *http.Re
 		return
 	}
 
-	recipient, err := handler.accountsProvider.GetAccount(requestBody.RecipientId)
+	users, err := handler.accountsProvider.GetAccounts([]string{requestBody.RecipientId, *authorId})
+
 	if err != nil {
 		http.Error(rw, "unable to find recipient", http.StatusInternalServerError)
 		return
 	} 
 
+	var authorName string = ""
+
+	for _, user := range users {
+		if user.UserId == *authorId {
+			authorName = user.Username
+			break
+		}
+	}
+
 	handler.connections.DispatchMessageCreate(
 		*authorId, 
-		recipient.Username,
+		authorName,
 		requestBody.Text,
 		requestBody.RecipientId,
 	)

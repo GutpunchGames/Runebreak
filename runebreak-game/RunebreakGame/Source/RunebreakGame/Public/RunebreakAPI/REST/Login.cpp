@@ -8,8 +8,8 @@ ULoginTransaction::ULoginTransaction() {
 
 }
 
-void ULoginTransaction::Login() {
-	FLoginRequestBody body = FLoginRequestBody("andy2", "password");
+void ULoginTransaction::Login(FString username, FString password) {
+	FLoginRequestBody body = FLoginRequestBody(username, password);
 	TSharedPtr<FJsonObject> requestJsonObject = ToJsonObject(body);
 	UE_LOG(LogTemp, Warning, TEXT("got json: %s"), *(*requestJsonObject).GetStringField("username"))
 	TSharedRef<FJsonObject> test = requestJsonObject.ToSharedRef();
