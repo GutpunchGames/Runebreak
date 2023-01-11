@@ -16,23 +16,20 @@ URunebreakAPI::URunebreakAPI() {
 	};
 }
 
-void URunebreakAPI::Login(FString username, FString userId, UObject* resultHandler) {
-	ULoginTransaction* loginTransaction = NewObject<ULoginTransaction>(this);
-
-	loginTransaction->OnSuccess = [this, resultHandler](FLoginResponseBody resp) {
+void URunebreakAPI::Login(FString username, FString userId, FCallback OnSuccess, FCallback OnFailure) {
+	FHttpRequestRef loginRequest = LoginNew(username, userId, [this, OnSuccess](FLoginResponseBody resp) {
 		HandleAuthenticated(resp.userId, resp.token);
-		if (resultHandler) {
-			ILoginResultHandler::Execute_OnLoginSuccess(resultHandler);
-		}
-	};
-
-	loginTransaction->Login(username, userId);
+		OnSuccess.ExecuteIfBound();
+	}, [this, OnFailure]() {
+		OnFailure.ExecuteIfBound();
+	});
 }
 
 void URunebreakAPI::FetchLobbies(UObject* resultHandler) {
 	UFetchLobbiesTransaction* transaction = NewObject<UFetchLobbiesTransaction>(this);
 
 	transaction->OnSuccess = [this, resultHandler](FFetchLobbiesResponseBody resp) {
+		UE_LOG(LogTemp, Warning, TEXT("Fetched Lobbies"))
 		if (resultHandler) {
 			IFetchLobbiesResultHandler::Execute_OnSuccess(resultHandler, resp);
 		}

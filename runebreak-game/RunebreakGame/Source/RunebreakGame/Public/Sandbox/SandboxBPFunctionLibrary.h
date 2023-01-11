@@ -25,4 +25,7 @@ public:
 	// A simple example using TFunctionRef.
 	UFUNCTION(BlueprintCallable, Category="Sandbox")
 	static bool DoTFunctionRefExample();
+
+	UFUNCTION(BlueprintCallable, Category="Sandbox")
+	static void DoTestLoginCall(FString username, FString password);
 };

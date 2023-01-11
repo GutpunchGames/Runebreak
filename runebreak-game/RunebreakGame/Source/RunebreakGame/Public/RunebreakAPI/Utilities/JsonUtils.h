@@ -10,6 +10,17 @@ static TSharedPtr<FJsonObject> ToJsonObject(InStructType& inStruct) {
 	return FJsonObjectConverter::UStructToJsonObject(inStruct);
 }
 
+template<typename InStructType>
+static FString ToJsonString(InStructType& inStruct) {
+	TSharedPtr<FJsonObject> jsonObj = FJsonObjectConverter::UStructToJsonObject(inStruct);
+	TSharedRef<FJsonObject> sharedRef = jsonObj.ToSharedRef();
+
+	FString jsonStr;
+	TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&jsonStr);
+	FJsonSerializer::Serialize(sharedRef, Writer);
+	return jsonStr;
+}
+
 // todo: add better error handling?
 template<typename OutStructType>
 static void FromJson(FString json, OutStructType* outStruct, bool crashOnError=true) {

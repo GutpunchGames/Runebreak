@@ -9,6 +9,8 @@
 #include "RunebreakAPI/State/StateManager.h"
 #include "RunebreakAPI.generated.h"
 
+DECLARE_DYNAMIC_DELEGATE(FCallback);
+
 UINTERFACE(Blueprintable)
 class URBObserver : public UInterface
 {
@@ -38,7 +40,7 @@ public:
 	URunebreakAPI();
 
 	UFUNCTION(BlueprintCallable)
-	void Login(FString username, FString userId, UObject* resultHandler);
+	void Login(FString username, FString userId, FCallback OnSuccess, FCallback OnFailure);
 
 	UFUNCTION(BlueprintCallable)
 	void FetchLobbies(UObject* resultHandler);

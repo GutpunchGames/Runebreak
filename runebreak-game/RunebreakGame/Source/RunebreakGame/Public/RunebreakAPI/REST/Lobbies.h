@@ -80,7 +80,6 @@ public:
 	void OnFailure();
 };
 
-
 UCLASS()
 class RUNEBREAKGAME_API UFetchLobbiesTransaction : public UObject
 {

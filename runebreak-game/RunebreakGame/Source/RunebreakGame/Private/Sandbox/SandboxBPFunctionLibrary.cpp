@@ -1,8 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Sandbox/FunctionPointerExamples.h"
 #include "Sandbox/SandboxBPFunctionLibrary.h"
+#include "Sandbox/RestCallExperiments.h"
+#include "Sandbox/FunctionPointerExamples.h"
 
 bool USandboxBPFunctionLibrary::FunctionWithCallback(FExampleDelegate Out) {
 	Out.ExecuteIfBound("output string");
@@ -44,3 +45,12 @@ bool USandboxBPFunctionLibrary::DoTFunctionRefExample() {
 	return true;
 }
 
+void USandboxBPFunctionLibrary::DoTestLoginCall(FString username, FString password) {
+	_DoTestLoginCall(username, password,
+		[]() {
+			UE_LOG(LogTemp, Warning, TEXT("On Success"))
+		},
+		[]() {
+			UE_LOG(LogTemp, Warning, TEXT("On Failure"))
+		});
+}

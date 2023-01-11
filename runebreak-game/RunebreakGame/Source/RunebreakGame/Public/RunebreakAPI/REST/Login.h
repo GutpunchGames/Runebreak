@@ -8,24 +8,6 @@
 #include <RunebreakGame/Public/RunebreakAPI/Utilities/JsonUtils.h>
 #include "Login.generated.h"
 
-UINTERFACE(Blueprintable)
-class ULoginResultHandler : public UInterface
-{
-	GENERATED_BODY()
-};
-
-class RUNEBREAKGAME_API ILoginResultHandler
-{
-	GENERATED_BODY()
-
-public:
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void OnLoginSuccess();
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void OnLoginFailure();
-};
-
 
 USTRUCT()
 struct FLoginRequestBody
@@ -77,19 +59,4 @@ struct FLoginResponseBody
 	}
 };
 
-UCLASS()
-class RUNEBREAKGAME_API ULoginTransaction : public UObject
-{
-	GENERATED_BODY()
-
-public:
-	TFunction<void(FLoginResponseBody)> OnSuccess;
-
-public:
-	ULoginTransaction();
-
-	void Login(FString username, FString password);
-
-private:
-	void OnLoginResponseReceived(FHttpRequestPtr request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
-};
+FHttpRequestRef LoginNew(FString username, FString password, TFunction<void(FLoginResponseBody result)> OnSuccess, TFunction<void()> OnFailure);
