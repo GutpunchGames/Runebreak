@@ -8,9 +8,6 @@
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FExampleDelegate, FString, StringOut);
 
-/**
- * 
- */
 UCLASS()
 class RUNEBREAKGAME_API USandboxBPFunctionLibrary : public UBlueprintFunctionLibrary
 {
@@ -24,4 +21,8 @@ public:
 	// An asynchronous function with a callback FExampleDelegate.
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category="Sandbox")
 	static bool AsyncFunctionWithCallback(FExampleDelegate Out);
+
+	// A simple example using TFunctionRef.
+	UFUNCTION(BlueprintCallable, Category="Sandbox")
+	static bool DoTFunctionRefExample();
 };
