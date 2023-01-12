@@ -4,7 +4,7 @@
 #include "HTTP.h"
 #include <RunebreakGame/Public/RunebreakAPI/Utilities/JsonUtils.h>
 
-FHttpRequestRef LoginNew(FString username, FString password, TFunction<void(FLoginResponseBody result)> OnSuccess, TFunction<void()> OnFailure) {
+FHttpRequestRef DoLoginRESTCall(FString username, FString password, TFunction<void(FLoginResponseBody result)> OnSuccess, TFunction<void()> OnFailure) {
 	FLoginRequestBody body = FLoginRequestBody(username, password);
 	FString serializedRequestBody = ToJsonString(body);
 	FHttpRequestRef Request = FHttpModule::Get().CreateRequest();

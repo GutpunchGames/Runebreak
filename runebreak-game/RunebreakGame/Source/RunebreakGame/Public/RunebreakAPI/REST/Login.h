@@ -59,4 +59,4 @@ struct FLoginResponseBody
 	}
 };
 
-FHttpRequestRef LoginNew(FString username, FString password, TFunction<void(FLoginResponseBody result)> OnSuccess, TFunction<void()> OnFailure);
+FHttpRequestRef DoLoginRESTCall(FString username, FString password, TFunction<void(FLoginResponseBody result)> OnSuccess, TFunction<void()> OnFailure);

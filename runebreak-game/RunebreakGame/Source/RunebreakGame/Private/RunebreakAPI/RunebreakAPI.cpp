@@ -17,7 +17,7 @@ URunebreakAPI::URunebreakAPI() {
 }
 
 void URunebreakAPI::Login(FString username, FString userId, FCallback OnSuccess, FCallback OnFailure) {
-	FHttpRequestRef loginRequest = LoginNew(username, userId, [this, OnSuccess](FLoginResponseBody resp) {
+	FHttpRequestRef loginRequest = DoLoginRESTCall(username, userId, [this, OnSuccess](FLoginResponseBody resp) {
 		HandleAuthenticated(resp.userId, resp.token);
 		OnSuccess.ExecuteIfBound();
 	}, [this, OnFailure]() {
