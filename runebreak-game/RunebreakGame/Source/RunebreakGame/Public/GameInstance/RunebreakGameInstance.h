@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include <RunebreakGame/Public/RunebreakAPI/RunebreakAPI.h>
+#include <RunebreakGame/Public/RBGameSession/RBGameSession.h>
 #include "RunebreakGameInstance.generated.h"
 
 UCLASS()
@@ -16,7 +16,7 @@ public:
 	URunebreakGameInstance();
 
 	UPROPERTY(BlueprintReadWrite)
-	URunebreakAPI* api;
+	URBGameSession* gameSession;
 
 	// this attempts to fix a bug, detailed here: 
 	// https://forums.unrealengine.com/t/pig-of-a-crash-pure-virtual-function-being-called-while-application-was-running/155116/13

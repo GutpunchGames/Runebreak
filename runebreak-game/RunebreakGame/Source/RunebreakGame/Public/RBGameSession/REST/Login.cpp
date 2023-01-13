@@ -1,8 +1,8 @@
-#include <RunebreakGame/Public/RunebreakAPI/REST/Login.h>
+#include <RunebreakGame/Public/RBGameSession/REST/Login.h>
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "HTTP.h"
-#include <RunebreakGame/Public/RunebreakAPI/Utilities/JsonUtils.h>
+#include <RunebreakGame/Public/RBGameSession/Utilities/JsonUtils.h>
 
 FHttpRequestRef DoLoginRESTCall(FString username, FString password, TFunction<void(FLoginResponseBody result)> OnSuccess, TFunction<void()> OnFailure) {
 	FLoginRequestBody body = FLoginRequestBody(username, password);

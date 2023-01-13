@@ -4,7 +4,7 @@
 #include "Sandbox/RestCallExperiments.h"
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include <RunebreakGame/Public/RunebreakAPI/Utilities/JsonUtils.h>
+#include <RunebreakGame/Public/RBGameSession/Utilities/JsonUtils.h>
 
 FHttpRequestRef _DoTestLoginCall(FString username, FString password, TFunctionRef<void ()> OnSuccess, TFunctionRef<void ()> OnFailure) {
 	FLoginExperimentRequestBody body = FLoginExperimentRequestBody(username, password);

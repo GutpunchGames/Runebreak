@@ -5,5 +5,5 @@
 
 URunebreakGameInstance::URunebreakGameInstance() {
 	// todo: should this be CreateDefaultSubobject? and what does the Name param do?
-	api = NewObject<URunebreakAPI>(this, "Game Instance API");
+	gameSession = NewObject<URBGameSession>(this, "Game Instance API");
 }

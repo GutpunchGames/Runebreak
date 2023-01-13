@@ -5,48 +5,35 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "HTTP.h"
-#include "RunebreakAPI/RBSocket/RBSocket.h"
-#include "RunebreakAPI/State/StateManager.h"
-#include "RunebreakAPI.generated.h"
+#include "RBGameSession/REST/Lobbies.h"
+#include "RBGameSession/RBSocket/RBSocket.h"
+#include "RBGameSession/State/StateManager.h"
+#include "RBGameSession.generated.h"
 
+// todo: move these declarations
 DECLARE_DYNAMIC_DELEGATE(FCallback);
-
-UINTERFACE(Blueprintable)
-class URBObserver : public UInterface
-{
-	GENERATED_BODY()
-};
-
-class RUNEBREAKGAME_API IRBObserver
-{
-	GENERATED_BODY()
-
-public:
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void OnStateChanged(const FRBState& state);
-};
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGameSessionStateChangedEvent, FRBState, State);
 
 UCLASS()
-class RUNEBREAKGAME_API URunebreakAPI : public UObject
+class RUNEBREAKGAME_API URBGameSession : public UObject
 {
 	GENERATED_BODY()
 
 private:
 	RBSocket* rbSocket;
 	StateManager* stateManager;
-	TSet<UObject*> listeners;
 
 public:
-	URunebreakAPI();
+	URBGameSession();
 
 	UFUNCTION(BlueprintCallable)
 	void Login(FString username, FString userId, FCallback OnSuccess, FCallback OnFailure);
 
 	UFUNCTION(BlueprintCallable)
-	void FetchLobbies(UObject* resultHandler);
+	void FetchLobbies(FOnLobbiesFetched OnSuccess, FCallback OnFailure);
 
-	UFUNCTION(BlueprintCallable)
-	void AddListener(UObject* listener);
+	UPROPERTY(BlueprintAssignable, BlueprintReadOnly)
+	FOnGameSessionStateChangedEvent OnGameSessionStateChanged;
 
 private:
 	void HandleAuthenticated(FString& userId, FString& token);
@@ -54,4 +41,6 @@ private:
 	void ConnectToWebSocket(FString& userId);
 
 	void NotifyListeners(FRBState state);
+
+	void AddAuthHeaders(FHttpRequestRef HttpRequestRef);
 };

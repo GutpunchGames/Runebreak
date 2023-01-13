@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "HTTP.h"
-#include <RunebreakGame/Public/RunebreakAPI/Utilities/JsonUtils.h>
+#include <RunebreakGame/Public/RBGameSession/Utilities/JsonUtils.h>
 #include "Login.generated.h"
 
 

@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include <RunebreakGame/Public/RunebreakAPI/Models/ChatMessage.h>
-#include <RunebreakGame/Public/RunebreakAPI/Models/ConnectionStatus.h>
+#include <RunebreakGame/Public/RBGameSession/Models/ChatMessage.h>
+#include <RunebreakGame/Public/RBGameSession/Models/ConnectionStatus.h>
 #include "StateManager.generated.h"
 
 USTRUCT(BlueprintType)
