@@ -15,7 +15,7 @@ class RUNEBREAKGAME_API URunebreakGameInstance : public UGameInstance
 public:
 	URunebreakGameInstance();
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadOnly)
 	URBGameSession* gameSession;
 
 	// this attempts to fix a bug, detailed here: 

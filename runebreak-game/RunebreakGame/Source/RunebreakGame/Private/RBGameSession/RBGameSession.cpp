@@ -15,12 +15,14 @@ URBGameSession::URBGameSession() {
 }
 
 void URBGameSession::Login(FString username, FString userId, FCallback OnSuccess, FCallback OnFailure) {
-	FHttpRequestRef loginRequest = DoLoginRESTCall(username, userId, [this, OnSuccess](FLoginResponseBody resp) {
-		HandleAuthenticated(resp.userId, resp.token);
-		OnSuccess.ExecuteIfBound();
-	}, [this, OnFailure]() {
-		OnFailure.ExecuteIfBound();
-	});
+	FHttpRequestRef loginRequest = DoLoginRESTCall(username, userId,
+		[this, OnSuccess](FLoginResponseBody resp) {
+			HandleAuthenticated(resp.userId, resp.token);
+			OnSuccess.ExecuteIfBound();
+		},
+		[this, OnFailure]() {
+			OnFailure.ExecuteIfBound();
+		});
 }
 
 void URBGameSession::FetchLobbies(FOnLobbiesFetched OnSuccess, FCallback OnFailure) {
