@@ -6,6 +6,15 @@
 #include "Blueprint/UserWidget.h"
 #include "SocialList.generated.h"
 
+UCLASS(BlueprintType)
+class RUNEBREAKGAME_API USocialListEntryData : public UObject {
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	FString TextValue;
+};
+
 /**
  * 
  */
@@ -20,7 +29,4 @@ public:
 
 protected:
 	virtual void NativeConstruct() override;
-
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	class UTextBlock* TextLabel;
 };
