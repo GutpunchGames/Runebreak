@@ -42,7 +42,7 @@ public:
 	FOnGameSessionStateChangedEvent OnGameSessionStateChanged;
 
 	UFUNCTION(BlueprintCallable)
-	FRBState GetCurrentState;
+	FRBState GetCurrentState();
 
 private:
 	void HandleAuthenticated(FString& userId, FString& token);

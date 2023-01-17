@@ -14,6 +14,10 @@ URBGameSession::URBGameSession() {
 	};
 }
 
+FRBState URBGameSession::GetCurrentState() {
+	return stateManager->GetState();
+}
+
 void URBGameSession::Login(FString username, FString userId, FCallback OnSuccess, FCallback OnFailure) {
 	FHttpRequestRef loginRequest = DoLoginRESTCall(username, userId,
 		[this, OnSuccess](FLoginResponseBody resp) {
