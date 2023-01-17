@@ -38,6 +38,7 @@ void URBGameSession::FetchLobbies(FOnLobbiesFetched OnSuccess, FCallback OnFailu
 void URBGameSession::CreateLobby(FString LobbyName, FOnCreatedOrJoinedLobby OnSuccess, FCallback OnFailure) {
 	FHttpRequestRef request = CreateLobbyRESTCall(LobbyName,
 		[this, OnSuccess](FLobby resp) {
+			stateManager->HandleLobbyCreate(resp);
 			OnSuccess.ExecuteIfBound(resp);
 		},
 		[this, OnFailure]() {
@@ -50,6 +51,7 @@ void URBGameSession::CreateLobby(FString LobbyName, FOnCreatedOrJoinedLobby OnSu
 void URBGameSession::JoinLobby(FString LobbyId, FOnCreatedOrJoinedLobby OnSuccess, FCallback OnFailure) {
 	FHttpRequestRef request = JoinLobbyRESTCall(LobbyId,
 		[this, OnSuccess](FLobby resp) {
+			stateManager->HandleLobbyJoin(resp);
 			OnSuccess.ExecuteIfBound(resp);
 		},
 		[this, OnFailure]() {

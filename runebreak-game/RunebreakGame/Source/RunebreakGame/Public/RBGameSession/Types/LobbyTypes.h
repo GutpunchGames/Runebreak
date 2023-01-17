@@ -20,6 +20,16 @@ struct FLobby
 	UPROPERTY(BlueprintReadOnly)
 		TArray<FUser> users;
 
+	bool IsValid() {
+		return !(lobbyId.Equals(""));
+	}
+
+	bool Invalidate() {
+		bool WasValid = IsValid();
+		lobbyId = "";
+		return WasValid;
+	}
+
 	FString ToString() {
 		return FString(
 			+ "\tlobby: " + lobbyId + "\n"

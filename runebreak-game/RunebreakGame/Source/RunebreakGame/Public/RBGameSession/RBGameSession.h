@@ -41,6 +41,9 @@ public:
 	UPROPERTY(BlueprintAssignable, BlueprintReadOnly)
 	FOnGameSessionStateChangedEvent OnGameSessionStateChanged;
 
+	UFUNCTION(BlueprintCallable)
+	FRBState GetCurrentState;
+
 private:
 	void HandleAuthenticated(FString& userId, FString& token);
 	void HandleSocketConnectionStatusChanged(EConnectionStatus& status);

@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <RunebreakGame/Public/RBGameSession/Types/LobbyTypes.h>
 #include <RunebreakGame/Public/RBGameSession/Models/ChatMessage.h>
 #include <RunebreakGame/Public/RBGameSession/Models/ConnectionStatus.h>
 #include "StateManager.generated.h"
@@ -12,15 +13,17 @@ struct FRBState {
 	GENERATED_BODY()
 
 public:
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Authentication")
-	FString authToken = "";
+		FString authToken = "";
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	EConnectionStatus connectionStatus = EConnectionStatus::Uninitialized;
+		EConnectionStatus connectionStatus = EConnectionStatus::Uninitialized;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	FChatMessage mostRecentMessage;
+		FChatMessage mostRecentMessage;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		FLobby currentLobby;
 };
 
 class StateManager
@@ -36,6 +39,11 @@ public:
 	void HandleAuthenticated(FString token);
 	void HandleSocketConnectionStatusChanged(EConnectionStatus status);
 	void HandleMessageReceived(FChatMessage message);
+
+	void HandleLobbyCreate(FLobby Lobby);
+	void HandleLobbyJoin(FLobby Lobby);
+	void HandleLobbyUpdate(FLobby Lobby);
+	void HandleLobbyLeave(FString LobbyId);
 
 	FRBState GetState();
 

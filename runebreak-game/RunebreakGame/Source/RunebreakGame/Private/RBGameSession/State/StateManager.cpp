@@ -30,6 +30,28 @@ void StateManager::HandleMessageReceived(FChatMessage message) {
 	PublishState();
 }
 
+void StateManager::HandleLobbyCreate(FLobby Lobby) {
+	state.currentLobby = Lobby;
+	PublishState();
+}
+
+void StateManager::HandleLobbyJoin(FLobby Lobby) {
+	state.currentLobby = Lobby;
+	PublishState();
+}
+
+void StateManager::HandleLobbyUpdate(FLobby Lobby) {
+	state.currentLobby = Lobby;
+	PublishState();
+}
+
+void StateManager::HandleLobbyLeave(FString LobbyId) {
+	if (state.currentLobby.lobbyId.Equals(LobbyId)) {
+		state.currentLobby.Invalidate();
+		PublishState();
+	}
+}
+
 void StateManager::PublishState() {
 	OnStateChanged(state);
 }
