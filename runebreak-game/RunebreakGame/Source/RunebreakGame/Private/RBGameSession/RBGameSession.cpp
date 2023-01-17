@@ -35,6 +35,30 @@ void URBGameSession::FetchLobbies(FOnLobbiesFetched OnSuccess, FCallback OnFailu
 	request->ProcessRequest();
 }
 
+void URBGameSession::CreateLobby(FString LobbyName, FOnCreatedOrJoinedLobby OnSuccess, FCallback OnFailure) {
+	FHttpRequestRef request = CreateLobbyRESTCall(LobbyName,
+		[this, OnSuccess](FLobby resp) {
+			OnSuccess.ExecuteIfBound(resp);
+		},
+		[this, OnFailure]() {
+			OnFailure.ExecuteIfBound();
+		});
+	AddAuthHeaders(request);
+	request->ProcessRequest();
+}
+
+void URBGameSession::JoinLobby(FString LobbyId, FOnCreatedOrJoinedLobby OnSuccess, FCallback OnFailure) {
+	FHttpRequestRef request = JoinLobbyRESTCall(LobbyId,
+		[this, OnSuccess](FLobby resp) {
+			OnSuccess.ExecuteIfBound(resp);
+		},
+		[this, OnFailure]() {
+			OnFailure.ExecuteIfBound();
+		});
+	AddAuthHeaders(request);
+	request->ProcessRequest();
+}
+
 void URBGameSession::HandleAuthenticated(FString& userId, FString& token) {
 	stateManager->HandleAuthenticated(token);
 	ConnectToWebSocket(userId);

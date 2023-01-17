@@ -24,9 +24,24 @@ struct FFetchLobbiesResponseBody
 	}
 };
 
+USTRUCT(BlueprintType)
+struct FCreateOrJoinLobbyResponseBody
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	FLobby lobby;
+};
+
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnLobbiesFetched, FFetchLobbiesResponseBody, Lobbies);
 FHttpRequestRef GetLobbiesRESTCall(TFunction<void(FFetchLobbiesResponseBody resp)> OnSuccess, TFunction<void()> OnFailure);
 
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnLobbyFetched, FFetchLobbiesResponseBody, Lobbies);
 FHttpRequestRef GetLobbyRESTCall(FString lobbyId, TFunction<void(FLobby lobby)> OnSuccess, TFunction<void()> OnFailure);
+
+// these two calls share the same response.
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCreatedOrJoinedLobby, FLobby, Lobby);
+FHttpRequestRef CreateLobbyRESTCall(FString lobbyName, TFunction<void(FLobby lobby)> OnSuccess, TFunction<void()> OnFailure);
 FHttpRequestRef JoinLobbyRESTCall(FString lobbyId, TFunction<void(FLobby lobby)> OnSuccess, TFunction<void()> OnFailure);
+
 FHttpRequestRef LeaveLobbyRESTCall(FString lobbyId, TFunction<void(FLobby lobby)> OnSuccess, TFunction<void()> OnFailure);

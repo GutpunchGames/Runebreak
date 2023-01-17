@@ -48,6 +48,29 @@ FHttpRequestRef GetLobbyRESTCall(FString lobbyId, TFunction<void(FLobby lobby)> 
 	return Request;
 }
 
+FHttpRequestRef CreateLobbyRESTCall(FString LobbyName, TFunction<void(FLobby lobby)> OnSuccess, TFunction<void()> OnFailure) {
+	FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
+
+	Request->OnProcessRequestComplete().BindLambda([OnSuccess, OnFailure](FHttpRequestPtr request, FHttpResponsePtr Response, bool bConnectedSuccessfully) {
+		const int responseCode = Response->GetResponseCode();
+		if (bConnectedSuccessfully && responseCode >= 200 && responseCode <= 299) {
+			FString respJson = *Response->GetContentAsString();
+			FCreateOrJoinLobbyResponseBody resp;
+			FromJson(respJson, &resp);
+			OnSuccess(resp.lobby);
+		}
+		else {
+			OnFailure();
+		}
+	});
+
+	Request->SetURL("http://localhost:9000/lobbies");
+	Request->SetVerb("POST");
+	Request->SetHeader("Content-Type", "application/json");
+	Request->SetContentAsString("{\"lobbyName\":\"" + LobbyName + "\"}");
+	return Request;
+}
+
 FHttpRequestRef JoinLobbyRESTCall(FString lobbyId, TFunction<void(FLobby lobby)> OnSuccess, TFunction<void()> OnFailure) {
 	FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
 
