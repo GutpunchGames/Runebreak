@@ -18,10 +18,21 @@ FRBState URBGameSession::GetCurrentState() {
 	return stateManager->GetState();
 }
 
-void URBGameSession::Login(FString username, FString userId, FCallback OnSuccess, FCallback OnFailure) {
-	FHttpRequestRef loginRequest = DoLoginRESTCall(username, userId,
-		[this, OnSuccess](FLoginResponseBody resp) {
-			HandleAuthenticated(resp.userId, resp.token);
+void URBGameSession::Login(FString username, FString password, FCallback OnSuccess, FCallback OnFailure) {
+	FHttpRequestRef loginRequest = DoLoginRESTCall(username, password,
+		[this, username, OnSuccess](FLoginResponseBody resp) {
+			HandleAuthenticated(resp.userId, username, resp.token);
+			OnSuccess.ExecuteIfBound();
+		},
+		[this, OnFailure]() {
+			OnFailure.ExecuteIfBound();
+		});
+}
+
+void URBGameSession::Register(FString username, FString password, FCallback OnSuccess, FCallback OnFailure) {
+	FHttpRequestRef registerRequest = DoRegisterRESTCall(username, password,
+		[this, username, OnSuccess](FLoginResponseBody resp) {
+			HandleAuthenticated(resp.userId, username, resp.token);
 			OnSuccess.ExecuteIfBound();
 		},
 		[this, OnFailure]() {
@@ -65,8 +76,11 @@ void URBGameSession::JoinLobby(FString LobbyId, FOnCreatedOrJoinedLobby OnSucces
 	request->ProcessRequest();
 }
 
-void URBGameSession::HandleAuthenticated(FString& userId, FString& token) {
-	stateManager->HandleAuthenticated(token);
+void URBGameSession::HandleAuthenticated(FString& userId, const FString username, FString& token) {
+	FUser user;
+	user.userId = userId;
+	user.username = username;
+	stateManager->HandleAuthenticated(token, user);
 	ConnectToWebSocket(userId);
 }
 

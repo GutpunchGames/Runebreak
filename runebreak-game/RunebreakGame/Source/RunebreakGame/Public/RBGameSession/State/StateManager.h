@@ -24,6 +24,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		FLobby currentLobby;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		FUser user;
 };
 
 class StateManager
@@ -36,7 +39,7 @@ public:
 	TFunction<void(FRBState)> OnStateChanged;
 
 	// all the methods for handling updates
-	void HandleAuthenticated(FString token);
+	void HandleAuthenticated(FString token, FUser user);
 	void HandleSocketConnectionStatusChanged(EConnectionStatus status);
 	void HandleMessageReceived(FChatMessage message);
 
