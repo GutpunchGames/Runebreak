@@ -27,7 +27,10 @@ public:
 	URBGameSession();
 
 	UFUNCTION(BlueprintCallable)
-	void Login(FString username, FString userId, FCallback OnSuccess, FCallback OnFailure);
+	void Login(FString username, FString password, FCallback OnSuccess, FCallback OnFailure);
+
+	UFUNCTION(BlueprintCallable)
+	void Register(FString username, FString password, FCallback OnSuccess, FCallback OnFailure);
 
 	UFUNCTION(BlueprintCallable)
 	void FetchLobbies(FOnLobbiesFetched OnSuccess, FCallback OnFailure);
@@ -45,7 +48,7 @@ public:
 	FRBState GetCurrentState();
 
 private:
-	void HandleAuthenticated(FString& userId, FString& token);
+	void HandleAuthenticated(FString& userId, const FString username, FString& token);
 	void HandleSocketConnectionStatusChanged(EConnectionStatus& status);
 	void ConnectToWebSocket(FString& userId);
 

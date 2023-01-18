@@ -15,8 +15,10 @@ FRBState StateManager::GetState() {
 	return state;
 }
 
-void StateManager::HandleAuthenticated(FString token) {
+void StateManager::HandleAuthenticated(FString token, FUser user) {
 	state.authToken = token;
+	state.user = user;
+	UE_LOG(LogTemp, Warning, TEXT("Got user %s"), *user.username)
 	PublishState();
 }
 
