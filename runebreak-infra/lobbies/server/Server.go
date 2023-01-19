@@ -122,7 +122,7 @@ func (server LobbiesServer) lobbyRecordToRpcLobby(lobby *types.Lobby) (*lobbiesP
 	rpcLobby.OwnerId = lobby.OwnerId
 	rpcLobby.Users = []*lobbiesPbs.User{}
 
-	userIds := getKeys_String(lobby.Users)
+	userIds := lobby.Users
 	err := server.addUsersFromAccountsService(&rpcLobby, userIds)
 	if err != nil {
 		return nil, err

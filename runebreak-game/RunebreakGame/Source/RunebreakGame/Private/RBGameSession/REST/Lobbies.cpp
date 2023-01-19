@@ -73,14 +73,13 @@ FHttpRequestRef CreateLobbyRESTCall(FString LobbyName, TFunction<void(FLobby lob
 
 FHttpRequestRef JoinLobbyRESTCall(FString lobbyId, TFunction<void(FLobby lobby)> OnSuccess, TFunction<void()> OnFailure) {
 	FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
-
 	Request->OnProcessRequestComplete().BindLambda([OnSuccess, OnFailure](FHttpRequestPtr request, FHttpResponsePtr Response, bool bConnectedSuccessfully) {
 		const int responseCode = Response->GetResponseCode();
 		if (bConnectedSuccessfully && responseCode >= 200 && responseCode <= 299) {
 			FString respJson = *Response->GetContentAsString();
-			FLobby resp;
+			FCreateOrJoinLobbyResponseBody resp;
 			FromJson(respJson, &resp);
-			OnSuccess(resp);
+			OnSuccess(resp.lobby);
 		}
 		else {
 			OnFailure();

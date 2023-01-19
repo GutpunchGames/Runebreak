@@ -22,6 +22,7 @@ RBSocket::~RBSocket()
 void RBSocket::Connect() {
 	const FString ServerProtocol = TEXT("ws");
 
+	FModuleManager::Get().LoadModuleChecked("WebSockets");
 	TSharedPtr<IWebSocket> Socket = FWebSocketsModule::Get().CreateWebSocket(url, ServerProtocol);
 
 	ConnectionStatusChangedEvent.Broadcast(EConnectionStatus::Connecting);

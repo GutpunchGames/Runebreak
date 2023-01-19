@@ -35,5 +35,12 @@ struct FLobby
 			+ "\tlobby: " + lobbyId + "\n"
 		);
 	}
+
+	void PrintUsers() {
+		UE_LOG(LogTemp, Warning, TEXT("users size: %d"), users.Num());
+		for (FUser User : users) {
+			UE_LOG(LogTemp, Warning, TEXT("lobby user: %s"), *User.ToString());
+		}
+	}
 };
 
