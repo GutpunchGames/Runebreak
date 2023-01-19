@@ -13,5 +13,7 @@ UCLASS()
 class RUNEBREAKGAME_API ARunebreakGameGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
+
+
 	
 };
