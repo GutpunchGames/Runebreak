@@ -41,6 +41,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void JoinLobby(FString LobbyId, FOnCreatedOrJoinedLobby OnSuccess, FCallback OnFailure);
 
+	UFUNCTION(BlueprintCallable)
+	void LeaveLobby(FString LobbyId, FCallback OnSuccess, FCallback OnFailure);
+
 	UPROPERTY(BlueprintAssignable, BlueprintReadOnly)
 	FOnGameSessionStateChangedEvent OnGameSessionStateChanged;
 

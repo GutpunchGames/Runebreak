@@ -44,4 +44,4 @@ DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCreatedOrJoinedLobby, FLobby, Lobby);
 FHttpRequestRef CreateLobbyRESTCall(FString lobbyName, TFunction<void(FLobby lobby)> OnSuccess, TFunction<void()> OnFailure);
 FHttpRequestRef JoinLobbyRESTCall(FString lobbyId, TFunction<void(FLobby lobby)> OnSuccess, TFunction<void()> OnFailure);
 
-FHttpRequestRef LeaveLobbyRESTCall(FString lobbyId, TFunction<void(FLobby lobby)> OnSuccess, TFunction<void()> OnFailure);
+FHttpRequestRef LeaveLobbyRESTCall(FString lobbyId, TFunction<void()> OnSuccess, TFunction<void()> OnFailure);

@@ -76,6 +76,19 @@ void URBGameSession::JoinLobby(FString LobbyId, FOnCreatedOrJoinedLobby OnSucces
 	request->ProcessRequest();
 }
 
+void URBGameSession::LeaveLobby(FString LobbyId, FCallback OnSuccess, FCallback OnFailure) {
+	FHttpRequestRef request = LeaveLobbyRESTCall(LobbyId,
+		[this, LobbyId, OnSuccess]() {
+			stateManager->HandleLobbyLeave(LobbyId);
+			OnSuccess.ExecuteIfBound();
+		},
+		[this, OnFailure]() {
+			OnFailure.ExecuteIfBound();
+		});
+	AddAuthHeaders(request);
+	request->ProcessRequest();
+}
+
 void URBGameSession::HandleAuthenticated(FString& userId, const FString username, FString& token) {
 	FUser user;
 	user.userId = userId;

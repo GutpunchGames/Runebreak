@@ -73,14 +73,16 @@ func (server LobbiesServer) Leave(ctx context.Context, req *lobbiesPbs.LeaveLobb
 	}
 
 	// add the users to the library
-	rpcLobby, err := server.lobbyRecordToRpcLobby(lobby)
-	if (err != nil) {
-		return nil, err
-	}
+	if lobby != nil {
+		rpcLobby, err := server.lobbyRecordToRpcLobby(lobby)
+		if (err != nil) {
+			return nil, err
+		}
 
-	err = server.notifyLobbyUsers(rpcLobby, req.UserId)
-	if (err != nil) {
-		return nil, err
+		err = server.notifyLobbyUsers(rpcLobby, req.UserId)
+		if (err != nil) {
+			return nil, err
+		}
 	}
 
 	return &lobbiesPbs.LeaveLobbyResponse{}, nil
