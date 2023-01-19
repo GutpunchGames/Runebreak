@@ -1,5 +1,6 @@
 package connections
 
 type WSMessage struct {
-	payload []byte
+	MessageType string `json:"messageType"`
+	Payload     string `json:"payload"`
 }

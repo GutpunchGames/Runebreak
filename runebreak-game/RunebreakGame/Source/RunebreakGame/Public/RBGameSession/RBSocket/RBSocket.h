@@ -3,14 +3,29 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include <RunebreakGame/Public/RBGameSession/Types/LobbyTypes.h>
 #include <RunebreakGame/Public/RBGameSession/Models/ChatMessage.h>
 #include <RunebreakGame/Public/RBGameSession/Models/ConnectionStatus.h>
+#include "RBSocket.generated.h"
 
 DECLARE_EVENT_OneParam(URBSocket, FConnectionStatusChangedEvent, EConnectionStatus)
 DECLARE_EVENT_OneParam(URBSocket, FChatMessageReceivedEvent, FChatMessage)
+DECLARE_EVENT_OneParam(URBSocket, FLobbyUpdatedEvent, FLobby)
 
-// todo: add other events
-//DECLARE_EVENT_OneParam(URBSocket, FLobbyUpdate, FLobby)
+USTRUCT()
+struct FSocketMessage {
+	GENERATED_BODY()
+
+public:
+	FSocketMessage() {}
+
+	UPROPERTY(VisibleAnywhere)
+	FString MessageType;
+
+	// base 64 encoded
+	UPROPERTY(VisibleAnywhere)
+	FString Payload;
+};
 
 class RUNEBREAKGAME_API RBSocket
 {
@@ -25,6 +40,10 @@ public:
 
 	FConnectionStatusChangedEvent ConnectionStatusChangedEvent;
 	FChatMessageReceivedEvent ChatMessageReceivedEvent;
+	FLobbyUpdatedEvent LobbyUpdatedEvent;
 
 	void Connect();
+
+private:
+	FString Base64Decode(FString src);
 };

@@ -93,6 +93,9 @@ void URBGameSession::ConnectToWebSocket(FString& userId) {
 	rbSocket->ChatMessageReceivedEvent.AddLambda([this](FChatMessage message) {
 		stateManager->HandleMessageReceived(message);
 	});
+	rbSocket->LobbyUpdatedEvent.AddLambda([this](FLobby lobby) {
+		stateManager->HandleLobbyUpdate(lobby);
+	});
 	rbSocket->Connect();
 }
 

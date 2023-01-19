@@ -4,6 +4,7 @@
 #include "RBGameSession/RBSocket/RBSocket.h"
 
 #include "HTTP.h"
+#include "Misc/Base64.h"
 #include <Runtime/Online/WebSockets/Public/WebSocketsModule.h>
 #include <Runtime/Online/WebSockets/Public/IWebSocket.h>
 #include <RunebreakGame/Public/RBGameSession/Utilities/JsonUtils.h>
@@ -42,13 +43,20 @@ void RBSocket::Connect() {
 	});
 
 	Socket->OnMessage().AddLambda([this](const FString& Message) -> void {
-		UE_LOG(LogTemp, Warning, TEXT("thread id on ws message: %d"), FPlatformTLS::GetCurrentThreadId())
-		UE_LOG(LogTemp, Warning, TEXT("OnMessage(%s)"), *Message);
-		FChatMessage* msg = new FChatMessage();
-		FromJson(Message, msg);
-		UE_LOG(LogTemp, Warning, TEXT("deserialized message successfully : %s"), *msg->ToString());
-		ChatMessageReceivedEvent.Broadcast(*msg);
-		// This code will run when we receive a string message from the server.
+		FSocketMessage* message = new FSocketMessage();
+		FromJson(Message, message);
+		if (message->MessageType.Equals("LOBBY_UPDATE")) {
+			FString decoded = Base64Decode(message->Payload);
+			UE_LOG(LogTemp, Warning, TEXT("got decoded message: %s"), *decoded);
+			FLobby* lobby = new FLobby();
+			FromJson(decoded, lobby);
+			FUser user = lobby->users[0];
+			UE_LOG(LogTemp, Warning, TEXT("lobby had user (c++): %s"), *user.ToString());
+			LobbyUpdatedEvent.Broadcast(*lobby);
+		}
+		else {
+			UE_LOG(LogTemp, Warning, TEXT("unhandled message of type: %s"), *message->MessageType)
+		}
 	});
 
 	Socket->OnRawMessage().AddLambda([this](const void* Data, SIZE_T Size, SIZE_T BytesRemaining) -> void {
@@ -64,4 +72,11 @@ void RBSocket::Connect() {
 
 	// And we finally connect to the server. 
 	Socket->Connect();
+}
+
+FString RBSocket::Base64Decode(FString src) {
+	FString Dest;
+	TArray<uint8> ByteArray;
+	bool Success = FBase64::Decode(src, Dest);
+	return Dest;
 }

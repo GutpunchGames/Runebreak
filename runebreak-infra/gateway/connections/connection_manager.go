@@ -1,6 +1,7 @@
 package connections
 
 import (
+	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -93,8 +94,11 @@ func (connectionManager *ConnectionManager) Dispatch(
 		return
 	}
 
+	encoded := b64.StdEncoding.EncodeToString(payload)
 	// send the message over the websocket
-	if err := conn.WriteMessage(WSMessage{payload: payload}); err != nil {
+	err := conn.WriteMessage(WSMessage{MessageType: "LOBBY_UPDATE", Payload: encoded});
+
+	if err != nil {
 		connectionManager.logger.Printf("failed to deliver message to user: %s\n", userId)
 		return
 	} else {
