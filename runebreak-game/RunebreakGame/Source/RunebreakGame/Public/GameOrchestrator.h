@@ -27,6 +27,9 @@ public:
 	UPROPERTY(EditInstanceOnly)
 	UClass* PlayerClass;
 
+	UPROPERTY(EditInstanceOnly)
+	int InputDelay;
+
 private:
 	int frameCount = 0;
 

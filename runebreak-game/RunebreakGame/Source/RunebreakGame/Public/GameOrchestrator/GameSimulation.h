@@ -15,7 +15,7 @@ class RUNEBREAKGAME_API UGameSimulation : public UObject
 	GENERATED_BODY()
 
 public:
-	void Initialize(UClass* PlayerClass, FVector PlayerSpawnPoint);
+	void Initialize(UClass* PlayerClass, FVector PlayerSpawnPoint, int InputDelay);
 	void AddLocalInput(int MoveDirection);
 	void AdvanceFrame();
 	int GetFrameCount();

@@ -14,7 +14,7 @@ void AGameOrchestrator::BeginPlay() {
 	GameSimulation = NewObject<UGameSimulation>(this, "GameOrchestratorGameSimulation");
 	BindInputs();
 
-	GameSimulation->Initialize(PlayerClass, PlayerSpawnPoint);
+	GameSimulation->Initialize(PlayerClass, PlayerSpawnPoint, InputDelay);
 }
 
 void AGameOrchestrator::Tick(float DeltaSeconds) {

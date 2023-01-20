@@ -5,13 +5,16 @@
 #include <RunebreakGame/Public/GameOrchestrator/SimulationMovingBall.h>
 
 
-void UGameSimulation::Initialize(UClass* PlayerClass, FVector PlayerSpawnPoint) {
+void UGameSimulation::Initialize(UClass* PlayerClass, FVector PlayerSpawnPoint, int InputDelay) {
 	InputBuffer = NewObject<UInputBuffer>(this, "InputBuffer1");
+	InputBuffer->Delay = InputDelay;
 	SpawnPlayer(PlayerClass, PlayerSpawnPoint);
 }
 
 void UGameSimulation::AddLocalInput(int MoveDirection) {
-	InputBuffer->MoveDirection = MoveDirection;
+	FInput Input;
+	Input.Direction = MoveDirection;
+	InputBuffer->AddInput(Input);
 }
 
 void UGameSimulation::AdvanceFrame() {

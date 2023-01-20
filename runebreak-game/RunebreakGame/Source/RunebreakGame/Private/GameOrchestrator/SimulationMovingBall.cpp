@@ -4,14 +4,11 @@
 #include "GameOrchestrator/SimulationMovingBall.h"
 
 void ASimulationMovingBall::SimulationTick(UInputBuffer* InputBuffer) {
-	if (InputBuffer->MoveDirection != 0) {
-		FVector NewLocation = GetActorLocation();
-		NewLocation.Z += InputBuffer->MoveDirection;
-		SetActorLocation(NewLocation);
-		UE_LOG(LogTemp, Warning, TEXT("New location: %s"), *NewLocation.ToString())
-	} else {
-		UE_LOG(LogTemp, Warning, TEXT("No movement"))
-	}
+	FVector NewLocation = GetActorLocation();
+	FInput Input = InputBuffer->GetMostRecentInput();
+	NewLocation.Z += Input.Direction;
+	SetActorLocation(NewLocation);
+	UE_LOG(LogTemp, Warning, TEXT("New location: %s"), *NewLocation.ToString())
 }
 
 FString ASimulationMovingBall::SerializeState() {
