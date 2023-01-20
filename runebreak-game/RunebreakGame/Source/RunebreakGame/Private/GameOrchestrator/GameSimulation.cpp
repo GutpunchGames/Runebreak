@@ -3,8 +3,8 @@
 
 #include "GameOrchestrator/GameSimulation.h"
 
-void UGameSimulation::AddLocalInput(FInput LocalInput) {
-	UE_LOG(LogTemp, Warning, TEXT("Got Input: %s"), *LocalInput.ToString())
+void UGameSimulation::AddLocalInput(int MoveDirection) {
+	// todo: handle this
 }
 
 void UGameSimulation::AdvanceFrame() {
@@ -13,4 +13,8 @@ void UGameSimulation::AdvanceFrame() {
 
 void UGameSimulation::SerializeState() {
 
+}
+
+int UGameSimulation::GetFrameCount() {
+	return FrameCount;
 }

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include <RunebreakGame/Public/GameOrchestrator/PlayerInputProcessor.h>
+#include <RunebreakGame/Public/GameOrchestrator/GameSimulation.h>
 #include "GameOrchestrator.generated.h"
 
 /**
@@ -25,6 +26,9 @@ private:
 
 	UPROPERTY()
 	UPlayerInputProcessor* PlayerInputProcessor;
+
+	UPROPERTY()
+	UGameSimulation* GameSimulation;
 
 	void BindInputs();
 	void HandleMoveUpPressed();

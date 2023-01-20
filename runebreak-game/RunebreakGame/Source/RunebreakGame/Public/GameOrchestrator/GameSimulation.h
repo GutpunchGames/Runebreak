@@ -13,8 +13,9 @@ class RUNEBREAKGAME_API UGameSimulation : public UObject
 	GENERATED_BODY()
 
 public:
-	void AddLocalInput(FInput LocalInput);
+	void AddLocalInput(int MoveDirection);
 	void AdvanceFrame();
+	int GetFrameCount();
 
 private:
 	void SerializeState();
