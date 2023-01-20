@@ -3,12 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Input.generated.h"
 
-USTRUCT()
 struct RUNEBREAKGAME_API FInput
 {
-	GENERATED_BODY()
 
 public:
 	FInput();

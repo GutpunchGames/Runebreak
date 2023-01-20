@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include <RunebreakGame/Public/GameOrchestrator/PlayerInputProcessor.h>
 #include "GameOrchestrator.generated.h"
 
 /**
@@ -21,5 +22,13 @@ public:
 
 private:
 	int frameCount = 0;
-	virtual void HandleMoveUp();
+
+	UPROPERTY()
+	UPlayerInputProcessor* PlayerInputProcessor;
+
+	void BindInputs();
+	void HandleMoveUpPressed();
+	void HandleMoveUpReleased();
+	void HandleMoveDownPressed();
+	void HandleMoveDownReleased();
 };
