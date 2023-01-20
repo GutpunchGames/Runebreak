@@ -21,6 +21,12 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 
+	UPROPERTY(EditInstanceOnly)
+	FVector PlayerSpawnPoint;
+
+	UPROPERTY(EditInstanceOnly)
+	UClass* PlayerClass;
+
 private:
 	int frameCount = 0;
 

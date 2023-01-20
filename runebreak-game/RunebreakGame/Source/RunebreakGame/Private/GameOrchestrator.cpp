@@ -13,6 +13,8 @@ void AGameOrchestrator::BeginPlay() {
 	PlayerInputProcessor = NewObject<UPlayerInputProcessor>(this, "GameOrchestratorPlayerInputProcessor");
 	GameSimulation = NewObject<UGameSimulation>(this, "GameOrchestratorGameSimulation");
 	BindInputs();
+
+	GameSimulation->Initialize(PlayerClass, PlayerSpawnPoint);
 }
 
 void AGameOrchestrator::Tick(float DeltaSeconds) {
