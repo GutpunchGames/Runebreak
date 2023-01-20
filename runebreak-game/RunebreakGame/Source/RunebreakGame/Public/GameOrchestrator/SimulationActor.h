@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include <RunebreakGame/Public/GameOrchestrator/InputBuffer.h>
 #include "SimulationActor.generated.h"
 
 UCLASS()
@@ -20,6 +21,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	virtual void SimulationTick(int MoveDirection);
+	virtual void SimulationTick(UInputBuffer* InputBuffer);
 	virtual FString SerializeState();
 };

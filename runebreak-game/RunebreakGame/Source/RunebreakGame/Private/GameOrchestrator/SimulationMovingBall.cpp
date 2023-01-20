@@ -3,10 +3,10 @@
 
 #include "GameOrchestrator/SimulationMovingBall.h"
 
-void ASimulationMovingBall::SimulationTick(int MoveDirection) {
-	if (MoveDirection != 0) {
+void ASimulationMovingBall::SimulationTick(UInputBuffer* InputBuffer) {
+	if (InputBuffer->MoveDirection != 0) {
 		FVector NewLocation = GetActorLocation();
-		NewLocation.Z += MoveDirection;
+		NewLocation.Z += InputBuffer->MoveDirection;
 		SetActorLocation(NewLocation);
 		UE_LOG(LogTemp, Warning, TEXT("New location: %s"), *NewLocation.ToString())
 	} else {

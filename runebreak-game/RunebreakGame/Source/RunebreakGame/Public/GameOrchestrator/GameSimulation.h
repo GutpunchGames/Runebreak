@@ -5,8 +5,8 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include <RunebreakGame/Public/GameOrchestrator/Input.h>
+#include <RunebreakGame/Public/GameOrchestrator/InputBuffer.h>
 #include <RunebreakGame/Public/GameOrchestrator/SimulationActor.h>
-#include "Math/Rotator.h"
 #include "GameSimulation.generated.h"
 
 UCLASS()
@@ -20,12 +20,12 @@ public:
 	void AdvanceFrame();
 	int GetFrameCount();
 
-
 private:
 	ASimulationActor* Player;
 	int FrameCount = 0;
 
-	int ThisFrameMoveDirection;
+	UInputBuffer* InputBuffer;
+
 	void SpawnPlayer(UClass* PlayerClass, FVector const& PlayerSpawnPoint);
 	ASimulationActor* SpawnSimulationActor(UClass* Class, FVector const& Location);
 	void SerializeState();

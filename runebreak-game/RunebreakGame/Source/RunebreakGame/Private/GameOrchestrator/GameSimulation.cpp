@@ -6,17 +6,17 @@
 
 
 void UGameSimulation::Initialize(UClass* PlayerClass, FVector PlayerSpawnPoint) {
+	InputBuffer = NewObject<UInputBuffer>(this, "InputBuffer1");
 	SpawnPlayer(PlayerClass, PlayerSpawnPoint);
 }
 
 void UGameSimulation::AddLocalInput(int MoveDirection) {
-	ThisFrameMoveDirection = MoveDirection;
+	InputBuffer->MoveDirection = MoveDirection;
 }
 
 void UGameSimulation::AdvanceFrame() {
 	FrameCount++;
-	Player->SimulationTick(ThisFrameMoveDirection);
-	ThisFrameMoveDirection = 0;
+	Player->SimulationTick(InputBuffer);
 }
 
 void UGameSimulation::SerializeState() {

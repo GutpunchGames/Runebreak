@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameOrchestrator/SimulationActor.h"
+#include <RunebreakGame/Public/GameOrchestrator/InputBuffer.h>
 #include "SimulationMovingBall.generated.h"
 
 /**
@@ -14,6 +15,7 @@ class RUNEBREAKGAME_API ASimulationMovingBall : public ASimulationActor
 {
 	GENERATED_BODY()
 
-	void SimulationTick(int MoveDirection) override;
+public:
+	void SimulationTick(UInputBuffer* InputBuffer) override;
 	FString SerializeState() override;
 };
