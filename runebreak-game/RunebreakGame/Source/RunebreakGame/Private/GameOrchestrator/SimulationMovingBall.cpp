@@ -6,7 +6,7 @@
 void ASimulationMovingBall::SimulationTick(UInputBuffer* InputBuffer) {
 	FVector NewLocation = GetActorLocation();
 	FInput Input = InputBuffer->GetMostRecentInput();
-	NewLocation.Z += Input.Direction;
+	NewLocation.Z += Input.MoveDirection;
 	SetActorLocation(NewLocation);
 }
 

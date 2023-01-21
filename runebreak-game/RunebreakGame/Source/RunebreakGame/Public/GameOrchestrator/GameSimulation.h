@@ -15,18 +15,22 @@ class RUNEBREAKGAME_API UGameSimulation : public UObject
 	GENERATED_BODY()
 
 public:
-	void Initialize(UClass* PlayerClass, FVector PlayerSpawnPoint, int InputDelay);
-	void AddLocalInput(int MoveDirection);
+	void Initialize(UClass* PlayerClass, FVector Player1SpawnPoint, FVector Player2SpawnPoint, int InputDelay);
+	void AddPlayer1Input(FInput Inputj);
+	void AddPlayer2Input(FInput Inputj);
 	void AdvanceFrame();
 	int GetFrameCount();
 
 private:
-	ASimulationActor* Player;
+	ASimulationActor* Player1;
+	ASimulationActor* Player2;
+
 	int FrameCount = 0;
 
-	UInputBuffer* InputBuffer;
+	UInputBuffer* Player1InputBuffer;
+	UInputBuffer* Player2InputBuffer;
 
-	void SpawnPlayer(UClass* PlayerClass, FVector const& PlayerSpawnPoint);
+	ASimulationActor* SpawnPlayer(UClass* PlayerClass, FVector const& PlayerSpawnPoint);
 	ASimulationActor* SpawnSimulationActor(UClass* Class, FVector const& Location);
 	void SerializeState();
 };

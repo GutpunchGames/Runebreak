@@ -14,8 +14,7 @@ FInput UInputBuffer::GetInput(int Frame) {
 		return FrameInputs[Frame - Delay];
 	}
 	else {
-		FInput ret;
-		return ret;
+		return FInput();
 	}
 }
 

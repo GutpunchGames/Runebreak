@@ -18,8 +18,9 @@ class RUNEBREAKGAME_API UPlayerInputProcessor : public UObject
 
 public:
 	UPlayerInputProcessor();
-	void Bind(UInputComponent* InputComponent);
-	int MoveDirection;
+	void Bind(int PlayerIndex, UInputComponent* InputComponent);
+
+	FInput Input;
 
 	void HandleMoveUpPressed();
 	void HandleMoveUpReleased();

@@ -4,13 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include <RunebreakGame/Public/GameOrchestrator/PlayerSpawnPoint.h>
 #include <RunebreakGame/Public/GameOrchestrator/PlayerInputProcessor.h>
 #include <RunebreakGame/Public/GameOrchestrator/GameSimulation.h>
+#include <RunebreakGame/Public/GameOrchestrator/Input.h>
 #include "GameOrchestrator.generated.h"
 
-/**
- * 
- */
 UCLASS(Blueprintable)
 class RUNEBREAKGAME_API AGameOrchestrator : public AActor
 {
@@ -22,7 +21,10 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 	UPROPERTY(EditInstanceOnly)
-	FVector PlayerSpawnPoint;
+	APlayerSpawnPoint* Player1SpawnPoint;
+
+	UPROPERTY(EditInstanceOnly)
+	APlayerSpawnPoint* Player2SpawnPoint;
 
 	UPROPERTY(EditInstanceOnly)
 	UClass* PlayerClass;
@@ -31,17 +33,15 @@ public:
 	int InputDelay;
 
 private:
-	int frameCount = 0;
+	int FrameCount = 0;
 
 	UPROPERTY()
-	UPlayerInputProcessor* PlayerInputProcessor;
+	UPlayerInputProcessor* Player1InputProcessor;
+	UPROPERTY()
+	UPlayerInputProcessor* Player2InputProcessor;
 
 	UPROPERTY()
 	UGameSimulation* GameSimulation;
 
 	void BindInputs();
-	void HandleMoveUpPressed();
-	void HandleMoveUpReleased();
-	void HandleMoveDownPressed();
-	void HandleMoveDownReleased();
 };

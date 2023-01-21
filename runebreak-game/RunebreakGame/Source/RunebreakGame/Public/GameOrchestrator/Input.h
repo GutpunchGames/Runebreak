@@ -10,7 +10,7 @@ struct RUNEBREAKGAME_API FInput
 public:
 	FInput();
 
-	int Direction;
+	int MoveDirection;
 
 	FString ToString();
 };
