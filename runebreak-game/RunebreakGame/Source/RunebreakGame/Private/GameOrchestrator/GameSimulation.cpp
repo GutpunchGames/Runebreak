@@ -14,6 +14,7 @@ void UGameSimulation::Initialize(
 	Player1InputBuffer = NewObject<UInputBuffer>(this, "Player1InputBuffer");
 	Player2InputBuffer = NewObject<UInputBuffer>(this, "Player2InputBuffer");
 	Player1InputBuffer->Delay = InputDelay;
+	Player2InputBuffer->Delay = InputDelay;
 	Player1 = SpawnPlayer(PlayerClass, Player1SpawnPoint);
 	Player2 = SpawnPlayer(PlayerClass, Player2SpawnPoint);
 }
