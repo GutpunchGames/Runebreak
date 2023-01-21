@@ -17,7 +17,10 @@ class RUNEBREAKGAME_API AGameOrchestrator : public AActor
 
 public:
 	AGameOrchestrator();
-	virtual void BeginPlay() override;
+
+	UFUNCTION(BlueprintCallable)
+	virtual void PrepareGame(int PlayerIndex);
+
 	virtual void Tick(float DeltaSeconds) override;
 
 	UPROPERTY(EditInstanceOnly)
@@ -43,5 +46,5 @@ private:
 	UPROPERTY()
 	UGameSimulation* GameSimulation;
 
-	void BindInputs();
+	void BindInputs(int PlayerIndex);
 };

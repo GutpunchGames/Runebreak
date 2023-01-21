@@ -5,17 +5,18 @@
 
 AGameOrchestrator::AGameOrchestrator() {
 	PrimaryActorTick.bCanEverTick = true;
-	PrimaryActorTick.bStartWithTickEnabled = true;
+	PrimaryActorTick.bStartWithTickEnabled = false;
 }
 
-void AGameOrchestrator::BeginPlay() {
-	Super::BeginPlay();
+void AGameOrchestrator::PrepareGame(int PlayerIndex) {
 	Player1InputProcessor = NewObject<UPlayerInputProcessor>(this, "GameOrchestratorPlayer1InputProcessor");
 	Player2InputProcessor = NewObject<UPlayerInputProcessor>(this, "GameOrchestratorPlayer2InputProcessor");
-	GameSimulation = NewObject<UGameSimulation>(this, "GameOrchestratorGameSimulation");
-	BindInputs();
+	BindInputs(PlayerIndex);
 
+	GameSimulation = NewObject<UGameSimulation>(this, "GameOrchestratorGameSimulation");
 	GameSimulation->Initialize(PlayerClass, Player1SpawnPoint->GetActorLocation(), Player2SpawnPoint->GetActorLocation(), InputDelay);
+
+	PrimaryActorTick.SetTickFunctionEnable(true);
 }
 
 void AGameOrchestrator::Tick(float DeltaSeconds) {
@@ -25,12 +26,15 @@ void AGameOrchestrator::Tick(float DeltaSeconds) {
 	GameSimulation->AdvanceFrame();
 }
 
-void AGameOrchestrator::BindInputs() {
-	if (Player1SpawnPoint->PlayerSpawnConfig.ClientType == PlayerClientType::Local) {
+void AGameOrchestrator::BindInputs(int PlayerIndex) {
+	if (PlayerIndex == 1) {
 		Player1InputProcessor->Bind(1, InputComponent);
 	}
-	if (Player2SpawnPoint->PlayerSpawnConfig.ClientType == PlayerClientType::Local) {
+	else if (PlayerIndex == 2) {
 		Player2InputProcessor->Bind(2, InputComponent);
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("Invalid Player Index: %d"), PlayerIndex)
 	}
 }
 
