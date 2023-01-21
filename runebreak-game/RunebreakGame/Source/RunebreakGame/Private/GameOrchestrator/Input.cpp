@@ -5,6 +5,7 @@
 
 FInput::FInput()
 {
+	Direction = 0;
 }
 
 FString FInput::ToString() {

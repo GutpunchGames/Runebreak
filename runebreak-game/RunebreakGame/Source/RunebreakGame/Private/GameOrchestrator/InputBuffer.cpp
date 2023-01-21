@@ -15,7 +15,6 @@ FInput UInputBuffer::GetInput(int Frame) {
 	}
 	else {
 		FInput ret;
-		ret.Direction = 0;
 		return ret;
 	}
 }

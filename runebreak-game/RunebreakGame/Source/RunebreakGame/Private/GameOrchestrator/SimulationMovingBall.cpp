@@ -8,7 +8,6 @@ void ASimulationMovingBall::SimulationTick(UInputBuffer* InputBuffer) {
 	FInput Input = InputBuffer->GetMostRecentInput();
 	NewLocation.Z += Input.Direction;
 	SetActorLocation(NewLocation);
-	UE_LOG(LogTemp, Warning, TEXT("New location: %s"), *NewLocation.ToString())
 }
 
 FString ASimulationMovingBall::SerializeState() {
