@@ -34,8 +34,6 @@ void URBGameSocket::Setup() {
 	SendSocket = nullptr;
 	ReceiveSocket = nullptr;
 
-	FIPv4Address Addr = FIPv4Address::Any;
-
 	if (SocketSubsystem != nullptr)
 	{
 		if (ReceiveSocket == nullptr)
@@ -43,8 +41,9 @@ void URBGameSocket::Setup() {
 			 ReceiveSocket = FUdpSocketBuilder("RBGameSocket")
 				.AsNonBlocking()
 				.AsReusable()
-				.BoundToAddress(Addr)
-				.BoundToPort(9010)
+				.BoundToEndpoint(LocalEndpoint)
+				//.BoundToAddress(Addr)
+				//.BoundToPort(SocketConfig.LocalPort)
 				.WithSendBufferSize(MaxSendSize)
 				.WithReceiveBufferSize(BufferSize)
 				.WithBroadcast()
@@ -55,8 +54,6 @@ void URBGameSocket::Setup() {
 			 SendSocket = FUdpSocketBuilder("RBGameSocket")
 				.AsNonBlocking()
 				.AsReusable()
-				.BoundToAddress(Addr)
-				.BoundToPort(9012)
 				.WithSendBufferSize(MaxSendSize)
 				.WithReceiveBufferSize(BufferSize)
 				.WithBroadcast()
@@ -81,7 +78,9 @@ void URBGameSocket::ReceiveMessage() {
 		ansiiData[BytesRead] = 0;
 
 		FString data = ANSI_TO_TCHAR(ansiiData);
-		UE_LOG(LogTemp, Warning, TEXT("Received data: %s"), *data)
+		FString log = FString::Printf(TEXT("got message: %s"), *data);
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *log)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, log);
 	}
 	UE_LOG(LogTemp, Warning, TEXT("Receive message END"))
 }
