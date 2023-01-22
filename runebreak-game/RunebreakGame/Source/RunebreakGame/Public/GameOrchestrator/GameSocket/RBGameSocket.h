@@ -49,6 +49,7 @@ public:
 	void ReceiveMessage();
 
 	ISocketSubsystem* SocketSubsystem;
-	FSocket* Socket;
+	FSocket* SendSocket;
+	FSocket* ReceiveSocket;
 	TArray<uint8> ReceivedData;
 };
