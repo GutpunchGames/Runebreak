@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "GameOrchestrator.h"
+#include "GameOrchestrator/GameOrchestrator.h"
 
 AGameOrchestrator::AGameOrchestrator() {
 	PrimaryActorTick.bCanEverTick = true;
