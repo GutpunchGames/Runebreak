@@ -10,7 +10,7 @@ TSharedRef<FInternetAddr> FRBGameSocketConfig::GetRemoteAddr() {
 
 URBGameSocket::URBGameSocket()
 {
-
+	NetworkMonitor = CreateDefaultSubobject<UNetworkMonitor>(TEXT("NetworkMonitor"));
 }
 
 URBGameSocket::~URBGameSocket()
@@ -42,8 +42,6 @@ void URBGameSocket::Setup() {
 				.AsNonBlocking()
 				.AsReusable()
 				.BoundToEndpoint(LocalEndpoint)
-				//.BoundToAddress(Addr)
-				//.BoundToPort(SocketConfig.LocalPort)
 				.WithSendBufferSize(MaxSendSize)
 				.WithReceiveBufferSize(BufferSize)
 				.WithBroadcast()

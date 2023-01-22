@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Networking.h"
+#include"GameOrchestrator/GameSocket/NetworkMonitor.h"
 #include "RBGameSocket.generated.h"
 
 USTRUCT(BlueprintType)
@@ -21,6 +22,13 @@ public:
 	int LocalPort;
 
 	TSharedRef<FInternetAddr> GetRemoteAddr();
+};
+
+UENUM(BlueprintType)
+enum class ERBGameSocketState : uint8 {
+	Uninitialized = 0x0,
+	Syncing = 0x1,
+	Playing = 0x2
 };
 
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -47,6 +55,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ReceiveMessage();
+
+	UPROPERTY(BlueprintReadOnly)
+	UNetworkMonitor* NetworkMonitor;
 
 	ISocketSubsystem* SocketSubsystem;
 	FSocket* SendSocket;
