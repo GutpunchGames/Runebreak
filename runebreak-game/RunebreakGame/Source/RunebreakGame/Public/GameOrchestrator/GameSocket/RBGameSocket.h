@@ -31,10 +31,21 @@ enum class ERBGameSocketState : uint8 {
 	Playing = 0x2
 };
 
+USTRUCT(BlueprintType)
+struct FRBGameSocketMessage {
+	GENERATED_BODY()
+
+public:
+	UPROPERTY()
+	int Type;
+
+	UPROPERTY()
+	FString Payload; // base 64 encoded JSON for control messages.
+};
+
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class RUNEBREAKGAME_API URBGameSocket : public UActorComponent
 {
-
 	GENERATED_BODY()
 
 public:
@@ -50,17 +61,25 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FRBGameSocketConfig SocketConfig;
 
-	UFUNCTION(BlueprintCallable)
-	bool SendMessage(FString Message);
+	bool SendControlMessage(int Type, FString Payload);
 
-	UFUNCTION(BlueprintCallable)
-	void ReceiveMessage();
+	void ReceivePendingMessages();
 
 	UPROPERTY(BlueprintReadOnly)
 	UNetworkMonitor* NetworkMonitor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float PingIntervalSeconds;
 
 	ISocketSubsystem* SocketSubsystem;
 	FSocket* SendSocket;
 	FSocket* ReceiveSocket;
 	TArray<uint8> ReceivedData;
+
+private:
+	/* Handle to manage the timer */
+	FTimerHandle PingTimerHandle;
+
+	FString Base64Encode(const FString& Source);
+	FString Base64Decode(const FString& Source);
 };

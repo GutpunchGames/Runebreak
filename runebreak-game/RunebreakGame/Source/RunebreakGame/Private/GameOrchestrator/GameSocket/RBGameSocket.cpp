@@ -1,4 +1,6 @@
 #include "GameOrchestrator/GameSocket/RBGameSocket.h"
+#include <RunebreakGame/Public/RBGameSession/Utilities/JsonUtils.h>
+#include "Misc/Base64.h"
 
 // todo: cache this
 TSharedRef<FInternetAddr> FRBGameSocketConfig::GetRemoteAddr() {
@@ -34,6 +36,13 @@ void URBGameSocket::Setup() {
 	SendSocket = nullptr;
 	ReceiveSocket = nullptr;
 
+	NetworkMonitor = NewObject<UNetworkMonitor>(this, TEXT("NetworkMonitor"));
+	NetworkMonitor->PingImpl = [this](long long CurrentTime) {
+		FPingMessage Message;
+		Message.OriginTimestamp = CurrentTime;
+		SendControlMessage(0, Message.ToJson());
+	};
+
 	if (SocketSubsystem != nullptr)
 	{
 		if (ReceiveSocket == nullptr)
@@ -58,9 +67,11 @@ void URBGameSocket::Setup() {
 				.Build();
 		}
 	}
+
+	GetWorld()->GetTimerManager().SetTimer(PingTimerHandle, NetworkMonitor, &UNetworkMonitor::DoPing, PingIntervalSeconds, true);
 }
 
-void URBGameSocket::ReceiveMessage() {
+void URBGameSocket::ReceivePendingMessages() {
 	TSharedRef<FInternetAddr> targetAddr = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
 	uint32 Size;
 	while (ReceiveSocket->HasPendingData(Size))
@@ -80,23 +91,28 @@ void URBGameSocket::ReceiveMessage() {
 		UE_LOG(LogTemp, Warning, TEXT("%s"), *log)
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, log);
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Receive message END"))
 }
 
-bool URBGameSocket::SendMessage(FString Message) {
+bool URBGameSocket::SendControlMessage(int Type, FString Payload) {
 	if (!SendSocket) {
 		UE_LOG(LogTemp, Warning, TEXT("no socket was available"))
 		return false;
 	}
 
+	FRBGameSocketMessage Message;
+	Message.Type = Type;
+	Message.Payload = Base64Encode(Payload);
+
+	FString Json = ToJsonString(Message);
+
 	int32 BytesSent = 0;
 
-	TCHAR* serializedChar = Message.GetCharArray().GetData();
+	TCHAR* serializedChar = Json.GetCharArray().GetData();
 	int32 size = FCString::Strlen(serializedChar);
 
 	bool success = SendSocket->SendTo((uint8*)TCHAR_TO_UTF8(serializedChar), size, BytesSent, *SocketConfig.GetRemoteAddr());
 	if (success) {
-		UE_LOG(LogTemp, Warning, TEXT("Sent message: %s : %s"), *Message, (success ? TEXT("true") : TEXT("false")))
+		UE_LOG(LogTemp, Warning, TEXT("Sent message: %s : was success: %s"), *Json, (success ? TEXT("true") : TEXT("false")))
 		return true;
 	}
 	else {
@@ -106,6 +122,8 @@ bool URBGameSocket::SendMessage(FString Message) {
 }
 
 void URBGameSocket::Teardown() {
+	GetWorld()->GetTimerManager().ClearTimer(PingTimerHandle);
+
 	if (SendSocket) {
 		SocketSubsystem->DestroySocket(SendSocket);
 	}
@@ -115,4 +133,18 @@ void URBGameSocket::Teardown() {
 
 	SendSocket = nullptr;
 	SocketSubsystem = nullptr;
+}
+
+FString URBGameSocket::Base64Encode(const FString& Source) {
+	TArray<uint8> ByteArray;
+	FTCHARToUTF8 StringSrc = FTCHARToUTF8(Source.GetCharArray().GetData());
+	ByteArray.Append((uint8*)StringSrc.Get(), StringSrc.Length());
+	return FBase64::Encode(ByteArray);
+}
+
+FString URBGameSocket::Base64Decode(const FString& Source) {
+	FString Dest;
+	TArray<uint8> ByteArray;
+	bool Success = FBase64::Decode(Source, Dest);
+	return Dest;
 }
