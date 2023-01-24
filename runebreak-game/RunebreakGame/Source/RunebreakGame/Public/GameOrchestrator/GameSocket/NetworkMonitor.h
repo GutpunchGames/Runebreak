@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include <RunebreakGame/Public/GameOrchestrator/GameSocket/NetworkStatistics.h>
 #include "NetworkMonitor.generated.h"
 
 USTRUCT(BlueprintType)
@@ -31,6 +32,8 @@ public:
 	}
 };
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnNetworkStatisticsChanged, FNetworkStatistics);
+
 UCLASS(BlueprintType)
 class UNetworkMonitor : public UObject {
 	GENERATED_BODY()
@@ -39,9 +42,6 @@ public:
 	UNetworkMonitor();
 	~UNetworkMonitor();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	float AverageRoundTripTime;
-
 	void HandlePong(FPongMessage PongMessage);
 
 	UFUNCTION()
@@ -49,9 +49,13 @@ public:
 
 	TFunction<void(FPingMessage)> PingImpl;
 
+	FOnNetworkStatisticsChanged OnNetworkStatisticsChangedDelegate;
+
 private:
 	int PingIndex;
 	int NumPingsTracked = 0;
 	TArray<int> RoundTripTimes;
+
+	FNetworkStatistics NetworkStatistics;
 	void ComputeStatistics();
 };

@@ -43,7 +43,10 @@ void UNetworkMonitor::ComputeStatistics() {
 		Total += RoundTripTimes[i];
 	}
 
-	AverageRoundTripTime = (float)Total / (float) RoundTripTimes.Num();
+	NetworkStatistics.AverageRoundTripTime = (float)Total / (float) RoundTripTimes.Num();
+	UE_LOG(LogTemp, Warning, TEXT("Computed ping: %f"), NetworkStatistics.AverageRoundTripTime);
+	NetworkStatistics.PacketLoss = -1;
+	OnNetworkStatisticsChangedDelegate.Broadcast(NetworkStatistics);
 }
 
 void UNetworkMonitor::DoPing() {
