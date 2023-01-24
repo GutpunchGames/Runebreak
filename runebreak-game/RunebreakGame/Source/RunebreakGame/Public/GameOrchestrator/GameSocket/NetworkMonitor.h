@@ -10,10 +10,24 @@ struct FPingMessage {
 	GENERATED_BODY()
 
 public:
-	long long OriginTimestamp;
+	UPROPERTY()
+	FString OriginTimestamp;
 
 	FString ToJson() {
-		return FString::Printf(TEXT("{\"originTime\":\"%lld\"}"), OriginTimestamp);
+		return FString::Printf(TEXT("{\"OriginTimestamp\":\"%s\"}"), *OriginTimestamp);
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FPongMessage {
+	GENERATED_BODY()
+
+public:
+	UPROPERTY()
+	FString OriginTimestamp;
+
+	FString ToJson() {
+		return FString::Printf(TEXT("{\"OriginTimestamp\":\"%s\"}"), *OriginTimestamp);
 	}
 };
 
@@ -26,16 +40,18 @@ public:
 	~UNetworkMonitor();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	int AveragePing;
+	float AverageRoundTripTime;
 
-	void AddPing(int Ping);
+	void HandlePong(FPongMessage PongMessage);
 
 	UFUNCTION()
 	void DoPing();
-	TFunction<void(long long CurrentTime)> PingImpl;
+
+	TFunction<void(FPingMessage)> PingImpl;
 
 private:
-	int NumPingsCollected;
-	TMap<FString, int> Pings;
+	int PingIndex;
+	int NumPingsTracked = 0;
+	TArray<int> RoundTripTimes;
 	void ComputeStatistics();
 };

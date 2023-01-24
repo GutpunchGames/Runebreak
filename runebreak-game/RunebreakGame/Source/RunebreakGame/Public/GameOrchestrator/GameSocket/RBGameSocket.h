@@ -63,6 +63,7 @@ public:
 
 	bool SendControlMessage(int Type, FString Payload);
 
+	UFUNCTION(BlueprintCallable)
 	void ReceivePendingMessages();
 
 	UPROPERTY(BlueprintReadOnly)
@@ -71,15 +72,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float PingIntervalSeconds;
 
+	UPROPERTY(BlueprintReadOnly)
+	ERBGameSocketState SocketState;
+
 	ISocketSubsystem* SocketSubsystem;
 	FSocket* SendSocket;
 	FSocket* ReceiveSocket;
 	TArray<uint8> ReceivedData;
 
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
 private:
+	void HandleControlMessage(FRBGameSocketMessage Message);
 	/* Handle to manage the timer */
 	FTimerHandle PingTimerHandle;
-
-	FString Base64Encode(const FString& Source);
-	FString Base64Decode(const FString& Source);
 };

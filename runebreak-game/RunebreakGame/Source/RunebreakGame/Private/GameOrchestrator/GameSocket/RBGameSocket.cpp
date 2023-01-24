@@ -1,6 +1,8 @@
 #include "GameOrchestrator/GameSocket/RBGameSocket.h"
 #include <RunebreakGame/Public/RBGameSession/Utilities/JsonUtils.h>
-#include "Misc/Base64.h"
+#include "Kismet/KismetStringLibrary.h"
+#include <Utilities/TimeUtilities.h>
+#include <Utilities/Base64Utilities.h>
 
 // todo: cache this
 TSharedRef<FInternetAddr> FRBGameSocketConfig::GetRemoteAddr() {
@@ -13,6 +15,10 @@ TSharedRef<FInternetAddr> FRBGameSocketConfig::GetRemoteAddr() {
 URBGameSocket::URBGameSocket()
 {
 	NetworkMonitor = CreateDefaultSubobject<UNetworkMonitor>(TEXT("NetworkMonitor"));
+	SocketState = ERBGameSocketState::Uninitialized;
+
+	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bStartWithTickEnabled = true;
 }
 
 URBGameSocket::~URBGameSocket()
@@ -37,10 +43,8 @@ void URBGameSocket::Setup() {
 	ReceiveSocket = nullptr;
 
 	NetworkMonitor = NewObject<UNetworkMonitor>(this, TEXT("NetworkMonitor"));
-	NetworkMonitor->PingImpl = [this](long long CurrentTime) {
-		FPingMessage Message;
-		Message.OriginTimestamp = CurrentTime;
-		SendControlMessage(0, Message.ToJson());
+	NetworkMonitor->PingImpl = [this](FPingMessage PingMessage) {
+		SendControlMessage(0, PingMessage.ToJson());
 	};
 
 	if (SocketSubsystem != nullptr)
@@ -72,6 +76,10 @@ void URBGameSocket::Setup() {
 }
 
 void URBGameSocket::ReceivePendingMessages() {
+	if (!ReceiveSocket) {
+		return;
+	}
+
 	TSharedRef<FInternetAddr> targetAddr = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
 	uint32 Size;
 	while (ReceiveSocket->HasPendingData(Size))
@@ -87,9 +95,9 @@ void URBGameSocket::ReceivePendingMessages() {
 		ansiiData[BytesRead] = 0;
 
 		FString data = ANSI_TO_TCHAR(ansiiData);
-		FString log = FString::Printf(TEXT("got message: %s"), *data);
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *log)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, log);
+		FRBGameSocketMessage Message;
+		FromJson<FRBGameSocketMessage>(data, &Message);
+		HandleControlMessage(Message);
 	}
 }
 
@@ -101,7 +109,7 @@ bool URBGameSocket::SendControlMessage(int Type, FString Payload) {
 
 	FRBGameSocketMessage Message;
 	Message.Type = Type;
-	Message.Payload = Base64Encode(Payload);
+	Message.Payload = Base64Utilities::Base64Encode(Payload);
 
 	FString Json = ToJsonString(Message);
 
@@ -112,12 +120,33 @@ bool URBGameSocket::SendControlMessage(int Type, FString Payload) {
 
 	bool success = SendSocket->SendTo((uint8*)TCHAR_TO_UTF8(serializedChar), size, BytesSent, *SocketConfig.GetRemoteAddr());
 	if (success) {
-		UE_LOG(LogTemp, Warning, TEXT("Sent message: %s : was success: %s"), *Json, (success ? TEXT("true") : TEXT("false")))
+		//UE_LOG(LogTemp, Warning, TEXT("Sent message: %s : was success: %s"), *Json, (success ? TEXT("true") : TEXT("false")))
 		return true;
 	}
 	else {
 		UE_LOG(LogTemp, Warning, TEXT("Failed sending message"))
 		return false;
+	}
+}
+
+void URBGameSocket::HandleControlMessage(FRBGameSocketMessage Message) {
+	FString DecodedPayload = Base64Utilities::Base64Decode(Message.Payload);
+	// received ping. send back the timestamp as pong.
+	if (Message.Type == 0) {
+		FPingMessage PingMessage;
+		FromJson(DecodedPayload, &PingMessage);
+		FPongMessage PongMessage;
+		PongMessage.OriginTimestamp = PingMessage.OriginTimestamp;
+		SendControlMessage(1, PongMessage.ToJson());
+	}
+	// received pong. fold this into the network statistics.
+	else if (Message.Type == 1) {
+		FPongMessage PongMessage;
+		FromJson(DecodedPayload, &PongMessage);
+		NetworkMonitor->HandlePong(PongMessage);
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("Unhandled message type: %d"), Message.Type)
 	}
 }
 
@@ -135,16 +164,7 @@ void URBGameSocket::Teardown() {
 	SocketSubsystem = nullptr;
 }
 
-FString URBGameSocket::Base64Encode(const FString& Source) {
-	TArray<uint8> ByteArray;
-	FTCHARToUTF8 StringSrc = FTCHARToUTF8(Source.GetCharArray().GetData());
-	ByteArray.Append((uint8*)StringSrc.Get(), StringSrc.Length());
-	return FBase64::Encode(ByteArray);
-}
-
-FString URBGameSocket::Base64Decode(const FString& Source) {
-	FString Dest;
-	TArray<uint8> ByteArray;
-	bool Success = FBase64::Decode(Source, Dest);
-	return Dest;
+void URBGameSocket::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	ReceivePendingMessages();
 }

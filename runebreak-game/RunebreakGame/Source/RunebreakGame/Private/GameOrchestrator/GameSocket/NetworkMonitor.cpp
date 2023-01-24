@@ -2,28 +2,55 @@
 
 
 #include "GameOrchestrator/GameSocket/NetworkMonitor.h"
+#include "Misc/DefaultValueHelper.h"
+#include <Utilities/TimeUtilities.h>
 #include <chrono>
 
 UNetworkMonitor::UNetworkMonitor() {
-
+	RoundTripTimes.SetNumUninitialized(20);
+	PingIndex = 0;
 }
 
 UNetworkMonitor::~UNetworkMonitor() {
 
 }
 
-void UNetworkMonitor::AddPing(int Ping) {
-	// todo: add ping to Pings
+void UNetworkMonitor::HandlePong(FPongMessage PongMessage) {
+	UE_LOG(LogTemp, Warning, TEXT("Got ping: %d"), *PongMessage.OriginTimestamp)
+
+	int64 CurrentTime = TimeUtilities::GetMillisSinceEpoch();
+	int64 OriginTime;
+	FDefaultValueHelper::ParseInt64(PongMessage.OriginTimestamp, OriginTime);
+	int RoundTripTime = (CurrentTime - OriginTime);
+
+	RoundTripTimes[PingIndex] = RoundTripTime;
+
+	// increment NumPingsTracked, but keep it at or under the max index in RoundTripTimes
+	NumPingsTracked = FMath::Min(NumPingsTracked + 1, RoundTripTimes.Num() - 1);
+
+	// increment PingIndex (which tracks which ping we're going to overwrite next)
+	PingIndex++;
+	if (PingIndex == RoundTripTimes.Num()) {
+		PingIndex = 0;
+	}
+
 	ComputeStatistics();
 }
 
 void UNetworkMonitor::ComputeStatistics() {
+	int Total = 0;
+	for (int i = 0; i < NumPingsTracked; i++) {
+		Total += RoundTripTimes[i];
+	}
+
+	AverageRoundTripTime = (float)Total / (float) RoundTripTimes.Num();
 }
 
 void UNetworkMonitor::DoPing() {
-	long long CurrentTime = std::chrono::duration_cast<std::chrono::milliseconds>(
-		std::chrono::system_clock::now().time_since_epoch()
-		).count();
+	int64 CurrentTime = TimeUtilities::GetMillisSinceEpoch();
 
-	PingImpl(CurrentTime);
+	FPingMessage Message;
+	Message.OriginTimestamp = FString::Printf(TEXT("%lld"), CurrentTime);
+
+	PingImpl(Message);
 }
