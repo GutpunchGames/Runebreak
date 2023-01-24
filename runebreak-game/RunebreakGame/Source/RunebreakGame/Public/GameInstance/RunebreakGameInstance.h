@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include <RunebreakGame/Public/RBGameSession/RBGameSession.h>
+#include <GameOrchestrator/GameStartParams.h>
 #include "RunebreakGameInstance.generated.h"
 
 UCLASS()
@@ -17,4 +18,8 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	URBGameSession* gameSession;
+
+	UPROPERTY(BlueprintReadWrite)
+	FGameStartParams GameStartParams;
+
 };
