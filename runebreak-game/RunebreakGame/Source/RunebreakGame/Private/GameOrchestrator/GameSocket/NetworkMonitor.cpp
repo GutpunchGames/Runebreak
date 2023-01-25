@@ -7,7 +7,7 @@
 #include <chrono>
 
 UNetworkMonitor::UNetworkMonitor() {
-	RoundTripTimes.SetNumUninitialized(20);
+	RoundTripTimes.SetNumUninitialized(3);
 	PingIndex = 0;
 }
 

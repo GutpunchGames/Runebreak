@@ -3,14 +3,8 @@
     "",
     "\\runebreak-game",
     "\\runebreak-game\\RunebreakGame",
-    "\\runebreak-game\\RunebreakGame\\Source",
-    "\\runebreak-game\\RunebreakGame\\Source\\RunebreakGame",
-    "\\runebreak-game\\RunebreakGame\\Source\\RunebreakGame\\Public",
-    "\\runebreak-game\\RunebreakGame\\Source\\RunebreakGame\\Public\\RBGameSession",
-    "\\runebreak-game\\RunebreakGame\\Source\\RunebreakGame\\Public\\RBGameSession\\Models",
-    "\\runebreak-game\\RunebreakGame\\Source\\RunebreakGame\\Public\\RBGameSession\\RBSocket",
-    "\\runebreak-game\\RunebreakGame\\Source\\RunebreakGame\\Public\\RBGameSession\\State"
+    "\\runebreak-game\\RunebreakGame\\Source"
   ],
-  "SelectedNode": "\\runebreak-game\\RunebreakGame\\Source\\RunebreakGame\\Public\\RBGameSession\\RBSocket",
+  "SelectedNode": "\\runebreak-game\\RunebreakGame\\RunebreakGame.sln",
   "PreviewInSolutionExplorer": false
 }

@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Networking.h"
 #include"GameOrchestrator/GameSocket/NetworkMonitor.h"
+#include <RunebreakGame/Public/GameOrchestrator/GameSocket/UDPSocket.h>
 #include "RBGameSocket.generated.h"
 
 USTRUCT(BlueprintType)
@@ -13,15 +13,9 @@ struct FRBGameSocketConfig {
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString RemoteHost;
-
+	FUDPSocketConfig UDPSocketConfig;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int RemotePort;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int LocalPort;
-
-	TSharedRef<FInternetAddr> GetRemoteAddr();
+	bool IsHost;
 };
 
 UENUM(BlueprintType)
@@ -61,10 +55,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FRBGameSocketConfig SocketConfig;
 
-	bool SendControlMessage(int Type, FString Payload);
-
-	UFUNCTION(BlueprintCallable)
+	void SendControlMessage(int Type, FString Payload);
 	void ReceivePendingMessages();
+
+	UFUNCTION()
+	void HandleMessage(const FString& Bytes);
 
 	UPROPERTY(BlueprintReadOnly)
 	UNetworkMonitor* NetworkMonitor;
@@ -75,10 +70,7 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	ERBGameSocketState SocketState;
 
-	ISocketSubsystem* SocketSubsystem;
-	FSocket* SendSocket;
-	FSocket* ReceiveSocket;
-	TArray<uint8> ReceivedData;
+	UUDPSocket* Socket;
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
