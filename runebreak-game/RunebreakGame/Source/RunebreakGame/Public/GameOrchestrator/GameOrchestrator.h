@@ -35,6 +35,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	URBGameSocket* GameSocket;
 
+	UPROPERTY(EditInstanceOnly)
+	bool LogSocketMessages;
+
 private:
 	int FrameCount = 0;
 

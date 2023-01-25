@@ -16,7 +16,7 @@ UNetworkMonitor::~UNetworkMonitor() {
 }
 
 void UNetworkMonitor::HandlePong(FPongMessage PongMessage) {
-	UE_LOG(LogTemp, Warning, TEXT("Got ping: %d"), *PongMessage.OriginTimestamp)
+	UE_LOG(LogTemp, Warning, TEXT("HandlePong: %d"), *PongMessage.OriginTimestamp)
 
 	int64 CurrentTime = TimeUtilities::GetMillisSinceEpoch();
 	int64 OriginTime;

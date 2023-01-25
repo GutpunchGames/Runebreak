@@ -47,6 +47,7 @@ void AGameOrchestrator::PrepareGame(FPlayerSpawnConfig Player1SpawnConfig, FPlay
 	if (IsPlayer1Remote) {
 		FRBGameSocketConfig GameSocketConfig;
 		GameSocketConfig.IsHost = false;
+		GameSocketConfig.LogToScreen = LogSocketMessages;
 
 		FUDPSocketConfig UDPSocketConfig;
 		UDPSocketConfig.LocalPort = LocalPort;
@@ -60,6 +61,7 @@ void AGameOrchestrator::PrepareGame(FPlayerSpawnConfig Player1SpawnConfig, FPlay
 	} else if (IsPlayer2Remote) {
 		FRBGameSocketConfig GameSocketConfig;
 		GameSocketConfig.IsHost = true;
+		GameSocketConfig.LogToScreen = LogSocketMessages;
 
 		FUDPSocketConfig UDPSocketConfig;
 		UDPSocketConfig.LocalPort = LocalPort;
