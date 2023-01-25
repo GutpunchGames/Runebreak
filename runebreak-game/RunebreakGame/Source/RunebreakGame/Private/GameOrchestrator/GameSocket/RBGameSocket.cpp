@@ -39,6 +39,11 @@ void URBGameSocket::ReceivePendingMessages() {
 }
 
 void URBGameSocket::SendControlMessage(int Type, FString Payload) {
+	if (SocketConfig.LogToScreen) {
+		FString LogMessage = FString::Printf(TEXT("SEND: %d -- %s"), Type, *Payload);
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 1, FColor::Red, *LogMessage, /*newer on top*/ true);
+	}
+
 	FRBGameSocketMessage Message;
 	Message.Type = Type;
 	Message.Payload = Base64Utilities::Base64Encode(Payload);
@@ -51,6 +56,11 @@ void URBGameSocket::HandleMessage(const FString& Bytes) {
 	FRBGameSocketMessage Message;
 	FromJson<FRBGameSocketMessage>(Bytes, &Message);
 	FString DecodedPayload = Base64Utilities::Base64Decode(Message.Payload);
+
+	if (SocketConfig.LogToScreen) {
+		FString LogMessage = FString::Printf(TEXT("RECV: %d -- %s"), Message.Type, *DecodedPayload);
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 1, FColor::Red, *LogMessage, /*newer on top*/ true);
+	}
 
 	// received ping. send back the timestamp as pong.
 	if (Message.Type == MESSAGE_TYPE_PING) {

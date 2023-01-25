@@ -23,6 +23,8 @@ public:
 	FUDPSocketConfig UDPSocketConfig;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool IsHost;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool LogToScreen;
 };
 
 UENUM(BlueprintType)
