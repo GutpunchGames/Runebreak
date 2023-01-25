@@ -19,4 +19,8 @@ struct FPlayerSpawnConfig
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	PlayerClientType ClientType;
+	UPROPERTY(BlueprintReadWrite)
+	FString RemoteHost;
+	UPROPERTY(BlueprintReadWrite)
+	int RemotePort;
 };

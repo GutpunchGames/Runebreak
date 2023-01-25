@@ -6,35 +6,104 @@
 AGameOrchestrator::AGameOrchestrator() {
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = false;
+
+	GameSocket = CreateDefaultSubobject<URBGameSocket>(TEXT("URBGameSocket"));
+	AddOwnedComponent(GameSocket);
+
+	GameSocket->OnInputsReceivedDelegate.BindUObject(this, &AGameOrchestrator::HandleRemoteInputsReceived);
 }
 
-void AGameOrchestrator::PrepareGame(int PlayerIndex) {
+void AGameOrchestrator::PrepareGame(FPlayerSpawnConfig Player1SpawnConfig, FPlayerSpawnConfig Player2SpawnConfig, int LocalPort) {
 	Player1InputProcessor = NewObject<UPlayerInputProcessor>(this, "GameOrchestratorPlayer1InputProcessor");
 	Player2InputProcessor = NewObject<UPlayerInputProcessor>(this, "GameOrchestratorPlayer2InputProcessor");
-	BindInputs(PlayerIndex);
 
+	IsPlayer1Remote = Player1SpawnConfig.ClientType == PlayerClientType::Remote;
+	IsPlayer2Remote = Player2SpawnConfig.ClientType == PlayerClientType::Remote;
+
+	if (IsPlayer1Remote && IsPlayer2Remote) {
+		UE_LOG(LogTemp, Error, TEXT("two remote players is not supported"))
+			return;
+	}
+
+	if (!IsPlayer1Remote) {
+		Player1InputProcessor->Bind(1, InputComponent);
+	}
+	if (!IsPlayer2Remote) {
+		Player2InputProcessor->Bind(2, InputComponent);
+	}
+
+	FVector Player1SpawnLocation;
+	Player1SpawnLocation.X = 0;
+	Player1SpawnLocation.Y = -100;
+	Player1SpawnLocation.Z = 0;
+
+	FVector Player2SpawnLocation;
+	Player2SpawnLocation.X = 0;
+	Player2SpawnLocation.Y = 100;
+	Player2SpawnLocation.Z = 0;
 	GameSimulation = NewObject<UGameSimulation>(this, "GameOrchestratorGameSimulation");
-	GameSimulation->Initialize(PlayerClass, Player1SpawnPoint->GetActorLocation(), Player2SpawnPoint->GetActorLocation(), InputDelay);
+	GameSimulation->Initialize(PlayerClass, Player1SpawnLocation, Player2SpawnLocation, InputDelay);
+
+	if (IsPlayer1Remote) {
+		FRBGameSocketConfig GameSocketConfig;
+		GameSocketConfig.IsHost = false;
+
+		FUDPSocketConfig UDPSocketConfig;
+		UDPSocketConfig.LocalPort = LocalPort;
+		UDPSocketConfig.RemoteHost = Player1SpawnConfig.RemoteHost;
+		UDPSocketConfig.RemotePort = Player1SpawnConfig.RemotePort;
+		GameSocketConfig.UDPSocketConfig = UDPSocketConfig;
+
+		GameSocket->SocketConfig = GameSocketConfig;
+
+		GameSocket->Setup();
+	} else if (IsPlayer2Remote) {
+		FRBGameSocketConfig GameSocketConfig;
+		GameSocketConfig.IsHost = true;
+
+		FUDPSocketConfig UDPSocketConfig;
+		UDPSocketConfig.LocalPort = LocalPort;
+		UDPSocketConfig.RemoteHost = Player2SpawnConfig.RemoteHost;
+		UDPSocketConfig.RemotePort = Player2SpawnConfig.RemotePort;
+		GameSocketConfig.UDPSocketConfig = UDPSocketConfig;
+
+		GameSocket->SocketConfig = GameSocketConfig;
+		GameSocket->Setup();
+	}
 
 	PrimaryActorTick.SetTickFunctionEnable(true);
 }
 
+// 60fps frame limited ticks
 void AGameOrchestrator::Tick(float DeltaSeconds) {
 	Super::Tick(DeltaSeconds);
 	GameSimulation->AddPlayer1Input(Player1InputProcessor->Input);
 	GameSimulation->AddPlayer2Input(Player2InputProcessor->Input);
 	GameSimulation->AdvanceFrame();
+
+	if (!IsPlayer1Remote && IsPlayer2Remote) {
+		FInput PlayerInput = Player1InputProcessor->Input;
+		FInputsMessage InputsMessage;
+		InputsMessage.Direction = PlayerInput.MoveDirection;
+		InputsMessage.Frame = GameSimulation->GetFrameCount();
+		GameSocket->SendControlMessage(3, InputsMessage.ToString());
+	}
+	else if (IsPlayer1Remote && !IsPlayer2Remote) {
+		FInput PlayerInput = Player2InputProcessor->Input;
+		FInputsMessage InputsMessage;
+		InputsMessage.Direction = PlayerInput.MoveDirection;
+		InputsMessage.Frame = GameSimulation->GetFrameCount();
+		GameSocket->SendControlMessage(3, InputsMessage.ToString());
+	}
 }
 
-void AGameOrchestrator::BindInputs(int PlayerIndex) {
-	if (PlayerIndex == 1) {
-		Player1InputProcessor->Bind(1, InputComponent);
+void AGameOrchestrator::HandleRemoteInputsReceived(const FInputsMessage& InputsMessage) {
+	FInput Input;
+	Input.MoveDirection = InputsMessage.Direction;
+	if (IsPlayer1Remote) {
+		Player1InputProcessor->SetRemoteInput(Input);
 	}
-	else if (PlayerIndex == 2) {
-		Player2InputProcessor->Bind(2, InputComponent);
-	}
-	else {
-		UE_LOG(LogTemp, Error, TEXT("Invalid Player Index: %d"), PlayerIndex)
+	else if (IsPlayer2Remote) {
+		Player2InputProcessor->SetRemoteInput(Input);
 	}
 }
-

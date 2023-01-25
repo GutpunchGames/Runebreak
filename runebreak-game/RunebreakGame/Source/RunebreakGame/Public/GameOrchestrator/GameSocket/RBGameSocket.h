@@ -4,8 +4,11 @@
 
 #include "CoreMinimal.h"
 #include"GameOrchestrator/GameSocket/NetworkMonitor.h"
+#include"GameOrchestrator/GameSocket/InputsMessage.h"
 #include <RunebreakGame/Public/GameOrchestrator/GameSocket/UDPSocket.h>
 #include "RBGameSocket.generated.h"
+
+DECLARE_DELEGATE_OneParam(FOnInputsReceived, const FInputsMessage&);
 
 USTRUCT(BlueprintType)
 struct FRBGameSocketConfig {
@@ -71,6 +74,8 @@ public:
 	ERBGameSocketState SocketState;
 
 	UUDPSocket* Socket;
+
+	FOnInputsReceived OnInputsReceivedDelegate;
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 

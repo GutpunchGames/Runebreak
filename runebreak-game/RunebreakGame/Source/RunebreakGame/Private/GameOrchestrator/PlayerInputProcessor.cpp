@@ -21,6 +21,10 @@ void UPlayerInputProcessor::Bind(int PlayerIndex, UInputComponent* InputComponen
 	}
 }
 
+void UPlayerInputProcessor::SetRemoteInput(FInput _Input) {
+	Input = _Input;
+}
+
 void UPlayerInputProcessor::HandleMoveUpPressed() {
 	UE_LOG(LogTemp, Warning, TEXT("Move Up Pressed"))
 	Input.MoveDirection = 1;

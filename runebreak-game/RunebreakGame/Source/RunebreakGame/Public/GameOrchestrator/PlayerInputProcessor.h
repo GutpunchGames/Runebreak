@@ -8,9 +8,6 @@
 #include <RunebreakGame/Public/GameOrchestrator/Input.h>
 #include "PlayerInputProcessor.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class RUNEBREAKGAME_API UPlayerInputProcessor : public UObject
 {
@@ -19,6 +16,8 @@ class RUNEBREAKGAME_API UPlayerInputProcessor : public UObject
 public:
 	UPlayerInputProcessor();
 	void Bind(int PlayerIndex, UInputComponent* InputComponent);
+
+	void SetRemoteInput(FInput _Input);
 
 	FInput Input;
 

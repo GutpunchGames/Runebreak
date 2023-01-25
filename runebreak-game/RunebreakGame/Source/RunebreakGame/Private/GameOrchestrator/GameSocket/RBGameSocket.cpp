@@ -1,4 +1,5 @@
 #include "GameOrchestrator/GameSocket/RBGameSocket.h"
+#include "GameOrchestrator/GameSocket/InputsMessage.h"
 #include <RunebreakGame/Public/RBGameSession/Utilities/JsonUtils.h>
 #include "Kismet/KismetStringLibrary.h"
 #include <Utilities/TimeUtilities.h>
@@ -64,6 +65,17 @@ void URBGameSocket::HandleMessage(const FString& Bytes) {
 		FPongMessage PongMessage;
 		FromJson(DecodedPayload, &PongMessage);
 		NetworkMonitor->HandlePong(PongMessage);
+	}
+	else if (Message.Type == 2) {
+		FPongMessage PongMessage;
+		FromJson(DecodedPayload, &PongMessage);
+		NetworkMonitor->HandlePong(PongMessage);
+	}
+	else if (Message.Type == 3) {
+		FInputsMessage InputsMessage;
+		FInputsMessage::ParseString(DecodedPayload, InputsMessage);
+		OnInputsReceivedDelegate.ExecuteIfBound(InputsMessage);
+		UE_LOG(LogTemp, Warning, TEXT("Got inputs message: %s"), *InputsMessage.ToString())
 	}
 	else {
 		UE_LOG(LogTemp, Warning, TEXT("Unhandled message type: %d"), Message.Type)

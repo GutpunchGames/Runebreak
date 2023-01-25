@@ -4,10 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "GameOrchestrator/PlayerSpawnConfig.h"
+#include"GameOrchestrator/GameSocket/InputsMessage.h"
 #include <RunebreakGame/Public/GameOrchestrator/PlayerSpawnPoint.h>
 #include <RunebreakGame/Public/GameOrchestrator/PlayerInputProcessor.h>
 #include <RunebreakGame/Public/GameOrchestrator/GameSimulation.h>
 #include <RunebreakGame/Public/GameOrchestrator/Input.h>
+#include <RunebreakGame/Public/GameOrchestrator/GameSocket/RBGameSocket.h>
 #include "GameOrchestrator.generated.h"
 
 UCLASS(Blueprintable)
@@ -19,21 +22,18 @@ public:
 	AGameOrchestrator();
 
 	UFUNCTION(BlueprintCallable)
-	virtual void PrepareGame(int PlayerIndex);
+	virtual void PrepareGame(FPlayerSpawnConfig Player1SpawnConfig, FPlayerSpawnConfig Player2SpawnConfig, int LocalPort);
 
 	virtual void Tick(float DeltaSeconds) override;
-
-	UPROPERTY(EditInstanceOnly)
-	APlayerSpawnPoint* Player1SpawnPoint;
-
-	UPROPERTY(EditInstanceOnly)
-	APlayerSpawnPoint* Player2SpawnPoint;
 
 	UPROPERTY(EditInstanceOnly)
 	UClass* PlayerClass;
 
 	UPROPERTY(EditInstanceOnly)
 	int InputDelay;
+
+	UPROPERTY(BlueprintReadOnly)
+	URBGameSocket* GameSocket;
 
 private:
 	int FrameCount = 0;
@@ -46,5 +46,8 @@ private:
 	UPROPERTY()
 	UGameSimulation* GameSimulation;
 
-	void BindInputs(int PlayerIndex);
+	void HandleRemoteInputsReceived(const FInputsMessage& InputsMessage);
+
+	bool IsPlayer1Remote;
+	bool IsPlayer2Remote;
 };
