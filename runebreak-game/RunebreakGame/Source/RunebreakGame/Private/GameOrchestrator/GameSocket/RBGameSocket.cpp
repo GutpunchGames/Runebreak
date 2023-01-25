@@ -26,7 +26,7 @@ void URBGameSocket::Setup() {
 
 	NetworkMonitor = NewObject<UNetworkMonitor>(this, TEXT("NetworkMonitor"));
 	NetworkMonitor->PingImpl = [this](FPingMessage PingMessage) {
-		SendControlMessage(0, PingMessage.ToJson());
+		SendControlMessage(MESSAGE_TYPE_PING, PingMessage.ToJson());
 	};
 
 	GetWorld()->GetTimerManager().SetTimer(PingTimerHandle, NetworkMonitor, &UNetworkMonitor::DoPing, PingIntervalSeconds, true);
@@ -53,25 +53,20 @@ void URBGameSocket::HandleMessage(const FString& Bytes) {
 	FString DecodedPayload = Base64Utilities::Base64Decode(Message.Payload);
 
 	// received ping. send back the timestamp as pong.
-	if (Message.Type == 0) {
+	if (Message.Type == MESSAGE_TYPE_PING) {
 		FPingMessage PingMessage;
 		FromJson(DecodedPayload, &PingMessage);
 		FPongMessage PongMessage;
 		PongMessage.OriginTimestamp = PingMessage.OriginTimestamp;
-		SendControlMessage(1, PongMessage.ToJson());
+		SendControlMessage(MESSAGE_TYPE_PONG, PongMessage.ToJson());
 	}
 	// received pong. fold this into the network statistics.
-	else if (Message.Type == 1) {
+	else if (Message.Type == MESSAGE_TYPE_PONG) {
 		FPongMessage PongMessage;
 		FromJson(DecodedPayload, &PongMessage);
 		NetworkMonitor->HandlePong(PongMessage);
 	}
-	else if (Message.Type == 2) {
-		FPongMessage PongMessage;
-		FromJson(DecodedPayload, &PongMessage);
-		NetworkMonitor->HandlePong(PongMessage);
-	}
-	else if (Message.Type == 3) {
+	else if (Message.Type == MESSAGE_TYPE_INPUTS) {
 		FInputsMessage InputsMessage;
 		FInputsMessage::ParseString(DecodedPayload, InputsMessage);
 		OnInputsReceivedDelegate.ExecuteIfBound(InputsMessage);

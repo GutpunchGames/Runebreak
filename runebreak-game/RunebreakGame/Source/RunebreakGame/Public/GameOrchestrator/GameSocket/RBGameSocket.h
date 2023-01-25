@@ -10,6 +10,10 @@
 
 DECLARE_DELEGATE_OneParam(FOnInputsReceived, const FInputsMessage&);
 
+static const int MESSAGE_TYPE_PING = 0;
+static const int MESSAGE_TYPE_PONG = 1;
+static const int MESSAGE_TYPE_INPUTS = 2;
+
 USTRUCT(BlueprintType)
 struct FRBGameSocketConfig {
 	GENERATED_BODY()

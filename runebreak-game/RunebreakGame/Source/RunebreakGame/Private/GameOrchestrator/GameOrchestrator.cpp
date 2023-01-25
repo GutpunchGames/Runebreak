@@ -86,14 +86,14 @@ void AGameOrchestrator::Tick(float DeltaSeconds) {
 		FInputsMessage InputsMessage;
 		InputsMessage.Direction = PlayerInput.MoveDirection;
 		InputsMessage.Frame = GameSimulation->GetFrameCount();
-		GameSocket->SendControlMessage(3, InputsMessage.ToString());
+		GameSocket->SendControlMessage(MESSAGE_TYPE_INPUTS, InputsMessage.ToString());
 	}
 	else if (IsPlayer1Remote && !IsPlayer2Remote) {
 		FInput PlayerInput = Player2InputProcessor->Input;
 		FInputsMessage InputsMessage;
 		InputsMessage.Direction = PlayerInput.MoveDirection;
 		InputsMessage.Frame = GameSimulation->GetFrameCount();
-		GameSocket->SendControlMessage(3, InputsMessage.ToString());
+		GameSocket->SendControlMessage(MESSAGE_TYPE_INPUTS, InputsMessage.ToString());
 	}
 }
 
