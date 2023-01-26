@@ -5,6 +5,7 @@
 #include "Components/TextBlock.h"
 #include "NetworkStatistics.h"
 #include "NetworkMonitor.h"
+#include <RunebreakGame/Public/GameOrchestrator/GameSocket/RBGameSocket.h>
 #include "ConnectionInfoWidget.generated.h"
 
 UCLASS(Blueprintable)
@@ -19,11 +20,17 @@ public:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	class UTextBlock* PacketLossDisplay;
 
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	class UTextBlock* RemoteEndpointDisplay;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	class UTextBlock* LocalPortDisplay;
+
 	UFUNCTION()
-	void SetData(FNetworkStatistics NetworkStatistics);
+	void SetNetworkStatistics(FNetworkStatistics NetworkStatistics);
 
 	UFUNCTION(BlueprintCallable)
-	void Bind(UNetworkMonitor* NetworkMonitor);
+	void Bind(ARBGameSocket* GameSocket);
 
 protected:
 	virtual void NativeConstruct() override;

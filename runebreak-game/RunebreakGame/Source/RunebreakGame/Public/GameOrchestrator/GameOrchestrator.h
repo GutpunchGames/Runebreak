@@ -13,6 +13,8 @@
 #include <RunebreakGame/Public/GameOrchestrator/GameSocket/RBGameSocket.h>
 #include "GameOrchestrator.generated.h"
 
+DECLARE_DYNAMIC_DELEGATE(FOnFrameAdvanced);
+
 UCLASS(Blueprintable)
 class RUNEBREAKGAME_API AGameOrchestrator : public AActor
 {
@@ -26,17 +28,25 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 	UPROPERTY(EditInstanceOnly)
 	UClass* PlayerClass;
 
 	UPROPERTY(EditInstanceOnly)
 	int InputDelay;
 
-	UPROPERTY(BlueprintReadOnly)
-	URBGameSocket* GameSocket;
+	UPROPERTY(EditInstanceOnly, BlueprintReadOnly)
+	ARBGameSocket* GameSocket;
 
 	UPROPERTY(EditInstanceOnly)
 	bool LogSocketMessages;
+
+	UPROPERTY(BlueprintReadWrite)
+	FOnFrameAdvanced OnFrameAdvancedDelegate;
+
+	UPROPERTY(BlueprintReadOnly)
+	UGameSimulation* GameSimulation;
 
 private:
 	int FrameCount = 0;
@@ -45,9 +55,6 @@ private:
 	UPlayerInputProcessor* Player1InputProcessor;
 	UPROPERTY()
 	UPlayerInputProcessor* Player2InputProcessor;
-
-	UPROPERTY()
-	UGameSimulation* GameSimulation;
 
 	void HandleRemoteInputsReceived(const FInputsMessage& InputsMessage);
 

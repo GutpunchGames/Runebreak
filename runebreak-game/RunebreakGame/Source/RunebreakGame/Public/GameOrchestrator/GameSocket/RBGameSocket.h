@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameFramework/Actor.h"
 #include"GameOrchestrator/GameSocket/NetworkMonitor.h"
 #include"GameOrchestrator/GameSocket/InputsMessage.h"
 #include <RunebreakGame/Public/GameOrchestrator/GameSocket/UDPSocket.h>
@@ -25,6 +26,8 @@ public:
 	bool IsHost;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool LogToScreen;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float PingIntervalSecs = 1;
 };
 
 UENUM(BlueprintType)
@@ -46,14 +49,14 @@ public:
 	FString Payload; // base 64 encoded JSON for control messages.
 };
 
-UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class RUNEBREAKGAME_API URBGameSocket : public UActorComponent
+UCLASS(Blueprintable)
+class RUNEBREAKGAME_API ARBGameSocket : public AActor
 {
 	GENERATED_BODY()
 
 public:
-	URBGameSocket();
-	~URBGameSocket();
+	ARBGameSocket();
+	~ARBGameSocket();
 
 	UFUNCTION(BlueprintCallable)
 	void Setup();
@@ -61,7 +64,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Teardown();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	FRBGameSocketConfig SocketConfig;
 
 	void SendControlMessage(int Type, FString Payload);
@@ -73,9 +76,6 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	UNetworkMonitor* NetworkMonitor;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float PingIntervalSeconds;
-
 	UPROPERTY(BlueprintReadOnly)
 	ERBGameSocketState SocketState;
 
@@ -83,10 +83,12 @@ public:
 
 	FOnInputsReceived OnInputsReceivedDelegate;
 
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void Tick(float DeltaTime) override;
 
 private:
-	void HandleControlMessage(FRBGameSocketMessage Message);
 	/* Handle to manage the timer */
 	FTimerHandle PingTimerHandle;
+	float PingIntervalSecs;
+
+	bool IsSetup;
 };

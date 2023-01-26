@@ -5,43 +5,47 @@
 #include <Utilities/TimeUtilities.h>
 #include <Utilities/Base64Utilities.h>
 
-URBGameSocket::URBGameSocket()
+ARBGameSocket::ARBGameSocket()
 {
-	NetworkMonitor = CreateDefaultSubobject<UNetworkMonitor>(TEXT("NetworkMonitor"));
 	SocketState = ERBGameSocketState::Uninitialized;
+	IsSetup = false;
 
-	PrimaryComponentTick.bCanEverTick = true;
-	PrimaryComponentTick.bStartWithTickEnabled = true;
+	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bStartWithTickEnabled = false;
 }
 
-URBGameSocket::~URBGameSocket()
+ARBGameSocket::~ARBGameSocket()
 {
 }
 
-void URBGameSocket::Setup() {
-	Socket = NewObject<UUDPSocket>(this, "UDPSocket");
+void ARBGameSocket::Setup() {
+	UE_LOG(LogTemp, Warning, TEXT("Setup Socket"))
+	Socket = NewObject<UUDPSocket>(this, TEXT("UDPSocket"));
+	NetworkMonitor = NewObject<UNetworkMonitor>(this, TEXT("NetworkMonitor"));
 
 	Socket->Setup(SocketConfig.UDPSocketConfig);
-	Socket->OnBytesReceivedDelegate.BindUObject(this, &URBGameSocket::HandleMessage);
+	Socket->OnBytesReceivedDelegate.BindUObject(this, &ARBGameSocket::HandleMessage);
 
-	NetworkMonitor = NewObject<UNetworkMonitor>(this, TEXT("NetworkMonitor"));
 	NetworkMonitor->PingImpl = [this](FPingMessage PingMessage) {
 		SendControlMessage(MESSAGE_TYPE_PING, PingMessage.ToJson());
 	};
+	PingIntervalSecs = SocketConfig.PingIntervalSecs;
+	GetWorld()->GetTimerManager().SetTimer(PingTimerHandle, NetworkMonitor, &UNetworkMonitor::DoPing, PingIntervalSecs, true);
 
-	GetWorld()->GetTimerManager().SetTimer(PingTimerHandle, NetworkMonitor, &UNetworkMonitor::DoPing, PingIntervalSeconds, true);
+	IsSetup = true;
+	PrimaryActorTick.SetTickFunctionEnable(true);
 }
 
-void URBGameSocket::ReceivePendingMessages() {
-	if (Socket) {
+void ARBGameSocket::ReceivePendingMessages() {
+	if (IsSetup && Socket) {
 		Socket->ReceivePendingMessages();
 	}
 }
 
-void URBGameSocket::SendControlMessage(int Type, FString Payload) {
+void ARBGameSocket::SendControlMessage(int Type, FString Payload) {
 	if (SocketConfig.LogToScreen) {
 		FString LogMessage = FString::Printf(TEXT("SEND: %d -- %s"), Type, *Payload);
-		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 1, FColor::Red, *LogMessage, /*newer on top*/ true);
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 3, FColor::Green, *LogMessage, /*newer on top*/ true);
 	}
 
 	FRBGameSocketMessage Message;
@@ -52,14 +56,14 @@ void URBGameSocket::SendControlMessage(int Type, FString Payload) {
 	Socket->SendMessage(Json);
 }
 
-void URBGameSocket::HandleMessage(const FString& Bytes) {
+void ARBGameSocket::HandleMessage(const FString& Bytes) {
 	FRBGameSocketMessage Message;
 	FromJson<FRBGameSocketMessage>(Bytes, &Message);
 	FString DecodedPayload = Base64Utilities::Base64Decode(Message.Payload);
 
 	if (SocketConfig.LogToScreen) {
 		FString LogMessage = FString::Printf(TEXT("RECV: %d -- %s"), Message.Type, *DecodedPayload);
-		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 1, FColor::Red, *LogMessage, /*newer on top*/ true);
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 3, FColor::Red, *LogMessage, /*newer on top*/ true);
 	}
 
 	// received ping. send back the timestamp as pong.
@@ -87,14 +91,17 @@ void URBGameSocket::HandleMessage(const FString& Bytes) {
 	}
 }
 
-void URBGameSocket::Teardown() {
-	GetWorld()->GetTimerManager().ClearTimer(PingTimerHandle);
-	if (Socket) {
+void ARBGameSocket::Teardown() {
+	if (IsSetup && Socket) {
+		GetWorld()->GetTimerManager().ClearTimer(PingTimerHandle);
 		Socket->Teardown();
 	}
 }
 
-void URBGameSocket::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void ARBGameSocket::Tick(float DeltaTime)
 {
-	ReceivePendingMessages();
+	Super::Tick(DeltaTime);
+	if (IsSetup) {
+		ReceivePendingMessages();
+	}
 }

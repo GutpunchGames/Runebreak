@@ -6,11 +6,6 @@
 AGameOrchestrator::AGameOrchestrator() {
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = false;
-
-	GameSocket = CreateDefaultSubobject<URBGameSocket>(TEXT("URBGameSocket"));
-	AddOwnedComponent(GameSocket);
-
-	GameSocket->OnInputsReceivedDelegate.BindUObject(this, &AGameOrchestrator::HandleRemoteInputsReceived);
 }
 
 void AGameOrchestrator::PrepareGame(FPlayerSpawnConfig Player1SpawnConfig, FPlayerSpawnConfig Player2SpawnConfig, int LocalPort) {
@@ -57,6 +52,7 @@ void AGameOrchestrator::PrepareGame(FPlayerSpawnConfig Player1SpawnConfig, FPlay
 
 		GameSocket->SocketConfig = GameSocketConfig;
 
+		GameSocket->OnInputsReceivedDelegate.BindUObject(this, &AGameOrchestrator::HandleRemoteInputsReceived);
 		GameSocket->Setup();
 	} else if (IsPlayer2Remote) {
 		FRBGameSocketConfig GameSocketConfig;
@@ -70,6 +66,8 @@ void AGameOrchestrator::PrepareGame(FPlayerSpawnConfig Player1SpawnConfig, FPlay
 		GameSocketConfig.UDPSocketConfig = UDPSocketConfig;
 
 		GameSocket->SocketConfig = GameSocketConfig;
+
+		GameSocket->OnInputsReceivedDelegate.BindUObject(this, &AGameOrchestrator::HandleRemoteInputsReceived);
 		GameSocket->Setup();
 	}
 
@@ -79,12 +77,18 @@ void AGameOrchestrator::PrepareGame(FPlayerSpawnConfig Player1SpawnConfig, FPlay
 // 60fps frame limited ticks
 void AGameOrchestrator::Tick(float DeltaSeconds) {
 	Super::Tick(DeltaSeconds);
+	if (!GameSimulation) {
+		return;
+	}
+
 	GameSimulation->AddPlayer1Input(Player1InputProcessor->Input);
 	GameSimulation->AddPlayer2Input(Player2InputProcessor->Input);
 	GameSimulation->AdvanceFrame();
+	OnFrameAdvancedDelegate.ExecuteIfBound();
 
 	if (!IsPlayer1Remote && IsPlayer2Remote) {
 		FInput PlayerInput = Player1InputProcessor->Input;
+
 		FInputsMessage InputsMessage;
 		InputsMessage.Direction = PlayerInput.MoveDirection;
 		InputsMessage.Frame = GameSimulation->GetFrameCount();
@@ -92,6 +96,7 @@ void AGameOrchestrator::Tick(float DeltaSeconds) {
 	}
 	else if (IsPlayer1Remote && !IsPlayer2Remote) {
 		FInput PlayerInput = Player2InputProcessor->Input;
+
 		FInputsMessage InputsMessage;
 		InputsMessage.Direction = PlayerInput.MoveDirection;
 		InputsMessage.Frame = GameSimulation->GetFrameCount();
@@ -107,5 +112,12 @@ void AGameOrchestrator::HandleRemoteInputsReceived(const FInputsMessage& InputsM
 	}
 	else if (IsPlayer2Remote) {
 		Player2InputProcessor->SetRemoteInput(Input);
+	}
+}
+
+void AGameOrchestrator::EndPlay(const EEndPlayReason::Type EndPlayReason) {
+	if (GameSocket) {
+		UE_LOG(LogTemp, Warning, TEXT("Tearing down socket"))
+		GameSocket->Teardown();
 	}
 }

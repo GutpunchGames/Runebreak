@@ -14,9 +14,9 @@ public:
 	~FNetworkStatistics();
 
 	UPROPERTY(BlueprintReadOnly)
-		float AverageRoundTripTime;
+	float AverageRoundTripTime;
 
 	UPROPERTY(BlueprintReadOnly)
-		float PacketLoss;
+	float PacketLoss;
 };
 

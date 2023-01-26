@@ -19,6 +19,8 @@ public:
 	void AddPlayer1Input(FInput Inputj);
 	void AddPlayer2Input(FInput Inputj);
 	void AdvanceFrame();
+
+	UFUNCTION(BlueprintCallable)
 	int GetFrameCount();
 
 private:

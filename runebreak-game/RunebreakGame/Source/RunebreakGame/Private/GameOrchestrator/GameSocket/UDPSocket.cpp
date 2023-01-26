@@ -63,7 +63,8 @@ void UUDPSocket::SendMessage(FString& Bytes) {
 	TCHAR* serializedChar = Bytes.GetCharArray().GetData();
 	int32 size = FCString::Strlen(serializedChar);
 
-	bool success = SendSocket->SendTo((uint8*)TCHAR_TO_UTF8(serializedChar), size, BytesSent, *SocketConfig.GetRemoteAddr());
+	TSharedRef<FInternetAddr> RemoteAddr = SocketConfig.GetRemoteAddr();
+	bool success = SendSocket->SendTo((uint8*)TCHAR_TO_UTF8(serializedChar), size, BytesSent, *RemoteAddr);
 	if (success) {
 		//UE_LOG(LogTemp, Warning, TEXT("Sent message: %s : was success: %s"), *Json, (success ? TEXT("true") : TEXT("false")))
 		return;
@@ -100,10 +101,14 @@ void UUDPSocket::ReceivePendingMessages() {
 
 void UUDPSocket::Teardown() {
 	if (SendSocket) {
+		SendSocket->Close();
 		SocketSubsystem->DestroySocket(SendSocket);
+		UE_LOG(LogTemp, Warning, TEXT("Destroyed SendSocket"))
 	}
 	if (ReceiveSocket) {
+		ReceiveSocket->Close();
 		SocketSubsystem->DestroySocket(ReceiveSocket);
+		UE_LOG(LogTemp, Warning, TEXT("Destroyed ReceiveSocket on port :%d"), SocketConfig.LocalPort);
 	}
 
 	SendSocket = nullptr;
