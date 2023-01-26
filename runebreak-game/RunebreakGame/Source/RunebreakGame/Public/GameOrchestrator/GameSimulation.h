@@ -33,7 +33,6 @@ private:
 	UPROPERTY()
 	int FrameCount = 0;
 
-	// todo: ask why these need to be marked UPROPERTY
 	UPROPERTY()
 	UInputBuffer* Player1InputBuffer;
 	UPROPERTY()
