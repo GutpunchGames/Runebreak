@@ -112,6 +112,7 @@ void UUDPSocket::Teardown() {
 	}
 
 	SendSocket = nullptr;
+	ReceiveSocket = nullptr;
 	SocketSubsystem = nullptr;
 }
 

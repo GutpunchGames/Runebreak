@@ -79,6 +79,7 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	ERBGameSocketState SocketState;
 
+	UPROPERTY()
 	UUDPSocket* Socket;
 
 	FOnInputsReceived OnInputsReceivedDelegate;

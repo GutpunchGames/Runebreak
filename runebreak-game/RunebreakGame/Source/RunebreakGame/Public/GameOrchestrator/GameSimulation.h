@@ -16,23 +16,31 @@ class RUNEBREAKGAME_API UGameSimulation : public UObject
 
 public:
 	void Initialize(UClass* PlayerClass, FVector Player1SpawnPoint, FVector Player2SpawnPoint, int InputDelay);
-	void AddPlayer1Input(FInput Inputj);
-	void AddPlayer2Input(FInput Inputj);
+	void AddPlayer1Input(FInput Input);
+	void AddPlayer2Input(FInput Input);
 	void AdvanceFrame();
 
 	UFUNCTION(BlueprintCallable)
 	int GetFrameCount();
 
 private:
+	UPROPERTY()
 	ASimulationActor* Player1;
+
+	UPROPERTY()
 	ASimulationActor* Player2;
 
+	UPROPERTY()
 	int FrameCount = 0;
 
+	// todo: ask why these need to be marked UPROPERTY
+	UPROPERTY()
 	UInputBuffer* Player1InputBuffer;
+	UPROPERTY()
 	UInputBuffer* Player2InputBuffer;
 
 	ASimulationActor* SpawnPlayer(UClass* PlayerClass, FVector const& PlayerSpawnPoint);
 	ASimulationActor* SpawnSimulationActor(UClass* Class, FVector const& Location);
+
 	void SerializeState();
 };

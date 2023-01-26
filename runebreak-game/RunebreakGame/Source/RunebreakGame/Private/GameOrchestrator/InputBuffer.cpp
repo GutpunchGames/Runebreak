@@ -4,14 +4,24 @@
 #include "GameOrchestrator/InputBuffer.h"
 
 UInputBuffer::UInputBuffer() {
+	FrameIndex = 0;
+	FrameInputs.SetNumUninitialized(512);
+}
+
+UInputBuffer::UInputBuffer(const FObjectInitializer& ObjectInitializer) {
+	FrameIndex = 0;
+	FrameInputs.SetNumUninitialized(512);
 }
 
 UInputBuffer::~UInputBuffer() {
 }
 
 FInput UInputBuffer::GetInput(int Frame) {
-	if (Frame - Delay >= 0) {
-		return FrameInputs[Frame - Delay];
+	UE_LOG(LogTemp, Warning, TEXT("Fetching Frame: %d"), Frame)
+	int DelayAdjustedFrame = Frame - Delay;
+	int TargetIndex = DelayAdjustedFrame % 512;
+	if (FrameInputs.IsValidIndex(TargetIndex)) {
+		return FrameInputs[TargetIndex];
 	}
 	else {
 		return FInput();
@@ -19,10 +29,12 @@ FInput UInputBuffer::GetInput(int Frame) {
 }
 
 FInput UInputBuffer::GetMostRecentInput() {
-	return GetInput(FrameInputs.Num() - 1);
+	return GetInput(FrameIndex - 1);
 }
 
-void UInputBuffer::AddInput(FInput FrameInput) {
-	// todo: this should be one trillion times more efficient
-	FrameInputs.Emplace(FrameInput);
+void UInputBuffer::AddInput(FInput Input) {
+	UE_LOG(LogTemp, Warning, TEXT("Adding input for frame: %ld"), FrameIndex)
+	FrameInputs[FrameIndex % 512] = Input;
+	FrameIndex++;
+	UE_LOG(LogTemp, Warning, TEXT("post-increment frame index is now: %ld"), FrameIndex)
 }

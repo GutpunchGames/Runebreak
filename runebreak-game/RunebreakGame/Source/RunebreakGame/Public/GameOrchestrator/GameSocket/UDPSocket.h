@@ -44,8 +44,10 @@ public:
 	FOnBytesReceived OnBytesReceivedDelegate;
 
 private:
+	UPROPERTY()
 	FUDPSocketConfig SocketConfig;
 	ISocketSubsystem* SocketSubsystem;
+
 	FSocket* SendSocket;
 	FSocket* ReceiveSocket;
 };

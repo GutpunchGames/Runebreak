@@ -4,8 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "Containers/RingBuffer.h"
+#include "Containers/CircularBuffer.h"
 #include "GameOrchestrator/Input.h"
+#include "Templates/SharedPointer.h"
 #include "InputBuffer.generated.h"
 
 /**
@@ -18,15 +19,19 @@ class RUNEBREAKGAME_API UInputBuffer : public UObject
 
 public:
 	UInputBuffer();
+	UInputBuffer(const FObjectInitializer& ObjectInitializer);
 	~UInputBuffer();
 
+	UPROPERTY()
 	int Delay = 0;
 
-	void AddInput(FInput FrameInput);
-	FInput GetInput(int frame);
+	void AddInput(FInput Input);
+	FInput GetInput(int Frame);
 	FInput GetMostRecentInput();
 
 private:
-	// todo: use ring buffer
+	UPROPERTY()
 	TArray<FInput> FrameInputs;
+	UPROPERTY()
+	int32 FrameIndex;
 };

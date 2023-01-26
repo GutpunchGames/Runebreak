@@ -3,13 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Input.generated.h"
 
-struct RUNEBREAKGAME_API FInput
+USTRUCT()
+struct FInput
 {
+	GENERATED_BODY()
 
 public:
 	FInput();
 
+	UPROPERTY()
 	int MoveDirection;
 
 	FString ToString();
