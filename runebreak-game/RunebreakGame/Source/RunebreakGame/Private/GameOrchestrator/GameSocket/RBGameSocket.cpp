@@ -29,9 +29,8 @@ void ARBGameSocket::Setup() {
 	IsSetup = true;
 }
 
-void ARBGameSocket::ReceivePendingMessages(FSyncMessage& LatestSyncMessage) {
-	LatestSyncMessage.OriginFrame = -1;
-
+TSharedPtr<FSyncMessage> ARBGameSocket::ReceivePendingMessages() {
+	TSharedPtr<FSyncMessage> LatestSyncMessage;
 	if (IsSetup) {
 		uint32 Size;
 
@@ -44,11 +43,10 @@ void ARBGameSocket::ReceivePendingMessages(FSyncMessage& LatestSyncMessage) {
 			LogRecv(Message.Type, DecodedPayload);
 
 			if (Message.Type == MESSAGE_TYPE_SYNC) {
-				FSyncMessage InSyncMessage;
-				FromJson(DecodedPayload, &InSyncMessage);
-				if (InSyncMessage.OriginFrame >= LatestSyncMessage.OriginFrame) {
-					UE_LOG(LogTemp, Warning, TEXT("OVERWROTE LatestSyncMessage: md: %d"), InSyncMessage.LatestInput.MoveDirection)
-					LatestSyncMessage = InSyncMessage;
+				FSyncMessage* InSyncMessage = new FSyncMessage();
+				FromJson(DecodedPayload, InSyncMessage);
+				if (!LatestSyncMessage || InSyncMessage->OriginFrame >= LatestSyncMessage->OriginFrame) {
+					LatestSyncMessage = MakeShareable(InSyncMessage);
 				}
 			}
 			// received ping. send back the timestamp as pong.
@@ -70,12 +68,12 @@ void ARBGameSocket::ReceivePendingMessages(FSyncMessage& LatestSyncMessage) {
 			}
 		}
 
-		if (LatestSyncMessage.OriginFrame >= 0) {
-			NetworkMonitor->HandleSync(LatestSyncMessage);
+		if (LatestSyncMessage) {
+			NetworkMonitor->HandleSync(*LatestSyncMessage);
 		}
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Final MD: %d -- OF: %d"), LatestSyncMessage.LatestInput.MoveDirection, LatestSyncMessage.OriginFrame)
+	return LatestSyncMessage;
 }
 
 void ARBGameSocket::SendPing(int LocalFrame) {

@@ -82,21 +82,15 @@ void AGameOrchestrator::Tick(float DeltaSeconds) {
 	int CurrentFrame = GameSimulation->GetFrameCount();
 	if (IsAnyPlayerRemote) {
 		GameSocket->SendPing(GameSimulation->GetFrameCount());
-		FSyncMessage LatestSyncMessage;
-		GameSocket->ReceivePendingMessages(LatestSyncMessage);
-		if (LatestSyncMessage.OriginFrame >= 0) {
-			UE_LOG(LogTemp, Warning, TEXT("HANDLING SYNC with md: %d, originFrame: %d"), LatestSyncMessage.LatestInput.MoveDirection, LatestSyncMessage.OriginFrame)
-			HandleSyncMessage(LatestSyncMessage);
-		}
-		else {
-			UE_LOG(LogTemp, Warning, TEXT("HANDLING SYNC: null"))
+		TSharedPtr<FSyncMessage> LatestSyncMessage = GameSocket->ReceivePendingMessages();
+		if (LatestSyncMessage) {
+			HandleSyncMessage(*LatestSyncMessage);
 		}
 	}
 
 	bool ShouldAdvanceFrame = true;
 	if (IsAnyPlayerRemote) {
 		float Rift = IsAnyPlayerRemote ? ComputeRift() : 0;
-		UE_LOG(LogTemp, Warning, TEXT("Computed Rift: %f"), Rift)
 		if (Rift >= RiftPauseThresholdFrames || IsCorrectingRift && Rift > 0) {
 			ShouldAdvanceFrame = false;
 			IsCorrectingRift = true;
@@ -151,9 +145,6 @@ void AGameOrchestrator::HandleRemoteInputsReceived(const FInput& Input) {
 }
 
 void AGameOrchestrator::HandleSyncMessage(FSyncMessage SyncMessage) {
-	FString LogMessage = FString::Printf(TEXT("HANDLING SYNC -- dir: %d"), SyncMessage.LatestInput.MoveDirection);
-	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 3, FColor::Green, *LogMessage, /*newer on top*/ true);
-	//UE_LOG(LogTemp, Warning, TEXT("%s"), *LogMessage)
 	HandleRemoteInputsReceived(SyncMessage.LatestInput);
 }
 
@@ -161,6 +152,7 @@ void AGameOrchestrator::HandleSyncMessage(FSyncMessage SyncMessage) {
 // negative values imply that they are ahead of us, positive that we are ahead of them
 // todo: consider network time
 float AGameOrchestrator::ComputeRift() {
+
 	FNetworkStatistics NetworkStatistics = GameSocket->NetworkMonitor->NetworkStatistics;
 	int MostRecentRemoteFrame = NetworkStatistics.MostRecentRemoteFrame;
 	//float AverageRoundTripTime = NetworkStatistics.AverageRoundTripTime;
@@ -168,7 +160,7 @@ float AGameOrchestrator::ComputeRift() {
 	//float FrameTime = (float)1 / (float)60;
 	//float AverageOneWayFrames = AverageOneWayTime / FrameTime;
 	//float EstimatedCurrentRemoteFrame = (float) MostRecentRemoteFrame + AverageOneWayFrames;
-	float EstimatedCurrentRemoteFrame = MostRecentRemoteFrame;
+	float EstimatedCurrentRemoteFrame = (float) MostRecentRemoteFrame;
 
 	return (float) GameSimulation->GetFrameCount() - EstimatedCurrentRemoteFrame;
 }

@@ -72,7 +72,7 @@ public:
 	void SendSync(const FSyncMessage& SyncMessage);
 
 	void SendControlMessage(int Type, FString Payload);
-	void ReceivePendingMessages(FSyncMessage& OutLatestSyncMessage);
+	TSharedPtr<FSyncMessage> ReceivePendingMessages();
 
 	UPROPERTY(BlueprintReadOnly)
 	UNetworkMonitor* NetworkMonitor;
