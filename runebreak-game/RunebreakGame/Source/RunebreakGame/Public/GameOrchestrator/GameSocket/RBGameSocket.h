@@ -14,7 +14,7 @@ DECLARE_DELEGATE_OneParam(FOnInputsReceived, const FInputsMessage&);
 
 static const int MESSAGE_TYPE_PING = 0;
 static const int MESSAGE_TYPE_PONG = 1;
-static const int MESSAGE_TYPE_INPUTS = 2;
+static const int MESSAGE_TYPE_SYNC = 2;
 
 USTRUCT(BlueprintType)
 struct FRBGameSocketConfig {
@@ -69,12 +69,10 @@ public:
 	FRBGameSocketConfig SocketConfig;
 
 	void SendPing(int LocalFrame);
+	void SendSync(const FSyncMessage& SyncMessage);
 
 	void SendControlMessage(int Type, FString Payload);
-	void ReceivePendingMessages();
-
-	UFUNCTION()
-	void HandleMessage(const FString& Bytes);
+	void ReceivePendingMessages(FSyncMessage& OutLatestSyncMessage);
 
 	UPROPERTY(BlueprintReadOnly)
 	UNetworkMonitor* NetworkMonitor;
@@ -90,8 +88,8 @@ public:
 
 	FOnInputsReceived OnInputsReceivedDelegate;
 
-	virtual void Tick(float DeltaTime) override;
-
 private:
 	bool IsSetup;
+	void LogSend(int Type, const FString& Payload);
+	void LogRecv(int Type, const FString& Payload);
 };

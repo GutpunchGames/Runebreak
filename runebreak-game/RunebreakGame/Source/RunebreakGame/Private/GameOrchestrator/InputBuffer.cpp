@@ -33,8 +33,6 @@ FInput UInputBuffer::GetMostRecentInput() {
 }
 
 void UInputBuffer::AddInput(FInput Input) {
-	UE_LOG(LogTemp, Warning, TEXT("Adding input for frame: %ld"), FrameIndex)
 	FrameInputs[FrameIndex % 512] = Input;
 	FrameIndex++;
-	UE_LOG(LogTemp, Warning, TEXT("post-increment frame index is now: %ld"), FrameIndex)
 }

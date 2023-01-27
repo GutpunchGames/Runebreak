@@ -75,28 +75,34 @@ void UUDPSocket::SendMessage(FString& Bytes) {
 	}
 }
 
-void UUDPSocket::ReceivePendingMessages() {
+bool UUDPSocket::HasPendingData(uint32& Size) {
 	if (!ReceiveSocket) {
-		return;
+		Size = 0;
+		return false;
 	}
+
+	return ReceiveSocket->HasPendingData(Size);
+}
+
+FString UUDPSocket::ReceiveBytes(uint32 Size) {
+	if (!ReceiveSocket) {
+		return "";
+	}
+
+	uint8* Recv = new uint8[Size];
+	int32 BytesRead = 0;
+
+	ReceiveDataBuffer.SetNumUninitialized(FMath::Min(Size, 65507u));
 
 	TSharedRef<FInternetAddr> targetAddr = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
-	uint32 Size;
-	while (ReceiveSocket->HasPendingData(Size))
-	{
-		uint8* Recv = new uint8[Size];
-		int32 BytesRead = 0;
+	ReceiveSocket->RecvFrom(ReceiveDataBuffer.GetData(), ReceiveDataBuffer.Num(), BytesRead, *targetAddr);
 
-		ReceiveDataBuffer.SetNumUninitialized(FMath::Min(Size, 65507u));
-		ReceiveSocket->RecvFrom(ReceiveDataBuffer.GetData(), ReceiveDataBuffer.Num(), BytesRead, *targetAddr);
+	char ansiiData[1024];
+	memcpy(ansiiData, ReceiveDataBuffer.GetData(), BytesRead);
+	ansiiData[BytesRead] = 0;
 
-		char ansiiData[1024];
-		memcpy(ansiiData, ReceiveDataBuffer.GetData(), BytesRead);
-		ansiiData[BytesRead] = 0;
-
-		FString Data = ANSI_TO_TCHAR(ansiiData);
-		OnBytesReceivedDelegate.ExecuteIfBound(Data);
-	}
+	FString Bytes = ANSI_TO_TCHAR(ansiiData);
+	return Bytes;
 }
 
 void UUDPSocket::Teardown() {

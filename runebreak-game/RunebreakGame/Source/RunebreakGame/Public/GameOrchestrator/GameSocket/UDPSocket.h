@@ -37,11 +37,11 @@ public:
 	void Teardown();
 
 	void SendMessage(FString& Bytes);
-	void ReceivePendingMessages();
+
+	bool HasPendingData(uint32& Size);
+	FString ReceiveBytes(uint32 Size);
 
 	TArray<uint8> ReceiveDataBuffer;
-
-	FOnBytesReceived OnBytesReceivedDelegate;
 
 private:
 	UPROPERTY()

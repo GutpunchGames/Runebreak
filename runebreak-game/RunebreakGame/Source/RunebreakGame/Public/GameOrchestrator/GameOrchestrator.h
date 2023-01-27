@@ -48,20 +48,21 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	UGameSimulation* GameSimulation;
 
+	UPROPERTY(BlueprintReadOnly)
+	bool IsAnyPlayerRemote;
+
 private:
 	UPROPERTY()
 	UPlayerInputProcessor* Player1InputProcessor;
 	UPROPERTY()
 	UPlayerInputProcessor* Player2InputProcessor;
 
-	void HandleRemoteInputsReceived(const FInputsMessage& InputsMessage);
+	void HandleRemoteInputsReceived(const FInput& Input);
 
 	UPROPERTY()
 	bool IsPlayer1Remote;
 	UPROPERTY()
 	bool IsPlayer2Remote;
-	UPROPERTY()
-	bool IsAnyPlayerRemote;
 
 	UPROPERTY()
 	bool IsCorrectingRift;
@@ -70,4 +71,5 @@ private:
 	float RiftPauseThresholdFrames = 4;
 
 	float ComputeRift();
+	void HandleSyncMessage(FSyncMessage SyncMessage);
 };

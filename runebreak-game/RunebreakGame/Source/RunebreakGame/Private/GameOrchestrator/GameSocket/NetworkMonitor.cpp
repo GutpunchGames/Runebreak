@@ -14,8 +14,6 @@ UNetworkMonitor::~UNetworkMonitor() {
 }
 
 void UNetworkMonitor::HandlePong(FPongMessage PongMessage) {
-	UE_LOG(LogTemp, Warning, TEXT("HandlePong: %d"), *PongMessage.OriginTimestamp)
-
 	int64 CurrentTime = TimeUtilities::GetMillisSinceEpoch();
 	int64 OriginTime;
 	FDefaultValueHelper::ParseInt64(PongMessage.OriginTimestamp, OriginTime);
@@ -32,10 +30,15 @@ void UNetworkMonitor::HandlePong(FPongMessage PongMessage) {
 		PingIndex = 0;
 	}
 
-	ComputeStatistics(PongMessage.RemoteFrame);
+	ComputeStatistics();
 }
 
-void UNetworkMonitor::ComputeStatistics(int RemoteFrame) {
+void UNetworkMonitor::HandleSync(const FSyncMessage& SyncMessage) {
+	NetworkStatistics.MostRecentRemoteFrame = SyncMessage.OriginFrame;
+	Publish();
+}
+
+void UNetworkMonitor::ComputeStatistics() {
 	int Total = 0;
 	for (int i = 0; i < NumPingsTracked; i++) {
 		Total += RoundTripTimes[i];
@@ -43,7 +46,9 @@ void UNetworkMonitor::ComputeStatistics(int RemoteFrame) {
 
 	NetworkStatistics.AverageRoundTripTime = (float)Total / (float) RoundTripTimes.Num();
 	NetworkStatistics.PacketLoss = -1;
-	NetworkStatistics.MostRecentRemoteFrame =
-		FMath::Max(RemoteFrame, NetworkStatistics.MostRecentRemoteFrame);
+	Publish();
+}
+
+void UNetworkMonitor::Publish() {
 	OnNetworkStatisticsChangedDelegate.Broadcast(NetworkStatistics);
 }

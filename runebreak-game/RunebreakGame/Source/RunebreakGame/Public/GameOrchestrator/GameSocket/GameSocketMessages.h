@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include <RunebreakGame/Public/GameOrchestrator/Input.h>
 #include "GameSocketMessages.generated.h"
 
 USTRUCT(BlueprintType)
@@ -12,9 +13,6 @@ struct FPingMessage {
 public:
 	UPROPERTY()
 	FString OriginTimestamp;
-
-	UPROPERTY()
-	int OriginFrame;
 };
 
 USTRUCT(BlueprintType)
@@ -24,8 +22,18 @@ struct FPongMessage {
 public:
 	UPROPERTY()
 	FString OriginTimestamp;
+};
 
+USTRUCT(BlueprintType)
+struct FSyncMessage {
+	GENERATED_BODY()
+
+public:
 	UPROPERTY()
-	int RemoteFrame;
+	int OriginFrame;
+	UPROPERTY()
+	FInput LatestInput; // todo: make array of unacked inputs
+	UPROPERTY()
+	int FrameAck;
 };
 

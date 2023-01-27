@@ -12,7 +12,7 @@ ARBGameSocket::ARBGameSocket()
 
 	CurrentFrame = 0;
 
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.bStartWithTickEnabled = false;
 }
 
@@ -26,16 +26,56 @@ void ARBGameSocket::Setup() {
 	NetworkMonitor = NewObject<UNetworkMonitor>(this, TEXT("NetworkMonitor"));
 
 	Socket->Setup(SocketConfig.UDPSocketConfig);
-	Socket->OnBytesReceivedDelegate.BindUObject(this, &ARBGameSocket::HandleMessage);
-
 	IsSetup = true;
-	PrimaryActorTick.SetTickFunctionEnable(true);
 }
 
-void ARBGameSocket::ReceivePendingMessages() {
-	if (IsSetup && Socket) {
-		Socket->ReceivePendingMessages();
+void ARBGameSocket::ReceivePendingMessages(FSyncMessage& LatestSyncMessage) {
+	LatestSyncMessage.OriginFrame = -1;
+
+	if (IsSetup) {
+		uint32 Size;
+
+		while (Socket->HasPendingData(Size)) {
+			FString Bytes = Socket->ReceiveBytes(Size);
+			FRBGameSocketMessage Message;
+			FromJson<FRBGameSocketMessage>(Bytes, &Message);
+			FString DecodedPayload = Base64Utilities::Base64Decode(Message.Payload);
+
+			LogRecv(Message.Type, DecodedPayload);
+
+			if (Message.Type == MESSAGE_TYPE_SYNC) {
+				FSyncMessage InSyncMessage;
+				FromJson(DecodedPayload, &InSyncMessage);
+				if (InSyncMessage.OriginFrame >= LatestSyncMessage.OriginFrame) {
+					UE_LOG(LogTemp, Warning, TEXT("OVERWROTE LatestSyncMessage: md: %d"), InSyncMessage.LatestInput.MoveDirection)
+					LatestSyncMessage = InSyncMessage;
+				}
+			}
+			// received ping. send back the timestamp as pong.
+			else if (Message.Type == MESSAGE_TYPE_PING) {
+				FPingMessage PingMessage;
+				FromJson(DecodedPayload, &PingMessage);
+				FPongMessage PongMessage;
+				PongMessage.OriginTimestamp = PingMessage.OriginTimestamp;
+				SendControlMessage(MESSAGE_TYPE_PONG, ToJsonString(PongMessage));
+			}
+			// received pong. fold this into the network statistics.
+			else if (Message.Type == MESSAGE_TYPE_PONG) {
+				FPongMessage PongMessage;
+				FromJson(DecodedPayload, &PongMessage);
+				NetworkMonitor->HandlePong(PongMessage);
+			}
+			else {
+				UE_LOG(LogTemp, Warning, TEXT("Unhandled message type: %d"), Message.Type)
+			}
+		}
+
+		if (LatestSyncMessage.OriginFrame >= 0) {
+			NetworkMonitor->HandleSync(LatestSyncMessage);
+		}
 	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Final MD: %d -- OF: %d"), LatestSyncMessage.LatestInput.MoveDirection, LatestSyncMessage.OriginFrame)
 }
 
 void ARBGameSocket::SendPing(int LocalFrame) {
@@ -43,15 +83,17 @@ void ARBGameSocket::SendPing(int LocalFrame) {
 
 	FPingMessage PingMessage;
 	PingMessage.OriginTimestamp = FString::Printf(TEXT("%lld"), CurrentTime);
-	PingMessage.OriginFrame = LocalFrame;
 
 	SendControlMessage(MESSAGE_TYPE_PING, ToJsonString(PingMessage));
 }
 
+void ARBGameSocket::SendSync(const FSyncMessage& SyncMessage) {
+	SendControlMessage(MESSAGE_TYPE_SYNC, ToJsonString(SyncMessage));
+}
+
 void ARBGameSocket::SendControlMessage(int Type, FString Payload) {
 	if (SocketConfig.LogToScreen) {
-		FString LogMessage = FString::Printf(TEXT("SEND: %d -- %s"), Type, *Payload);
-		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 3, FColor::Green, *LogMessage, /*newer on top*/ true);
+		LogSend(Type, Payload);
 	}
 
 	FRBGameSocketMessage Message;
@@ -62,52 +104,16 @@ void ARBGameSocket::SendControlMessage(int Type, FString Payload) {
 	Socket->SendMessage(Json);
 }
 
-void ARBGameSocket::HandleMessage(const FString& Bytes) {
-	FRBGameSocketMessage Message;
-	FromJson<FRBGameSocketMessage>(Bytes, &Message);
-	FString DecodedPayload = Base64Utilities::Base64Decode(Message.Payload);
-
-	if (SocketConfig.LogToScreen) {
-		FString LogMessage = FString::Printf(TEXT("RECV: %d -- %s"), Message.Type, *DecodedPayload);
-		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 3, FColor::Red, *LogMessage, /*newer on top*/ true);
-	}
-
-	// received ping. send back the timestamp as pong.
-	if (Message.Type == MESSAGE_TYPE_PING) {
-		FPingMessage PingMessage;
-		FromJson(DecodedPayload, &PingMessage);
-		FPongMessage PongMessage;
-		PongMessage.OriginTimestamp = PingMessage.OriginTimestamp;
-		PongMessage.RemoteFrame = CurrentFrame;
-		SendControlMessage(MESSAGE_TYPE_PONG, ToJsonString(PongMessage));
-	}
-	// received pong. fold this into the network statistics.
-	else if (Message.Type == MESSAGE_TYPE_PONG) {
-		FPongMessage PongMessage;
-		FromJson(DecodedPayload, &PongMessage);
-		NetworkMonitor->HandlePong(PongMessage);
-	}
-	else if (Message.Type == MESSAGE_TYPE_INPUTS) {
-		FInputsMessage InputsMessage;
-		FInputsMessage::ParseString(DecodedPayload, InputsMessage);
-		OnInputsReceivedDelegate.ExecuteIfBound(InputsMessage);
-		UE_LOG(LogTemp, Warning, TEXT("Got inputs message: %s"), *InputsMessage.ToString())
-	}
-	else {
-		UE_LOG(LogTemp, Warning, TEXT("Unhandled message type: %d"), Message.Type)
-	}
-}
-
 void ARBGameSocket::Teardown() {
 	if (IsSetup && Socket) {
 		Socket->Teardown();
 	}
 }
 
-void ARBGameSocket::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-	if (IsSetup) {
-		ReceivePendingMessages();
-	}
+void ARBGameSocket::LogSend(int Type, const FString& Payload) {
+	UE_LOG(LogTemp, Warning, TEXT("SEND: %d -- %s"), Type, *Payload);
+}
+
+void ARBGameSocket::LogRecv(int Type, const FString& Payload) {
+	UE_LOG(LogTemp, Warning, TEXT("RECV: %d -- %s"), Type, *Payload);
 }

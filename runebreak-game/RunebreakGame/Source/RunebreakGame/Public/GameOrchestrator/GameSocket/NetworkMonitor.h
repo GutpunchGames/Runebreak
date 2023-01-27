@@ -18,9 +18,7 @@ public:
 	~UNetworkMonitor();
 
 	void HandlePong(FPongMessage PongMessage);
-
-	UPROPERTY()
-	int MostRecentRemoteFrame;
+	void HandleSync(const FSyncMessage& SyncMessage);
 
 	UPROPERTY()
 	FNetworkStatistics NetworkStatistics;
@@ -37,5 +35,9 @@ private:
 	UPROPERTY()
 	TArray<int> RoundTripTimes;
 
-	void ComputeStatistics(int RemoteFrame);
+	UPROPERTY()
+	int MostRecentRemoteFrame;
+
+	void Publish();
+	void ComputeStatistics();
 };
