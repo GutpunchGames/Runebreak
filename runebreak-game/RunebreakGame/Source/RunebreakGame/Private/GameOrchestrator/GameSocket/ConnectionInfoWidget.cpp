@@ -7,6 +7,9 @@ void UConnectionInfoWidget::NativeConstruct() {
 void UConnectionInfoWidget::SetNetworkStatistics(FNetworkStatistics NetworkStatistics) {
 	FString RTT_Str = FString::Printf(TEXT("%f ms"), NetworkStatistics.AverageRoundTripTime);
 	AverageRoundTripTimeDisplay->SetText(FText::FromString(RTT_Str));
+
+	FString MostRecentRemoteFrameStr = FString::Printf(TEXT("%d"), NetworkStatistics.MostRecentRemoteFrame);
+	MostRecentRemoteFrameDisplay->SetText(FText::FromString(MostRecentRemoteFrameStr));
 }
 
 void UConnectionInfoWidget::Bind(ARBGameSocket* GameSocket) {

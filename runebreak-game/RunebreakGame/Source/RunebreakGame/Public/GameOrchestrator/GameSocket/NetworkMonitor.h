@@ -4,33 +4,8 @@
 
 #include "CoreMinimal.h"
 #include <RunebreakGame/Public/GameOrchestrator/GameSocket/NetworkStatistics.h>
+#include <RunebreakGame/Public/GameOrchestrator/GameSocket/GameSocketMessages.h>
 #include "NetworkMonitor.generated.h"
-
-USTRUCT(BlueprintType)
-struct FPingMessage {
-	GENERATED_BODY()
-
-public:
-	UPROPERTY()
-	FString OriginTimestamp;
-
-	FString ToJson() {
-		return FString::Printf(TEXT("{\"OriginTimestamp\":\"%s\"}"), *OriginTimestamp);
-	}
-};
-
-USTRUCT(BlueprintType)
-struct FPongMessage {
-	GENERATED_BODY()
-
-public:
-	UPROPERTY()
-	FString OriginTimestamp;
-
-	FString ToJson() {
-		return FString::Printf(TEXT("{\"OriginTimestamp\":\"%s\"}"), *OriginTimestamp);
-	}
-};
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnNetworkStatisticsChanged, FNetworkStatistics);
 
@@ -44,18 +19,23 @@ public:
 
 	void HandlePong(FPongMessage PongMessage);
 
-	UFUNCTION()
-	void DoPing();
+	UPROPERTY()
+	int MostRecentRemoteFrame;
 
-	TFunction<void(FPingMessage)> PingImpl;
+	UPROPERTY()
+	FNetworkStatistics NetworkStatistics;
 
 	FOnNetworkStatisticsChanged OnNetworkStatisticsChangedDelegate;
 
 private:
+	UPROPERTY()
 	int PingIndex;
+
+	UPROPERTY()
 	int NumPingsTracked = 0;
+
+	UPROPERTY()
 	TArray<int> RoundTripTimes;
 
-	FNetworkStatistics NetworkStatistics;
-	void ComputeStatistics();
+	void ComputeStatistics(int RemoteFrame);
 };

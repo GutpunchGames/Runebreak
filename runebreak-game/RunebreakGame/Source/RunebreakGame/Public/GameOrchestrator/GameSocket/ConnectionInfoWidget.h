@@ -21,6 +21,9 @@ public:
 	class UTextBlock* PacketLossDisplay;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	class UTextBlock* MostRecentRemoteFrameDisplay;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	class UTextBlock* RemoteEndpointDisplay;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))

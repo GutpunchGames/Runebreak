@@ -49,8 +49,6 @@ public:
 	UGameSimulation* GameSimulation;
 
 private:
-	int FrameCount = 0;
-
 	UPROPERTY()
 	UPlayerInputProcessor* Player1InputProcessor;
 	UPROPERTY()
@@ -58,6 +56,18 @@ private:
 
 	void HandleRemoteInputsReceived(const FInputsMessage& InputsMessage);
 
+	UPROPERTY()
 	bool IsPlayer1Remote;
+	UPROPERTY()
 	bool IsPlayer2Remote;
+	UPROPERTY()
+	bool IsAnyPlayerRemote;
+
+	UPROPERTY()
+	bool IsCorrectingRift;
+
+	UPROPERTY()
+	float RiftPauseThresholdFrames = 4;
+
+	float ComputeRift();
 };

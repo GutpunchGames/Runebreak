@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "GameOrchestrator/GameSocket/NetworkMonitor.h"
 #include "Misc/DefaultValueHelper.h"
 #include <Utilities/TimeUtilities.h>
@@ -9,6 +6,7 @@
 UNetworkMonitor::UNetworkMonitor() {
 	RoundTripTimes.SetNumUninitialized(3);
 	PingIndex = 0;
+	MostRecentRemoteFrame = 0;
 }
 
 UNetworkMonitor::~UNetworkMonitor() {
@@ -34,26 +32,18 @@ void UNetworkMonitor::HandlePong(FPongMessage PongMessage) {
 		PingIndex = 0;
 	}
 
-	ComputeStatistics();
+	ComputeStatistics(PongMessage.RemoteFrame);
 }
 
-void UNetworkMonitor::ComputeStatistics() {
+void UNetworkMonitor::ComputeStatistics(int RemoteFrame) {
 	int Total = 0;
 	for (int i = 0; i < NumPingsTracked; i++) {
 		Total += RoundTripTimes[i];
 	}
 
 	NetworkStatistics.AverageRoundTripTime = (float)Total / (float) RoundTripTimes.Num();
-	UE_LOG(LogTemp, Warning, TEXT("Computed ping: %f"), NetworkStatistics.AverageRoundTripTime);
 	NetworkStatistics.PacketLoss = -1;
+	NetworkStatistics.MostRecentRemoteFrame =
+		FMath::Max(RemoteFrame, NetworkStatistics.MostRecentRemoteFrame);
 	OnNetworkStatisticsChangedDelegate.Broadcast(NetworkStatistics);
-}
-
-void UNetworkMonitor::DoPing() {
-	int64 CurrentTime = TimeUtilities::GetMillisSinceEpoch();
-
-	FPingMessage Message;
-	Message.OriginTimestamp = FString::Printf(TEXT("%lld"), CurrentTime);
-
-	PingImpl(Message);
 }

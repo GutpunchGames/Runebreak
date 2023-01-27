@@ -10,6 +10,8 @@ ARBGameSocket::ARBGameSocket()
 	SocketState = ERBGameSocketState::Uninitialized;
 	IsSetup = false;
 
+	CurrentFrame = 0;
+
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = false;
 }
@@ -26,12 +28,6 @@ void ARBGameSocket::Setup() {
 	Socket->Setup(SocketConfig.UDPSocketConfig);
 	Socket->OnBytesReceivedDelegate.BindUObject(this, &ARBGameSocket::HandleMessage);
 
-	NetworkMonitor->PingImpl = [this](FPingMessage PingMessage) {
-		SendControlMessage(MESSAGE_TYPE_PING, PingMessage.ToJson());
-	};
-	PingIntervalSecs = SocketConfig.PingIntervalSecs;
-	GetWorld()->GetTimerManager().SetTimer(PingTimerHandle, NetworkMonitor, &UNetworkMonitor::DoPing, PingIntervalSecs, true);
-
 	IsSetup = true;
 	PrimaryActorTick.SetTickFunctionEnable(true);
 }
@@ -40,6 +36,16 @@ void ARBGameSocket::ReceivePendingMessages() {
 	if (IsSetup && Socket) {
 		Socket->ReceivePendingMessages();
 	}
+}
+
+void ARBGameSocket::SendPing(int LocalFrame) {
+	int64 CurrentTime = TimeUtilities::GetMillisSinceEpoch();
+
+	FPingMessage PingMessage;
+	PingMessage.OriginTimestamp = FString::Printf(TEXT("%lld"), CurrentTime);
+	PingMessage.OriginFrame = LocalFrame;
+
+	SendControlMessage(MESSAGE_TYPE_PING, ToJsonString(PingMessage));
 }
 
 void ARBGameSocket::SendControlMessage(int Type, FString Payload) {
@@ -72,7 +78,8 @@ void ARBGameSocket::HandleMessage(const FString& Bytes) {
 		FromJson(DecodedPayload, &PingMessage);
 		FPongMessage PongMessage;
 		PongMessage.OriginTimestamp = PingMessage.OriginTimestamp;
-		SendControlMessage(MESSAGE_TYPE_PONG, PongMessage.ToJson());
+		PongMessage.RemoteFrame = CurrentFrame;
+		SendControlMessage(MESSAGE_TYPE_PONG, ToJsonString(PongMessage));
 	}
 	// received pong. fold this into the network statistics.
 	else if (Message.Type == MESSAGE_TYPE_PONG) {
@@ -93,7 +100,6 @@ void ARBGameSocket::HandleMessage(const FString& Bytes) {
 
 void ARBGameSocket::Teardown() {
 	if (IsSetup && Socket) {
-		GetWorld()->GetTimerManager().ClearTimer(PingTimerHandle);
 		Socket->Teardown();
 	}
 }

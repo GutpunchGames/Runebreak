@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include"GameOrchestrator/GameSocket/GameSocketMessages.h"
 #include"GameOrchestrator/GameSocket/NetworkMonitor.h"
 #include"GameOrchestrator/GameSocket/InputsMessage.h"
 #include <RunebreakGame/Public/GameOrchestrator/GameSocket/UDPSocket.h>
@@ -67,6 +68,8 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	FRBGameSocketConfig SocketConfig;
 
+	void SendPing(int LocalFrame);
+
 	void SendControlMessage(int Type, FString Payload);
 	void ReceivePendingMessages();
 
@@ -82,14 +85,13 @@ public:
 	UPROPERTY()
 	UUDPSocket* Socket;
 
+	UPROPERTY()
+	int CurrentFrame;
+
 	FOnInputsReceived OnInputsReceivedDelegate;
 
 	virtual void Tick(float DeltaTime) override;
 
 private:
-	/* Handle to manage the timer */
-	FTimerHandle PingTimerHandle;
-	float PingIntervalSecs;
-
 	bool IsSetup;
 };
