@@ -7,6 +7,7 @@
 #include <RunebreakGame/Public/GameOrchestrator/Input.h>
 #include <RunebreakGame/Public/GameOrchestrator/InputBuffer.h>
 #include <RunebreakGame/Public/GameOrchestrator/SimulationActor.h>
+#include <RunebreakGame/Public/GameOrchestrator/GameSocket/GameSocketMessages.h>
 #include "GameSimulation.generated.h"
 
 UCLASS()
@@ -16,12 +17,15 @@ class RUNEBREAKGAME_API UGameSimulation : public UObject
 
 public:
 	void Initialize(UClass* PlayerClass, FVector Player1SpawnPoint, FVector Player2SpawnPoint, int InputDelay);
-	void AddPlayer1Input(FInput Input);
-	void AddPlayer2Input(FInput Input);
+	void AddPlayer1Input(const FInput& Input);
+	void AddPlayer2Input(const FInput& Input);
 	void AdvanceFrame();
 
 	UFUNCTION(BlueprintCallable)
 	int GetFrameCount();
+
+	UFUNCTION()
+	void HandleSync(int Player, const FSyncMessage& SyncMessage);
 
 private:
 	UPROPERTY()

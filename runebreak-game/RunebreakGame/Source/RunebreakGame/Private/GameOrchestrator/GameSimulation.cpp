@@ -11,6 +11,7 @@ void UGameSimulation::Initialize(
 	FVector Player2SpawnPoint,
 	int InputDelay
 ) {
+	FrameCount = 0;
 	Player1InputBuffer = NewObject<UInputBuffer>(this, "Player1InputBuffer");
 	Player2InputBuffer = NewObject<UInputBuffer>(this, "Player2InputBuffer");
 	Player1InputBuffer->Delay = InputDelay;
@@ -19,11 +20,11 @@ void UGameSimulation::Initialize(
 	Player2 = SpawnPlayer(PlayerClass, Player2SpawnPoint);
 }
 
-void UGameSimulation::AddPlayer1Input(FInput Input) {
+void UGameSimulation::AddPlayer1Input(const FInput& Input) {
 	Player1InputBuffer->AddInput(Input);
 }
 
-void UGameSimulation::AddPlayer2Input(FInput Input) {
+void UGameSimulation::AddPlayer2Input(const FInput& Input) {
 	Player2InputBuffer->AddInput(Input);
 }
 
@@ -39,6 +40,11 @@ void UGameSimulation::SerializeState() {
 
 int UGameSimulation::GetFrameCount() {
 	return FrameCount;
+}
+
+void UGameSimulation::HandleSync(int Player, const FSyncMessage& SyncMessage) {
+	UInputBuffer* InputBuffer = Player == 1 ? Player1InputBuffer : Player2InputBuffer;
+	InputBuffer->AddInput(SyncMessage.LatestInput);
 }
 
 ASimulationActor* UGameSimulation::SpawnPlayer(UClass* PlayerClass, FVector const& PlayerSpawnPoint) {

@@ -10,7 +10,7 @@
 #include <RunebreakGame/Public/GameOrchestrator/GameSocket/UDPSocket.h>
 #include "RBGameSocket.generated.h"
 
-DECLARE_DELEGATE_OneParam(FOnInputsReceived, const FInputsMessage&);
+DECLARE_DELEGATE_OneParam(FOnSyncReceived, const FSyncMessage&);
 
 static const int MESSAGE_TYPE_PING = 0;
 static const int MESSAGE_TYPE_PONG = 1;
@@ -72,7 +72,7 @@ public:
 	void SendSync(const FSyncMessage& SyncMessage);
 
 	void SendControlMessage(int Type, FString Payload);
-	TSharedPtr<FSyncMessage> ReceivePendingMessages();
+	void ReceivePendingMessages();
 
 	UPROPERTY(BlueprintReadOnly)
 	UNetworkMonitor* NetworkMonitor;
@@ -86,7 +86,9 @@ public:
 	UPROPERTY()
 	int CurrentFrame;
 
-	FOnInputsReceived OnInputsReceivedDelegate;
+	FOnSyncReceived OnSyncReceivedDelegate;
+
+	virtual void Tick(float DeltaSeconds) override;
 
 private:
 	bool IsSetup;

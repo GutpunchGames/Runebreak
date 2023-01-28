@@ -9,9 +9,6 @@
 #include "Templates/SharedPointer.h"
 #include "InputBuffer.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class RUNEBREAKGAME_API UInputBuffer : public UObject
 {
@@ -32,6 +29,7 @@ public:
 private:
 	UPROPERTY()
 	TArray<FInput> FrameInputs;
+
 	UPROPERTY()
-	int32 FrameIndex;
+	int MostRecentFrame = 0;
 };

@@ -69,6 +69,10 @@ void AGameOrchestrator::PrepareGame(FPlayerSpawnConfig Player1SpawnConfig, FPlay
 		GameSocket->Setup();
 	}
 
+	if (IsAnyPlayerRemote) {
+		GameSocket->OnSyncReceivedDelegate.BindUObject(this, &AGameOrchestrator::HandleSyncMessage);
+	}
+
 	PrimaryActorTick.SetTickFunctionEnable(true);
 }
 
@@ -82,16 +86,13 @@ void AGameOrchestrator::Tick(float DeltaSeconds) {
 	int CurrentFrame = GameSimulation->GetFrameCount();
 	if (IsAnyPlayerRemote) {
 		GameSocket->SendPing(GameSimulation->GetFrameCount());
-		TSharedPtr<FSyncMessage> LatestSyncMessage = GameSocket->ReceivePendingMessages();
-		if (LatestSyncMessage) {
-			HandleSyncMessage(*LatestSyncMessage);
-		}
+		GameSocket->ReceivePendingMessages();
 	}
 
 	bool ShouldAdvanceFrame = true;
 	if (IsAnyPlayerRemote) {
 		float Rift = IsAnyPlayerRemote ? ComputeRift() : 0;
-		if (Rift >= RiftPauseThresholdFrames || IsCorrectingRift && Rift > 0) {
+		if (Rift >= RiftPauseThresholdFrames || IsCorrectingRift && Rift > 2) {
 			ShouldAdvanceFrame = false;
 			IsCorrectingRift = true;
 		}
@@ -102,28 +103,36 @@ void AGameOrchestrator::Tick(float DeltaSeconds) {
 	}
 
 	if (ShouldAdvanceFrame) {
-		GameSimulation->AddPlayer1Input(Player1InputProcessor->Input);
-		GameSimulation->AddPlayer2Input(Player2InputProcessor->Input);
-
 		if (!IsPlayer1Remote && IsPlayer2Remote) {
 			FInput PlayerInput = Player1InputProcessor->Input;
+			PlayerInput.Frame = GameSimulation->GetFrameCount();
+			GameSimulation->AddPlayer1Input(PlayerInput);
 
 			FSyncMessage SyncMessage;
 			SyncMessage.LatestInput = PlayerInput;
-			// the inputs we are sending are for the frame about to simulate
-			SyncMessage.OriginFrame = GameSimulation->GetFrameCount() + 1;
+			SyncMessage.OriginFrame = GameSimulation->GetFrameCount();
 			SyncMessage.FrameAck = GameSocket->NetworkMonitor->NetworkStatistics.MostRecentRemoteFrame;
 			GameSocket->SendSync(SyncMessage);
 		}
 		else if (IsPlayer1Remote && !IsPlayer2Remote) {
 			FInput PlayerInput = Player2InputProcessor->Input;
+			PlayerInput.Frame = GameSimulation->GetFrameCount();
+			GameSimulation->AddPlayer2Input(PlayerInput);
 
 			FSyncMessage SyncMessage;
 			SyncMessage.LatestInput = PlayerInput;
-			// the inputs we are sending are for the frame about to simulate
-			SyncMessage.OriginFrame = GameSimulation->GetFrameCount() + 1;
+			SyncMessage.OriginFrame = GameSimulation->GetFrameCount();
 			SyncMessage.FrameAck = GameSocket->NetworkMonitor->NetworkStatistics.MostRecentRemoteFrame;
 			GameSocket->SendSync(SyncMessage);
+		}
+		else {
+			FInput Player1Input = Player1InputProcessor->Input;
+			Player1Input.Frame = GameSimulation->GetFrameCount();
+			FInput Player2Input = Player2InputProcessor->Input;
+			Player2Input.Frame = GameSimulation->GetFrameCount();
+
+			GameSimulation->AddPlayer1Input(Player1Input);
+			GameSimulation->AddPlayer2Input(Player2Input);
 		}
 
 		if (IsAnyPlayerRemote) {
@@ -135,17 +144,17 @@ void AGameOrchestrator::Tick(float DeltaSeconds) {
 	}
 }
 
-void AGameOrchestrator::HandleRemoteInputsReceived(const FInput& Input) {
-	if (IsPlayer1Remote) {
-		Player1InputProcessor->SetRemoteInput(Input);
+void AGameOrchestrator::HandleSyncMessage(const FSyncMessage& SyncMessage) {
+	if (!IsAnyPlayerRemote) {
+		return;
 	}
-	else if (IsPlayer2Remote) {
-		Player2InputProcessor->SetRemoteInput(Input);
-	}
-}
 
-void AGameOrchestrator::HandleSyncMessage(FSyncMessage SyncMessage) {
-	HandleRemoteInputsReceived(SyncMessage.LatestInput);
+	if (IsPlayer1Remote) {
+		GameSimulation->HandleSync(1, SyncMessage);
+	}
+	else {
+		GameSimulation->HandleSync(2, SyncMessage);
+	}
 }
 
 // computes the number of frames (with subframe precision) that two clients differ

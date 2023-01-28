@@ -29,7 +29,7 @@ void ARBGameSocket::Setup() {
 	IsSetup = true;
 }
 
-TSharedPtr<FSyncMessage> ARBGameSocket::ReceivePendingMessages() {
+void ARBGameSocket::ReceivePendingMessages() {
 	TSharedPtr<FSyncMessage> LatestSyncMessage;
 	if (IsSetup) {
 		uint32 Size;
@@ -63,17 +63,13 @@ TSharedPtr<FSyncMessage> ARBGameSocket::ReceivePendingMessages() {
 				FromJson(DecodedPayload, &PongMessage);
 				NetworkMonitor->HandlePong(PongMessage);
 			}
-			else {
-				UE_LOG(LogTemp, Warning, TEXT("Unhandled message type: %d"), Message.Type)
-			}
 		}
 
 		if (LatestSyncMessage) {
 			NetworkMonitor->HandleSync(*LatestSyncMessage);
+			OnSyncReceivedDelegate.ExecuteIfBound(*LatestSyncMessage);
 		}
 	}
-
-	return LatestSyncMessage;
 }
 
 void ARBGameSocket::SendPing(int LocalFrame) {
@@ -114,4 +110,8 @@ void ARBGameSocket::LogSend(int Type, const FString& Payload) {
 
 void ARBGameSocket::LogRecv(int Type, const FString& Payload) {
 	UE_LOG(LogTemp, Warning, TEXT("RECV: %d -- %s"), Type, *Payload);
+}
+
+void ARBGameSocket::Tick(float DeltaSeconds) {
+
 }

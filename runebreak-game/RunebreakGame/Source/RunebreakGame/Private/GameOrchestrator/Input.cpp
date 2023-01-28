@@ -5,6 +5,7 @@
 
 FInput::FInput()
 {
+	Frame = -1;
 	MoveDirection = 0;
 }
 

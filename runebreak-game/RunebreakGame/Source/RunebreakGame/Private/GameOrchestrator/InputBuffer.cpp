@@ -4,13 +4,11 @@
 #include "GameOrchestrator/InputBuffer.h"
 
 UInputBuffer::UInputBuffer() {
-	FrameIndex = 0;
-	FrameInputs.SetNumUninitialized(512);
+	FrameInputs.SetNumUninitialized(65535);
 }
 
 UInputBuffer::UInputBuffer(const FObjectInitializer& ObjectInitializer) {
-	FrameIndex = 0;
-	FrameInputs.SetNumUninitialized(512);
+	FrameInputs.SetNumUninitialized(65535);
 }
 
 UInputBuffer::~UInputBuffer() {
@@ -19,20 +17,19 @@ UInputBuffer::~UInputBuffer() {
 FInput UInputBuffer::GetInput(int Frame) {
 	UE_LOG(LogTemp, Warning, TEXT("Fetching Frame: %d"), Frame)
 	int DelayAdjustedFrame = Frame - Delay;
-	int TargetIndex = DelayAdjustedFrame % 512;
-	if (FrameInputs.IsValidIndex(TargetIndex)) {
-		return FrameInputs[TargetIndex];
+	if (DelayAdjustedFrame <= MostRecentFrame) {
+		return FrameInputs[DelayAdjustedFrame];
 	}
 	else {
-		return FInput();
+		return GetMostRecentInput();
 	}
 }
 
 FInput UInputBuffer::GetMostRecentInput() {
-	return GetInput(FrameIndex - 1);
+	return GetInput(MostRecentFrame);
 }
 
 void UInputBuffer::AddInput(FInput Input) {
-	FrameInputs[FrameIndex % 512] = Input;
-	FrameIndex++;
+	FrameInputs[Input.Frame] = Input;
+	MostRecentFrame = FMath::Max(Input.Frame, MostRecentFrame);
 }

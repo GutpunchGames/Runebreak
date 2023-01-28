@@ -57,8 +57,6 @@ private:
 	UPROPERTY()
 	UPlayerInputProcessor* Player2InputProcessor;
 
-	void HandleRemoteInputsReceived(const FInput& Input);
-
 	UPROPERTY()
 	bool IsPlayer1Remote;
 	UPROPERTY()
@@ -71,5 +69,7 @@ private:
 	float RiftPauseThresholdFrames = 4;
 
 	float ComputeRift();
-	void HandleSyncMessage(FSyncMessage SyncMessage);
+
+	UFUNCTION()
+	void HandleSyncMessage(const FSyncMessage& SyncMessage);
 };

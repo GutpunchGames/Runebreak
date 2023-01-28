@@ -12,6 +12,9 @@ public:
 	FInput();
 
 	UPROPERTY()
+	int Frame;
+
+	UPROPERTY()
 	int MoveDirection;
 
 	FString ToString();
