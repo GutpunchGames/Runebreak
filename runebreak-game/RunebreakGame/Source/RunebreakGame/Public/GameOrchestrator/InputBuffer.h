@@ -39,6 +39,9 @@ public:
 	UFUNCTION()
 	TArray<FInput> GetInputsSince(int FrameExclusive);
 
+	UFUNCTION()
+	int ConsumeDiscrepancy();
+
 private:
 	UPROPERTY()
 	TArray<FInput> Inputs;
@@ -48,4 +51,7 @@ private:
 
 	UPROPERTY()
 	int InputBufferSize = 0;
+
+	UPROPERTY()
+	int EarliestDiscrepancy;
 };

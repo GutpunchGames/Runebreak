@@ -5,10 +5,12 @@
 
 UInputBuffer::UInputBuffer() {
 	Inputs.SetNumUninitialized(65535);
+	EarliestDiscrepancy = -1;
 }
 
 UInputBuffer::UInputBuffer(const FObjectInitializer& ObjectInitializer) {
 	Inputs.SetNumUninitialized(65535);
+	EarliestDiscrepancy = -1;
 }
 
 UInputBuffer::~UInputBuffer() {
@@ -26,6 +28,12 @@ FInput UInputBuffer::GetInput(int Frame) {
 
 FInput UInputBuffer::GetMostRecentInput() {
 	return GetInput(MostRecentVerifiedFrame);
+}
+
+int UInputBuffer::ConsumeDiscrepancy() {
+	int Result = EarliestDiscrepancy;
+	EarliestDiscrepancy = -1;
+	return Result;
 }
 
 void UInputBuffer::AddLocalInput(FInput Input) {
@@ -54,6 +62,9 @@ int UInputBuffer::AddRemoteInputs(TArray<FInput> NewInputs) {
 		if (NewInput.MoveDirection != LastVerifiedInput.MoveDirection) {
 			// we have detected a difference in the new input and the latest verified input, so a prediction would be wrong!
 			DidFindDiscrepancy = true;
+			if (EarliestDiscrepancy == -1 || EarliestDiscrepancy > NewInput.Frame) {
+				EarliestDiscrepancy = NewInput.Frame;
+			}
 		}
 		else if (!DidFindDiscrepancy) {
 			// if we haven't found a discrepancy yet in what would have been our predictions, we can increment this
