@@ -5,6 +5,7 @@ FNetworkStatistics::FNetworkStatistics()
 	AverageRoundTripTime = 0;
 	PacketLoss = 0;
 	MostRecentRemoteFrame = -1;
+	MostRecentRemoteAck = -1;
 }
 
 FNetworkStatistics::~FNetworkStatistics()

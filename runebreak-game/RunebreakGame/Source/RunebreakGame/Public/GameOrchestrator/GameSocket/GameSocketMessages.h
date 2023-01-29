@@ -32,7 +32,7 @@ public:
 	UPROPERTY()
 	int OriginFrame;
 	UPROPERTY()
-	FInput LatestInput; // todo: make array of unacked inputs
+	TArray<FInput> RecentInputs; // todo: make array of unacked inputs
 	UPROPERTY()
 	int FrameAck;
 };

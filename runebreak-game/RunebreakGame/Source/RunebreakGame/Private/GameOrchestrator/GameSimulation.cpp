@@ -21,11 +21,11 @@ void UGameSimulation::Initialize(
 }
 
 void UGameSimulation::AddPlayer1Input(const FInput& Input) {
-	Player1InputBuffer->AddInput(Input);
+	Player1InputBuffer->AddLocalInput(Input);
 }
 
 void UGameSimulation::AddPlayer2Input(const FInput& Input) {
-	Player2InputBuffer->AddInput(Input);
+	Player2InputBuffer->AddLocalInput(Input);
 }
 
 void UGameSimulation::AdvanceFrame() {
@@ -44,7 +44,7 @@ int UGameSimulation::GetFrameCount() {
 
 void UGameSimulation::HandleSync(int Player, const FSyncMessage& SyncMessage) {
 	UInputBuffer* InputBuffer = Player == 1 ? Player1InputBuffer : Player2InputBuffer;
-	InputBuffer->AddInput(SyncMessage.LatestInput);
+	InputBuffer->AddRemoteInputs(SyncMessage.RecentInputs);
 }
 
 ASimulationActor* UGameSimulation::SpawnPlayer(UClass* PlayerClass, FVector const& PlayerSpawnPoint) {

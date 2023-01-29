@@ -27,6 +27,11 @@ public:
 	UFUNCTION()
 	void HandleSync(int Player, const FSyncMessage& SyncMessage);
 
+	UPROPERTY()
+	UInputBuffer* Player1InputBuffer;
+	UPROPERTY()
+	UInputBuffer* Player2InputBuffer;
+
 private:
 	UPROPERTY()
 	ASimulationActor* Player1;
@@ -36,11 +41,6 @@ private:
 
 	UPROPERTY()
 	int FrameCount = 0;
-
-	UPROPERTY()
-	UInputBuffer* Player1InputBuffer;
-	UPROPERTY()
-	UInputBuffer* Player2InputBuffer;
 
 	ASimulationActor* SpawnPlayer(UClass* PlayerClass, FVector const& PlayerSpawnPoint);
 	ASimulationActor* SpawnSimulationActor(UClass* Class, FVector const& Location);

@@ -19,5 +19,10 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	int MostRecentRemoteFrame;
+
+	UPROPERTY(BlueprintReadOnly)
+	// this is the most recently received ack from a remote client. thus we need to send
+	// all inputs from this frame (plus one) up until our current frame.
+	int MostRecentRemoteAck;
 };
 

@@ -35,6 +35,7 @@ void UNetworkMonitor::HandlePong(FPongMessage PongMessage) {
 
 void UNetworkMonitor::HandleSync(const FSyncMessage& SyncMessage) {
 	NetworkStatistics.MostRecentRemoteFrame = SyncMessage.OriginFrame;
+	NetworkStatistics.MostRecentRemoteAck = SyncMessage.FrameAck;
 	Publish();
 }
 

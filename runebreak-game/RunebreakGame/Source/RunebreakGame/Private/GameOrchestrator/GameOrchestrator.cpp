@@ -109,9 +109,14 @@ void AGameOrchestrator::Tick(float DeltaSeconds) {
 			GameSimulation->AddPlayer1Input(PlayerInput);
 
 			FSyncMessage SyncMessage;
-			SyncMessage.LatestInput = PlayerInput;
+
+			int MostRecentRemoteAck = GameSocket->NetworkMonitor->NetworkStatistics.MostRecentRemoteAck;
+			TArray<FInput> RecentInputs = GameSimulation->Player1InputBuffer->GetInputsSince(MostRecentRemoteAck);
+			SyncMessage.RecentInputs = RecentInputs;
+
 			SyncMessage.OriginFrame = GameSimulation->GetFrameCount();
 			SyncMessage.FrameAck = GameSocket->NetworkMonitor->NetworkStatistics.MostRecentRemoteFrame;
+
 			GameSocket->SendSync(SyncMessage);
 		}
 		else if (IsPlayer1Remote && !IsPlayer2Remote) {
@@ -120,9 +125,14 @@ void AGameOrchestrator::Tick(float DeltaSeconds) {
 			GameSimulation->AddPlayer2Input(PlayerInput);
 
 			FSyncMessage SyncMessage;
-			SyncMessage.LatestInput = PlayerInput;
+
+			int MostRecentRemoteAck = GameSocket->NetworkMonitor->NetworkStatistics.MostRecentRemoteAck;
+			TArray<FInput> RecentInputs = GameSimulation->Player2InputBuffer->GetInputsSince(MostRecentRemoteAck);
+			SyncMessage.RecentInputs = RecentInputs;
+
 			SyncMessage.OriginFrame = GameSimulation->GetFrameCount();
 			SyncMessage.FrameAck = GameSocket->NetworkMonitor->NetworkStatistics.MostRecentRemoteFrame;
+
 			GameSocket->SendSync(SyncMessage);
 		}
 		else {

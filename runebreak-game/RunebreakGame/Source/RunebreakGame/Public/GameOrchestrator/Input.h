@@ -18,4 +18,9 @@ public:
 	int MoveDirection;
 
 	FString ToString();
+
+	bool operator==(const FInput& other)
+	{
+		return Frame == other.Frame && MoveDirection == other.MoveDirection;
+	}
 };
