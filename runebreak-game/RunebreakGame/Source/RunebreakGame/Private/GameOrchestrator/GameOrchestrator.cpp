@@ -2,6 +2,8 @@
 
 
 #include "GameOrchestrator/GameOrchestrator.h"
+#include "GameOrchestrator/InputBuffer/RemoteInputBuffer.h"
+#include "GameOrchestrator/InputBuffer/LocalInputBuffer.h"
 
 AGameOrchestrator::AGameOrchestrator() {
 	PrimaryActorTick.bCanEverTick = true;
@@ -39,7 +41,7 @@ void AGameOrchestrator::PrepareGame(FPlayerSpawnConfig Player1SpawnConfig, FPlay
 	Player2SpawnLocation.Y = 100;
 	Player2SpawnLocation.Z = 0;
 	GameSimulation = NewObject<UGameSimulation>(this, "GameOrchestratorGameSimulation");
-	GameSimulation->Initialize(PlayerClass, Player1SpawnLocation, Player2SpawnLocation, InputDelay);
+	GameSimulation->Initialize(PlayerClass, Player1SpawnLocation, Player2SpawnLocation, IsPlayer1Remote, IsPlayer2Remote, InputDelay);
 
 	if (IsPlayer1Remote) {
 		FRBGameSocketConfig GameSocketConfig;
@@ -111,7 +113,7 @@ void AGameOrchestrator::Tick(float DeltaSeconds) {
 			FSyncMessage SyncMessage;
 
 			int MostRecentRemoteAck = GameSocket->NetworkMonitor->NetworkStatistics.MostRecentRemoteAck;
-			TArray<FInput> RecentInputs = GameSimulation->Player1InputBuffer->GetInputsSince(MostRecentRemoteAck);
+			TArray<FInput> RecentInputs = Cast<ULocalInputBuffer>(GameSimulation->Player1InputBuffer)->GetInputsSince(MostRecentRemoteAck);
 			SyncMessage.RecentInputs = RecentInputs;
 
 			SyncMessage.OriginFrame = GameSimulation->GetFrameCount();
@@ -127,7 +129,7 @@ void AGameOrchestrator::Tick(float DeltaSeconds) {
 			FSyncMessage SyncMessage;
 
 			int MostRecentRemoteAck = GameSocket->NetworkMonitor->NetworkStatistics.MostRecentRemoteAck;
-			TArray<FInput> RecentInputs = GameSimulation->Player2InputBuffer->GetInputsSince(MostRecentRemoteAck);
+			TArray<FInput> RecentInputs = Cast<ULocalInputBuffer>(GameSimulation->Player2InputBuffer)->GetInputsSince(MostRecentRemoteAck);
 			SyncMessage.RecentInputs = RecentInputs;
 
 			SyncMessage.OriginFrame = GameSimulation->GetFrameCount();
@@ -146,8 +148,8 @@ void AGameOrchestrator::Tick(float DeltaSeconds) {
 		}
 
 		if (IsAnyPlayerRemote) {
-			UInputBuffer* RemoteInputBuffer = IsPlayer1Remote ? GameSimulation->Player1InputBuffer : GameSimulation->Player2InputBuffer;
-			int EarliestDiscrepancy = RemoteInputBuffer->ConsumeDiscrepancy();
+			UObject* RemoteInputBuffer = IsPlayer1Remote ? GameSimulation->Player1InputBuffer : GameSimulation->Player2InputBuffer;
+			int EarliestDiscrepancy = Cast<URemoteInputBuffer>(RemoteInputBuffer)->ConsumeDiscrepancy();
 			if (EarliestDiscrepancy != -1) {
 				int RollbackTarget = FMath::Max(0, EarliestDiscrepancy - 1); // can't roll back to negative frames, bit of a redundant check
 				int Delta = CurrentFrame - RollbackTarget;

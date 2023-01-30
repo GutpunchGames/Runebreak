@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include <RunebreakGame/Public/GameOrchestrator/Input.h>
-#include <RunebreakGame/Public/GameOrchestrator/InputBuffer.h>
 #include <RunebreakGame/Public/GameOrchestrator/SimulationActor.h>
 #include <RunebreakGame/Public/GameOrchestrator/GameSocket/GameSocketMessages.h>
 #include "GameSimulation.generated.h"
@@ -16,7 +15,7 @@ class RUNEBREAKGAME_API UGameSimulation : public UObject
 	GENERATED_BODY()
 
 public:
-	void Initialize(UClass* PlayerClass, FVector Player1SpawnPoint, FVector Player2SpawnPoint, int InputDelay);
+	void Initialize(UClass* PlayerClass, FVector Player1SpawnPoint, FVector Player2SpawnPoint, bool IsPlayer1Remote, bool IsPlayer2Remote, int InputDelay);
 	void AddPlayer1Input(const FInput& Input);
 	void AddPlayer2Input(const FInput& Input);
 	void AdvanceFrame();
@@ -27,10 +26,11 @@ public:
 	UFUNCTION()
 	void HandleSync(int Player, const FSyncMessage& SyncMessage);
 
+	// todo: make interface
 	UPROPERTY()
-	UInputBuffer* Player1InputBuffer;
+	UObject* Player1InputBuffer;
 	UPROPERTY()
-	UInputBuffer* Player2InputBuffer;
+	UObject* Player2InputBuffer;
 
 private:
 	UPROPERTY()
