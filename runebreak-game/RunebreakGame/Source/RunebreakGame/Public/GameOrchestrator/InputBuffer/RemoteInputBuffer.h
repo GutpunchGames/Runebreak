@@ -6,11 +6,12 @@
 #include "UObject/NoExportTypes.h"
 #include "Containers/CircularBuffer.h"
 #include "GameOrchestrator/Input.h"
+#include "GameOrchestrator/InputBuffer.h"
 #include "Templates/SharedPointer.h"
 #include "RemoteInputBuffer.generated.h"
 
 UCLASS()
-class RUNEBREAKGAME_API URemoteInputBuffer : public UObject
+class RUNEBREAKGAME_API URemoteInputBuffer : public UObject, public IInputBuffer
 {
 	GENERATED_BODY()
 
@@ -27,11 +28,7 @@ public:
 	// actual inputs. If this frame is less than the current executing frame, then we need to do a rollback.
 	int AddRemoteInputs(TArray<FInput> NewInputs);
 
-	UFUNCTION()
-	FInput GetInput(int Frame);
-
-	//UFUNCTION()
-	//FInput GetMostRecentInput();
+	virtual FInput GetInput(int Frame) override;
 
 	UFUNCTION()
 	int ConsumeDiscrepancy();

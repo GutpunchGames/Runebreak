@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "GameOrchestrator/Input.h"
+#include "GameOrchestrator/InputBuffer.h"
 #include "LocalInputBuffer.generated.h"
 
 UCLASS()
-class RUNEBREAKGAME_API ULocalInputBuffer : public UObject
+class RUNEBREAKGAME_API ULocalInputBuffer : public UObject, public IInputBuffer
 {
 	GENERATED_BODY()
 
@@ -23,8 +24,7 @@ public:
 	UFUNCTION()
 	void AddInput(FInput Input);
 
-	UFUNCTION()
-	FInput GetInput(int Frame);
+	virtual FInput GetInput(int Frame) override;
 
 	UFUNCTION()
 	FInput GetMostRecentInput();

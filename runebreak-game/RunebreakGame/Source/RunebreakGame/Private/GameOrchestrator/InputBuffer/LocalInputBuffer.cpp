@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "GameOrchestrator/InputBuffer/LocalInputBuffer.h"
 
 ULocalInputBuffer::ULocalInputBuffer() {
@@ -23,6 +20,7 @@ FInput ULocalInputBuffer::GetMostRecentInput() {
 }
 
 void ULocalInputBuffer::AddInput(FInput Input) {
+	UE_LOG(LogTemp, Warning, TEXT("added input with move direction: %d for frame: %d"), Input.MoveDirection, Input.Frame)
 	Inputs[Input.Frame] = Input;
 	LatestFrame = FMath::Max(Input.Frame, LatestFrame);
 }

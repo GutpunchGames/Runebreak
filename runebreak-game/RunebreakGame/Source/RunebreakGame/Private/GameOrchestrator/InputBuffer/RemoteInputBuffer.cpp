@@ -24,10 +24,6 @@ FInput URemoteInputBuffer::GetInput(int Frame) {
 	}
 }
 
-//FInput URemoteInputBuffer::GetMostRecentInput() {
-//	return GetInput(MostRecentVerifiedFrame);
-//}
-
 int URemoteInputBuffer::ConsumeDiscrepancy() {
 	int Result = EarliestDiscrepancy;
 	EarliestDiscrepancy = -1;

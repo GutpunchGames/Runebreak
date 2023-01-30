@@ -3,9 +3,10 @@
 
 #include "GameOrchestrator/SimulationMovingBall.h"
 
-void ASimulationMovingBall::SimulationTick(UInputBuffer* InputBuffer) {
+void ASimulationMovingBall::SimulationTick(int Frame, IInputBuffer* InputBuffer) {
 	FVector NewLocation = GetActorLocation();
-	FInput Input = InputBuffer->GetMostRecentInput();
+	FInput Input = InputBuffer->GetInput(Frame);
+	UE_LOG(LogTemp, Warning, TEXT("Fetched input with frame: %d"), Frame)
 	NewLocation.Z += Input.MoveDirection;
 	SetActorLocation(NewLocation);
 }

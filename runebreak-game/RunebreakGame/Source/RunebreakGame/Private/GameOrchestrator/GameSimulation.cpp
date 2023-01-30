@@ -6,7 +6,6 @@
 #include <RunebreakGame/Public/GameOrchestrator/InputBuffer/LocalInputBuffer.h>
 #include <RunebreakGame/Public/GameOrchestrator/InputBuffer/RemoteInputBuffer.h>
 
-
 void UGameSimulation::Initialize(
 	UClass* PlayerClass,
 	FVector Player1SpawnPoint,
@@ -20,7 +19,7 @@ void UGameSimulation::Initialize(
 	}
 	FrameCount = 0;
 	Player1InputBuffer = IsPlayer1Remote ? Cast<UObject>(NewObject<URemoteInputBuffer>(this, "Player1InputBuffer")): Cast<UObject>(NewObject<ULocalInputBuffer>(this, "Player1InputBuffer"));
-	Player2InputBuffer = IsPlayer2Remote ? Cast<UObject>(NewObject<URemoteInputBuffer>(this, "Player1InputBuffer")): Cast<UObject>(NewObject<ULocalInputBuffer>(this, "Player1InputBuffer"));
+	Player2InputBuffer = IsPlayer2Remote ? Cast<UObject>(NewObject<URemoteInputBuffer>(this, "Player2InputBuffer")): Cast<UObject>(NewObject<ULocalInputBuffer>(this, "Player2InputBuffer"));
 
 	if (InputDelay > 0) {
 		if (!IsPlayer1Remote) {
@@ -43,9 +42,9 @@ void UGameSimulation::AddPlayer2Input(const FInput& Input) {
 }
 
 void UGameSimulation::AdvanceFrame() {
+	Player1->SimulationTick(FrameCount, Cast<IInputBuffer>(Player1InputBuffer));
+	Player2->SimulationTick(FrameCount, Cast<IInputBuffer>(Player2InputBuffer));
 	FrameCount++;
-	Player1->SimulationTick(Player1InputBuffer);
-	Player2->SimulationTick(Player2InputBuffer);
 }
 
 void UGameSimulation::SerializeState() {

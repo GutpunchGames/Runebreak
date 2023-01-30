@@ -16,6 +16,6 @@ class RUNEBREAKGAME_API ASimulationMovingBall : public ASimulationActor
 	GENERATED_BODY()
 
 public:
-	void SimulationTick(UInputBuffer* InputBuffer) override;
+	void SimulationTick(int Frame, IInputBuffer* InputBuffer) override;
 	FString SerializeState() override;
 };

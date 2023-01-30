@@ -15,7 +15,7 @@ void ASimulationActor::BeginPlay()
 	Super::BeginPlay();
 }
 
-void ASimulationActor::SimulationTick(UInputBuffer* InputBuffer) {
+void ASimulationActor::SimulationTick(int Frame, IInputBuffer* InputBuffer) {
 }
 
 FString ASimulationActor::SerializeState() {

@@ -21,6 +21,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	virtual void SimulationTick(UInputBuffer* InputBuffer);
+	virtual void SimulationTick(int Frame, IInputBuffer* InputBuffer);
 	virtual FString SerializeState();
 };
