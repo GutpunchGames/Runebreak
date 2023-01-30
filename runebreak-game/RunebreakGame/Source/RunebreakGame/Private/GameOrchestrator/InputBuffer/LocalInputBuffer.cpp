@@ -12,17 +12,21 @@ ULocalInputBuffer::~ULocalInputBuffer() {
 }
 
 FInput ULocalInputBuffer::GetInput(int Frame) {
+	// with a delay, the first <delay> frames will be invalid.
+	if (Frame < Delay) {
+		FInput SyntheticInput;
+		SyntheticInput.Frame = Frame;
+		SyntheticInput.MoveDirection = 0;
+		return SyntheticInput;
+	}
 	return Inputs[Frame];
 }
 
-FInput ULocalInputBuffer::GetMostRecentInput() {
-	return GetInput(LatestFrame);
-}
-
 void ULocalInputBuffer::AddInput(FInput Input) {
-	UE_LOG(LogTemp, Warning, TEXT("added input with move direction: %d for frame: %d"), Input.MoveDirection, Input.Frame)
-	Inputs[Input.Frame] = Input;
-	LatestFrame = FMath::Max(Input.Frame, LatestFrame);
+	int DelayAdjustedFrame = Input.Frame + Delay;
+	Input.Frame = DelayAdjustedFrame;
+	Inputs[DelayAdjustedFrame] = Input;
+	LatestFrame = DelayAdjustedFrame;
 }
 
 TArray<FInput> ULocalInputBuffer::GetInputsSince(int FrameExclusive) {
@@ -32,7 +36,7 @@ TArray<FInput> ULocalInputBuffer::GetInputsSince(int FrameExclusive) {
 	}
 
 	for (int i = FrameExclusive + 1; i <= LatestFrame; i++) {
-		Result.Emplace(Inputs[i]);
+		Result.Emplace(GetInput(i));
 	}
 
 	return Result;

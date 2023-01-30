@@ -24,9 +24,13 @@ void UGameSimulation::Initialize(
 	if (InputDelay > 0) {
 		if (!IsPlayer1Remote) {
 			Cast<ULocalInputBuffer>(Player1InputBuffer)->Delay = InputDelay;
+			FString Msg = FString::Printf(TEXT("added delay for player 1: %d"), InputDelay);
+			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::Red, Msg);
 		}
 		if (!IsPlayer2Remote) {
 			Cast<ULocalInputBuffer>(Player2InputBuffer)->Delay = InputDelay;
+			FString Msg = FString::Printf(TEXT("added delay for player 2: %d"), InputDelay);
+			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::Red, Msg);
 		}
 	}
 	Player1 = SpawnPlayer(PlayerClass, Player1SpawnPoint);

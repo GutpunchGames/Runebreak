@@ -11,7 +11,7 @@ AGameOrchestrator::AGameOrchestrator() {
 	IsCorrectingRift = false;
 }
 
-void AGameOrchestrator::PrepareGame(FPlayerSpawnConfig Player1SpawnConfig, FPlayerSpawnConfig Player2SpawnConfig, int LocalPort) {
+void AGameOrchestrator::PrepareGame(FPlayerSpawnConfig Player1SpawnConfig, FPlayerSpawnConfig Player2SpawnConfig, int LocalPort, int InputDelay) {
 	Player1InputProcessor = NewObject<UPlayerInputProcessor>(this, "GameOrchestratorPlayer1InputProcessor");
 	Player2InputProcessor = NewObject<UPlayerInputProcessor>(this, "GameOrchestratorPlayer2InputProcessor");
 
@@ -150,14 +150,13 @@ void AGameOrchestrator::Tick(float DeltaSeconds) {
 		if (IsAnyPlayerRemote) {
 			UObject* RemoteInputBuffer = IsPlayer1Remote ? GameSimulation->Player1InputBuffer : GameSimulation->Player2InputBuffer;
 			int EarliestDiscrepancy = Cast<URemoteInputBuffer>(RemoteInputBuffer)->ConsumeDiscrepancy();
-			if (EarliestDiscrepancy != -1) {
+			if (EarliestDiscrepancy != -1 && EarliestDiscrepancy < CurrentFrame) {
 				int RollbackTarget = FMath::Max(0, EarliestDiscrepancy - 1); // can't roll back to negative frames, bit of a redundant check
 				int Delta = CurrentFrame - RollbackTarget;
 				FString LogMessage = FString::Printf(TEXT("Would have rolled back from frame %d to frame %d, a %d frame rollback"), CurrentFrame, RollbackTarget, Delta);
 				GEngine->AddOnScreenDebugMessage(INDEX_NONE, 1, FColor::Red, *LogMessage, true);
 			}
 		}
-
 
 		if (IsAnyPlayerRemote) {
 			GameSocket->CurrentFrame = GameSocket->CurrentFrame + 1;

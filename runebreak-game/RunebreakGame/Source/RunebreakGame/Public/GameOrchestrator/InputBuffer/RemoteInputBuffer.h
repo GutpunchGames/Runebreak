@@ -20,13 +20,8 @@ public:
 	URemoteInputBuffer(const FObjectInitializer& ObjectInitializer);
 	~URemoteInputBuffer();
 
-	UPROPERTY()
-	int Delay = 0;
-
 	UFUNCTION()
-	// returns the most recent frame for which there was no discrepancy between the predicted inputs and the
-	// actual inputs. If this frame is less than the current executing frame, then we need to do a rollback.
-	int AddRemoteInputs(TArray<FInput> NewInputs);
+	void AddRemoteInputs(TArray<FInput> NewInputs);
 
 	virtual FInput GetInput(int Frame) override;
 

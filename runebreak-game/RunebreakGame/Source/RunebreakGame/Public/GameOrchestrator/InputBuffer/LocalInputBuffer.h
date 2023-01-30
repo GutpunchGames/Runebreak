@@ -27,9 +27,6 @@ public:
 	virtual FInput GetInput(int Frame) override;
 
 	UFUNCTION()
-	FInput GetMostRecentInput();
-
-	UFUNCTION()
 	TArray<FInput> GetInputsSince(int FrameExclusive);
 
 private:

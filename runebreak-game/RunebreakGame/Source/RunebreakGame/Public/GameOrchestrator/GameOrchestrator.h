@@ -24,7 +24,7 @@ public:
 	AGameOrchestrator();
 
 	UFUNCTION(BlueprintCallable)
-	virtual void PrepareGame(FPlayerSpawnConfig Player1SpawnConfig, FPlayerSpawnConfig Player2SpawnConfig, int LocalPort);
+	virtual void PrepareGame(FPlayerSpawnConfig Player1SpawnConfig, FPlayerSpawnConfig Player2SpawnConfig, int LocalPort, int InputDelay);
 
 	virtual void Tick(float DeltaSeconds) override;
 
@@ -32,9 +32,6 @@ public:
 
 	UPROPERTY(EditInstanceOnly)
 	UClass* PlayerClass;
-
-	UPROPERTY(EditInstanceOnly)
-	int InputDelay;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly)
 	ARBGameSocket* GameSocket;
