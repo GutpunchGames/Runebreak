@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include <RunebreakGame/Public/GameOrchestrator/GameSimulation.h>
 #include "GameOrchestrator/SimulationActor.h"
-#include <RunebreakGame/Public/GameOrchestrator/InputBuffer.h>
 #include "SimulationMovingBall.generated.h"
 
 /**
@@ -16,6 +16,9 @@ class RUNEBREAKGAME_API ASimulationMovingBall : public ASimulationActor
 	GENERATED_BODY()
 
 public:
-	void SimulationTick(int Frame, IInputBuffer* InputBuffer) override;
+	virtual void SimulationTick(int Frame, IInputBuffer* Player1InputBuffer, IInputBuffer* Player2InputBuffer) override;
 	FString SerializeState() override;
+
+	UPROPERTY()
+	int PlayerIndex;
 };

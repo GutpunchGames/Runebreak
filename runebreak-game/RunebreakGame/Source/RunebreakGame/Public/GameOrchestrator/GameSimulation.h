@@ -9,6 +9,7 @@
 #include <RunebreakGame/Public/GameOrchestrator/GameSocket/GameSocketMessages.h>
 #include "GameSimulation.generated.h"
 
+
 UCLASS()
 class RUNEBREAKGAME_API UGameSimulation : public UObject
 {
@@ -32,6 +33,9 @@ public:
 	UPROPERTY()
 	UObject* Player2InputBuffer;
 
+	void SaveSnapshot();
+	void LoadSnapshot(int Frame);
+
 private:
 	UPROPERTY()
 	ASimulationActor* Player1;
@@ -39,11 +43,16 @@ private:
 	UPROPERTY()
 	ASimulationActor* Player2;
 
+	TArray<ASimulationActor*> SimulationActors;
+
 	UPROPERTY()
 	int FrameCount = 0;
 
-	ASimulationActor* SpawnPlayer(UClass* PlayerClass, FVector const& PlayerSpawnPoint);
-	ASimulationActor* SpawnSimulationActor(UClass* Class, FVector const& Location);
+	UPROPERTY()
+	int ActorIdCounter = 0;
 
-	void SerializeState();
+	ASimulationActor* SpawnPlayer(int PlayerIndex, UClass* PlayerClass, FVector const& PlayerSpawnPoint);
+	ASimulationActor* SpawnSimulationActor(UClass* Class, FVector const& Location);
+	void DestroySimulationActor(int ActorId);
+	void DestroyAllActors();
 };

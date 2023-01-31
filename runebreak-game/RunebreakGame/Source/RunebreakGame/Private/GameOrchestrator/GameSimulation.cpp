@@ -33,8 +33,8 @@ void UGameSimulation::Initialize(
 			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::Red, Msg);
 		}
 	}
-	Player1 = SpawnPlayer(PlayerClass, Player1SpawnPoint);
-	Player2 = SpawnPlayer(PlayerClass, Player2SpawnPoint);
+	Player1 = SpawnPlayer(0, PlayerClass, Player1SpawnPoint);
+	Player2 = SpawnPlayer(1, PlayerClass, Player2SpawnPoint);
 }
 
 void UGameSimulation::AddPlayer1Input(const FInput& Input) {
@@ -46,12 +46,18 @@ void UGameSimulation::AddPlayer2Input(const FInput& Input) {
 }
 
 void UGameSimulation::AdvanceFrame() {
-	Player1->SimulationTick(FrameCount, Cast<IInputBuffer>(Player1InputBuffer));
-	Player2->SimulationTick(FrameCount, Cast<IInputBuffer>(Player2InputBuffer));
+	for (int i = 0; i < SimulationActors.Num(); i++) {
+		SimulationActors[i]->SimulationTick(FrameCount, Cast<IInputBuffer>(Player1InputBuffer), Cast<IInputBuffer>(Player2InputBuffer));
+	}
 	FrameCount++;
 }
 
-void UGameSimulation::SerializeState() {
+void UGameSimulation::SaveSnapshot() {
+
+
+}
+
+void UGameSimulation::LoadSnapshot(int Frame) {
 
 }
 
@@ -64,12 +70,34 @@ void UGameSimulation::HandleSync(int Player, const FSyncMessage& SyncMessage) {
 	Cast<URemoteInputBuffer>(InputBuffer)->AddRemoteInputs(SyncMessage.RecentInputs);
 }
 
-ASimulationActor* UGameSimulation::SpawnPlayer(UClass* PlayerClass, FVector const& PlayerSpawnPoint) {
-	return SpawnSimulationActor(PlayerClass, PlayerSpawnPoint);
+ASimulationActor* UGameSimulation::SpawnPlayer(int PlayerIndex, UClass* PlayerClass, FVector const& PlayerSpawnPoint) {
+	ASimulationActor* Player = SpawnSimulationActor(PlayerClass, PlayerSpawnPoint);
+	Cast<ASimulationMovingBall>(Player)->PlayerIndex = PlayerIndex;
+	return Player;
 }
 
 ASimulationActor* UGameSimulation::SpawnSimulationActor(UClass* Class, FVector const& Location) {
 	FRotator Rotator = FRotator(0, 0, 0);
 	ASimulationActor* SimulationActor = (ASimulationActor*)GetWorld()->SpawnActor(Class, &Location, &Rotator);
+	SimulationActor->ActorId = ActorIdCounter;
+	ActorIdCounter++;
+	SimulationActors.Emplace(SimulationActor);
 	return SimulationActor;
+}
+
+void UGameSimulation::DestroySimulationActor(int ActorId) {
+	for (int i = 0; i < SimulationActors.Num(); i++) {
+		ASimulationActor* SimulationActor = SimulationActors[i];
+		SimulationActor->Destroy();
+		SimulationActors.RemoveAt(i); // todo: use a map, this is bad
+	}
+}
+
+void UGameSimulation::DestroyAllActors() {
+	for (int i = 0; i < SimulationActors.Num(); i++) {
+		ASimulationActor* SimulationActor = SimulationActors[i];
+		SimulationActor->Destroy();
+	}
+
+	SimulationActors.Empty();
 }
