@@ -7,8 +7,8 @@
 #include <RunebreakGame/Public/GameOrchestrator/Input.h>
 #include <RunebreakGame/Public/GameOrchestrator/SimulationActor.h>
 #include <RunebreakGame/Public/GameOrchestrator/GameSocket/GameSocketMessages.h>
+#include <RunebreakGame/Public/GameOrchestrator/SaveState.h>
 #include "GameSimulation.generated.h"
-
 
 UCLASS()
 class RUNEBREAKGAME_API UGameSimulation : public UObject
@@ -50,6 +50,9 @@ private:
 
 	UPROPERTY()
 	int ActorIdCounter = 0;
+
+	UPROPERTY()
+	USavedStateManager* SavedStateManager;
 
 	ASimulationActor* SpawnPlayer(int PlayerIndex, UClass* PlayerClass, FVector const& PlayerSpawnPoint);
 	ASimulationActor* SpawnSimulationActor(UClass* Class, FVector const& Location);

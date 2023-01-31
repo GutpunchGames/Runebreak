@@ -17,6 +17,7 @@ void UGameSimulation::Initialize(
 	if (IsPlayer1Remote && IsPlayer2Remote) {
 		UE_LOG(LogTemp, Error, TEXT("two remote players is not supported"))
 	}
+	SavedStateManager = NewObject<USavedStateManager>(this, "SavedStateManager");
 	FrameCount = 0;
 	Player1InputBuffer = IsPlayer1Remote ? Cast<UObject>(NewObject<URemoteInputBuffer>(this, "Player1InputBuffer")): Cast<UObject>(NewObject<ULocalInputBuffer>(this, "Player1InputBuffer"));
 	Player2InputBuffer = IsPlayer2Remote ? Cast<UObject>(NewObject<URemoteInputBuffer>(this, "Player2InputBuffer")): Cast<UObject>(NewObject<ULocalInputBuffer>(this, "Player2InputBuffer"));
@@ -53,12 +54,11 @@ void UGameSimulation::AdvanceFrame() {
 }
 
 void UGameSimulation::SaveSnapshot() {
-
-
+	SavedStateManager->Save(FrameCount, SimulationActors);
 }
 
 void UGameSimulation::LoadSnapshot(int Frame) {
-
+	// todo: do this
 }
 
 int UGameSimulation::GetFrameCount() {

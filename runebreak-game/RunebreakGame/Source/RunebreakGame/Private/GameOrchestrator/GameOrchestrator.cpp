@@ -86,6 +86,10 @@ void AGameOrchestrator::Tick(float DeltaSeconds) {
 	}
 
 	int CurrentFrame = GameSimulation->GetFrameCount();
+	if (CurrentFrame == 0) {
+		GameSimulation->SaveSnapshot();
+	}
+
 	if (IsAnyPlayerRemote) {
 		GameSocket->SendPing(GameSimulation->GetFrameCount());
 		GameSocket->ReceivePendingMessages();
@@ -164,6 +168,7 @@ void AGameOrchestrator::Tick(float DeltaSeconds) {
 
 		GameSimulation->AdvanceFrame();
 		OnFrameAdvancedDelegate.ExecuteIfBound();
+		GameSimulation->SaveSnapshot();
 	}
 }
 
