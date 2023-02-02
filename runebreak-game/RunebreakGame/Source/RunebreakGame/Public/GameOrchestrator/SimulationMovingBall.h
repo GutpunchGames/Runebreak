@@ -18,6 +18,7 @@ class RUNEBREAKGAME_API ASimulationMovingBall : public ASimulationActor
 public:
 	virtual void SimulationTick(int Frame, IInputBuffer* Player1InputBuffer, IInputBuffer* Player2InputBuffer) override;
 	FString SerializeState() override;
+	virtual void Deserialize(const FString& Bytes) override;
 
 	UPROPERTY()
 	int PlayerIndex;

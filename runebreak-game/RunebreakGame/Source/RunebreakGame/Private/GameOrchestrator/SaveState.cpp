@@ -2,18 +2,25 @@
 
 
 #include "GameOrchestrator/SaveState.h"
-#include "Misc/Base64.h"
+#include <Utilities/Base64Utilities.h>
 
+//To do: 
+//1. Created saved actors
+//2. Add saved actors to simulation snapshot
+//3. Add snapshot to map
 void USavedStateManager::Save(int Frame, TArray<ASimulationActor*> Actors) {
-	UE_LOG(LogTemp, Warning, TEXT("Saved state for frame: %d"), Frame)
 
 		FSavedSimulation SavedSimulation;
 		SavedSimulation.Frame = Frame;
 
-		for (ASimulationActor* SimulationActor : Array)
+		FString ConcatenatedActors;
+		for (ASimulationActor* SimulationActor : Actors)
 		{
-			SimulationActor->WriteFunc()
+			const FString SerializedActor = SimulationActor->SerializeState();
+			ConcatenatedActors += SerializedActor;
 		}
+		const FString Checksum = Base64Utilities::Base64Encode(ConcatenatedActors);
+		UE_LOG(LogTemp, Warning, TEXT("Saved state for frame: %d -- %s"), Frame, *Checksum);
 }
 
 FSavedSimulation USavedStateManager::GetSavedState(int Frame) {

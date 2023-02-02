@@ -2,6 +2,7 @@
 
 
 #include "GameOrchestrator/SimulationMovingBall.h"
+#include "Utilities/SerializationUtilities.h"
 
 void ASimulationMovingBall::SimulationTick(int Frame, IInputBuffer* Player1InputBuffer, IInputBuffer* Player2InputBuffer) {
 	FVector NewLocation = GetActorLocation();
@@ -13,22 +14,11 @@ void ASimulationMovingBall::SimulationTick(int Frame, IInputBuffer* Player1Input
 
 FString ASimulationMovingBall::SerializeState() {
 	FVector Location = GetActorLocation();
-	FString SerializedLocation = FString::Printf(TEXT("%d,%d,%d"), Location.X, Location.Y, Location.Z);
-	return SerializedLocation;
+	return SerializationUtilities::SerializeFVector(Location);
 }
 
 
 void ASimulationMovingBall::Deserialize(const FString& Bytes) {
-	FString X_STR;
-	FString Y_STR;
-	FString Z_STR;
-
-	Bytes.Split(TEXT(","), &X_STR, &Y_STR, &Z_STR);
-
-	FVector NewLocation;
-
-	NewLocation.X = FCString::Atof(*X_STR);
-	NewLocation.Y = FCString::Atof(*Y_STR);
-	NewLocation.Z = FCString::Atof(*Z_STR);
+	const FVector NewLocation = SerializationUtilities::DeserializeFVector(Bytes);
 	SetActorLocation(NewLocation);
 }
