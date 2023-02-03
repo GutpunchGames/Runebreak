@@ -7,9 +7,7 @@
 //To do: 
 //1. Created saved actors
 //2. Add saved actors to simulation snapshot
-//3. Add snapshot to map
-void USavedStateManager::Save(int Frame, TArray<ASimulationActor*> Actors) {
-
+FString USavedStateManager::Save(int Frame, TArray<ASimulationActor*> Actors) {
 		FSavedSimulation SavedSimulation;
 		SavedSimulation.Frame = Frame;
 
@@ -20,9 +18,19 @@ void USavedStateManager::Save(int Frame, TArray<ASimulationActor*> Actors) {
 			ConcatenatedActors += SerializedActor;
 		}
 		const FString Checksum = Base64Utilities::Base64Encode(ConcatenatedActors);
-		UE_LOG(LogTemp, Warning, TEXT("Saved state for frame: %d -- %s"), Frame, *Checksum);
+		SavedSimulation.Checksum = Checksum;
+		SavedStates.Add(Frame, SavedSimulation);
+		return Checksum;
 }
 
 FSavedSimulation USavedStateManager::GetSavedState(int Frame) {
-	return FSavedSimulation();
+	if (SavedStates.Contains(Frame)) {
+		return SavedStates[Frame];
+	}
+	else {
+		FSavedSimulation InvalidSimulation;
+		InvalidSimulation.Frame = -1;
+		InvalidSimulation.Checksum = "INVALID";
+		return InvalidSimulation;
+	}
 }

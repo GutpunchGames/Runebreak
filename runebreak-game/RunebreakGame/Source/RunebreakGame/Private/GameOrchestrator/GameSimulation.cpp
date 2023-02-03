@@ -12,12 +12,13 @@ void UGameSimulation::Initialize(
 	FVector Player2SpawnPoint,
 	bool IsPlayer1Remote,
 	bool IsPlayer2Remote,
-	int InputDelay
+	int InputDelay,
+	UGameLogger* _GameLogger
 ) {
 	if (IsPlayer1Remote && IsPlayer2Remote) {
 		UE_LOG(LogTemp, Error, TEXT("two remote players is not supported"))
 	}
-	SavedStateManager = NewObject<USavedStateManager>(this, "SavedStateManager");
+	GameLogger = _GameLogger;
 	FrameCount = 0;
 	Player1InputBuffer = IsPlayer1Remote ? Cast<UObject>(NewObject<URemoteInputBuffer>(this, "Player1InputBuffer")): Cast<UObject>(NewObject<ULocalInputBuffer>(this, "Player1InputBuffer"));
 	Player2InputBuffer = IsPlayer2Remote ? Cast<UObject>(NewObject<URemoteInputBuffer>(this, "Player2InputBuffer")): Cast<UObject>(NewObject<ULocalInputBuffer>(this, "Player2InputBuffer"));
@@ -47,17 +48,20 @@ void UGameSimulation::AddPlayer2Input(const FInput& Input) {
 }
 
 void UGameSimulation::AdvanceFrame() {
+	IInputBuffer* P1InputBuffer = Cast<IInputBuffer>(Player1InputBuffer);
+	IInputBuffer* P2InputBuffer = Cast<IInputBuffer>(Player2InputBuffer);
+	FInput P1Input = P1InputBuffer->GetInput(FrameCount);
+	FInput P2Input = P2InputBuffer->GetInput(FrameCount);
+
+	GameLogger->LogSimulate(FrameCount, P1Input.ToString(), P2Input.ToString());
+
 	for (int i = 0; i < SimulationActors.Num(); i++) {
-		SimulationActors[i]->SimulationTick(FrameCount, Cast<IInputBuffer>(Player1InputBuffer), Cast<IInputBuffer>(Player2InputBuffer));
+		SimulationActors[i]->SimulationTick(FrameCount, P1InputBuffer, P2InputBuffer);
 	}
 	FrameCount++;
 }
 
-void UGameSimulation::SaveSnapshot() {
-	SavedStateManager->Save(FrameCount, SimulationActors);
-}
-
-void UGameSimulation::LoadSnapshot(int Frame) {
+void UGameSimulation::LoadSnapshot(int Frame, FSavedSimulation SavedSimulation) {
 	// todo: do this
 }
 

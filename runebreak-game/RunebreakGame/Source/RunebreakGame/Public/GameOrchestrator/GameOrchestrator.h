@@ -9,8 +9,10 @@
 #include <RunebreakGame/Public/GameOrchestrator/PlayerSpawnPoint.h>
 #include <RunebreakGame/Public/GameOrchestrator/PlayerInputProcessor.h>
 #include <RunebreakGame/Public/GameOrchestrator/GameSimulation.h>
+#include <RunebreakGame/Public/GameOrchestrator/SaveState.h>
 #include <RunebreakGame/Public/GameOrchestrator/Input.h>
 #include <RunebreakGame/Public/GameOrchestrator/GameSocket/RBGameSocket.h>
+#include "GameOrchestrator/GameLogger/GameLogger.h"
 #include "GameOrchestrator.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE(FOnFrameAdvanced);
@@ -50,6 +52,12 @@ public:
 
 private:
 	UPROPERTY()
+	UGameLogger* GameLogger;
+
+	UPROPERTY()
+	USavedStateManager* SavedStateManager;
+
+	UPROPERTY()
 	UPlayerInputProcessor* Player1InputProcessor;
 	UPROPERTY()
 	UPlayerInputProcessor* Player2InputProcessor;
@@ -65,6 +73,7 @@ private:
 	UPROPERTY()
 	float RiftPauseThresholdFrames = 4;
 
+	UFUNCTION()
 	float ComputeRift();
 
 	UFUNCTION()

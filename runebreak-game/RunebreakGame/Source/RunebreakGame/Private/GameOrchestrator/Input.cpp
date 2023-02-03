@@ -10,7 +10,5 @@ FInput::FInput()
 }
 
 FString FInput::ToString() {
-	return FString(
-		+ "\tDirection: " + FString::FromInt(MoveDirection)
-	);
+	return FString("Direction: " + FString::FromInt(MoveDirection));
 }

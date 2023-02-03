@@ -9,9 +9,13 @@ AGameOrchestrator::AGameOrchestrator() {
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = false;
 	IsCorrectingRift = false;
+
+	SavedStateManager = CreateDefaultSubobject<USavedStateManager>("SavedStateManager");
 }
 
 void AGameOrchestrator::PrepareGame(FPlayerSpawnConfig Player1SpawnConfig, FPlayerSpawnConfig Player2SpawnConfig, int LocalPort, int InputDelay) {
+	GameLogger = NewObject<UGameLogger>(this, "GameLogger");
+	GameLogger->Initialize(TEXT("Test.txt"));
 	Player1InputProcessor = NewObject<UPlayerInputProcessor>(this, "GameOrchestratorPlayer1InputProcessor");
 	Player2InputProcessor = NewObject<UPlayerInputProcessor>(this, "GameOrchestratorPlayer2InputProcessor");
 
@@ -41,7 +45,7 @@ void AGameOrchestrator::PrepareGame(FPlayerSpawnConfig Player1SpawnConfig, FPlay
 	Player2SpawnLocation.Y = 100;
 	Player2SpawnLocation.Z = 0;
 	GameSimulation = NewObject<UGameSimulation>(this, "GameOrchestratorGameSimulation");
-	GameSimulation->Initialize(PlayerClass, Player1SpawnLocation, Player2SpawnLocation, IsPlayer1Remote, IsPlayer2Remote, InputDelay);
+	GameSimulation->Initialize(PlayerClass, Player1SpawnLocation, Player2SpawnLocation, IsPlayer1Remote, IsPlayer2Remote, InputDelay, GameLogger);
 
 	if (IsPlayer1Remote) {
 		FRBGameSocketConfig GameSocketConfig;
@@ -76,6 +80,7 @@ void AGameOrchestrator::PrepareGame(FPlayerSpawnConfig Player1SpawnConfig, FPlay
 	}
 
 	PrimaryActorTick.SetTickFunctionEnable(true);
+	GameLogger->LogGameStart(TEXT("RYU"), TEXT("RYU"), TEXT("ALLEY"));
 }
 
 // 60fps frame limited ticks
@@ -87,8 +92,11 @@ void AGameOrchestrator::Tick(float DeltaSeconds) {
 
 	int CurrentFrame = GameSimulation->GetFrameCount();
 	if (CurrentFrame == 0) {
-		GameSimulation->SaveSnapshot();
+		SavedStateManager->Save(0, GameSimulation->SimulationActors);
 	}
+
+	FString BeginChecksum = SavedStateManager->GetSavedState(CurrentFrame).Checksum;
+	GameLogger->LogTickStart(CurrentFrame, BeginChecksum);
 
 	if (IsAnyPlayerRemote) {
 		GameSocket->SendPing(GameSimulation->GetFrameCount());
@@ -168,7 +176,8 @@ void AGameOrchestrator::Tick(float DeltaSeconds) {
 
 		GameSimulation->AdvanceFrame();
 		OnFrameAdvancedDelegate.ExecuteIfBound();
-		GameSimulation->SaveSnapshot();
+		FString Checksum = SavedStateManager->Save(GameSimulation->GetFrameCount(), GameSimulation->SimulationActors);
+		GameLogger->LogTickEnd(GameSimulation->GetFrameCount(), Checksum);
 	}
 }
 
