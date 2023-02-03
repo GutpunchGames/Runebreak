@@ -13,6 +13,9 @@ static const FString GameEndFormat = TEXT("ENDGAME");
 static const FString TickStartFormat = TEXT("TICK {0} {1}");
 static const FString TickEndFormat = TEXT("ENDTICK {0} {1}");
 static const FString SimulateFrameFormat = TEXT("SIM {0}\n\tI1 {1}\n\tI2 {2}");
+static const FString RollToFormat = TEXT("ROLLTO {0} {1}");
+static const FString SyncReceiveHeaderFormat = TEXT("SYNC_RECV {0} {1} {2}\n\tACK {3}");
+static const FString SyncSendHeaderFormat = TEXT("SYNC_SEND {0} {1} {2}\n\tACK {3}");
 
 /**
  * 
@@ -74,9 +77,9 @@ public:
 	UFUNCTION()
 	void LogSimulate(int Frame, FString Input1, FString Input2);
 	UFUNCTION()
-	void LogSyncReceive(const FSyncMessage& SyncMessage);
+	void LogSyncReceive(int Player, const FSyncMessage& SyncMessage);
 	UFUNCTION()
-	void LogSyncSend(const FSyncMessage& SyncMessage);
+	void LogSyncSend(int Player, const FSyncMessage& SyncMessage);
 
 private:
 	UPROPERTY()

@@ -37,7 +37,8 @@ void UGameLogger::LogTickEnd(int Frame, FString Checksum) {
 }
 
 void UGameLogger::LogRollback(int Frame, FString Checksum) {
-
+	const FString Log = FString::Format(*RollToFormat, { Frame, Checksum});
+	AppendBytes(Log);
 }
 
 void UGameLogger::LogSimulate(int Frame, FString Input1, FString Input2) {
@@ -45,16 +46,33 @@ void UGameLogger::LogSimulate(int Frame, FString Input1, FString Input2) {
 	AppendBytes(Log);
 }
 
-void UGameLogger::LogSyncReceive(const FSyncMessage& SyncMessage) {
+void UGameLogger::LogSyncReceive(int Player, const FSyncMessage& SyncMessage) {
+	const FString HeaderLog = FString::Format(*SyncReceiveHeaderFormat, { Player, SyncMessage.RecentInputs[0].Frame, SyncMessage.RecentInputs.Num(), SyncMessage.FrameAck });
+	AppendBytes(HeaderLog);
 
+	for (int i = 0; i < SyncMessage.RecentInputs.Num(); i++) {
+		FInput Input = SyncMessage.RecentInputs[i];
+		// todo: no naive input tostring
+		FString InputLog = FString::Format(TEXT("\t\t{0} {1}"), { Input.Frame, Input.ToString() });
+		AppendBytes(InputLog);
+	}
 }
 
-void UGameLogger::LogSyncSend(const FSyncMessage& SyncMessage) {
+void UGameLogger::LogSyncSend(int Player, const FSyncMessage& SyncMessage) {
+	int NumInputs = SyncMessage.RecentInputs.Num();
+	const FString HeaderLog = FString::Format(*SyncSendHeaderFormat, { Player, SyncMessage.RecentInputs[0].Frame, NumInputs, SyncMessage.FrameAck });
+	AppendBytes(HeaderLog);
 
+	for (int i = 0; i < SyncMessage.RecentInputs.Num(); i++) {
+		FInput Input = SyncMessage.RecentInputs[i];
+		// todo: no naive input tostring
+		FString InputLog = FString::Format(TEXT("\t\t{0} {1}"), { Input.Frame, Input.ToString() });
+		AppendBytes(InputLog);
+	}
 }
 
 void UGameLogger::AppendBytes(const FString& Bytes) {
-	FString TestFilePath = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir()) + TEXT("/GameLog.txt");
+	FString TestFilePath = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir()) + TEXT("/" + FilePath);
 	UE_LOG(LogTemp, Warning, TEXT("GameLog: my file path: %s"), *TestFilePath);
 	FFileHelper::SaveStringToFile(Bytes + "\n", *TestFilePath, FFileHelper::EEncodingOptions::ForceUTF8, &IFileManager::Get(), EFileWrite::FILEWRITE_Append);
 }

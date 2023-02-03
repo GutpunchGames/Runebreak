@@ -29,15 +29,22 @@ void ULocalInputBuffer::AddInput(FInput Input) {
 	LatestFrame = DelayAdjustedFrame;
 }
 
+// FrameExclusive == -1 ? return all frames
 TArray<FInput> ULocalInputBuffer::GetInputsSince(int FrameExclusive) {
 	TArray<FInput> Result;
-	if (FrameExclusive <= -1 || FrameExclusive > LatestFrame) {
+	if (FrameExclusive == -1) {
+		for (int i = 0; i <= LatestFrame; i++) {
+			Result.Emplace(GetInput(i));
+		}
+		return Result;
+	}
+
+	if (FrameExclusive < -1 || FrameExclusive > LatestFrame) {
 		return Result;
 	}
 
 	for (int i = FrameExclusive + 1; i <= LatestFrame; i++) {
 		Result.Emplace(GetInput(i));
 	}
-
 	return Result;
 }
