@@ -26,6 +26,8 @@ public:
 	TArray<FSavedActor> Actors;
 	FString Checksum;
 	int Frame;
+
+	void ComputeChecksum(const FString& SerializedActors);
 };
 
 UCLASS()

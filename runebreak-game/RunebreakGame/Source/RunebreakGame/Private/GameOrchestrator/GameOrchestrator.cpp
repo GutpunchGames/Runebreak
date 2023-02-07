@@ -185,7 +185,7 @@ void AGameOrchestrator::Tick(float DeltaSeconds) {
 		GameSimulation->AdvanceFrame();
 		OnFrameAdvancedDelegate.ExecuteIfBound();
 		FString Checksum = SavedStateManager->Save(GameSimulation->GetFrameCount(), GameSimulation->SimulationActors);
-		GameLogger->LogTickEnd(GameSimulation->GetFrameCount(), Checksum);
+		GameLogger->LogTickEnd(GameSimulation->GetFrameCount() - 1, Checksum);
 	}
 }
 

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -8,14 +8,14 @@
 #include "GameOrchestrator/GameSocket/GameSocketMessages.h"
 #include "GameLogger.generated.h"
 
-static const FString GameStartFormat = TEXT("GAME\n\tP1 {0}\n\tP2 {1}\n\tSTG {2}");
+static const FString GameStartFormat = TEXT("GAME\n\tP1\t{0}\n\tP2\t{1}\n\tSTG\t{2}");
 static const FString GameEndFormat = TEXT("ENDGAME");
-static const FString TickStartFormat = TEXT("TICK {0} {1}");
-static const FString TickEndFormat = TEXT("ENDTICK {0} {1}");
-static const FString SimulateFrameFormat = TEXT("SIM {0}\n\tI1 {1}\n\tI2 {2}");
-static const FString RollToFormat = TEXT("ROLLTO {0} {1}");
-static const FString SyncReceiveHeaderFormat = TEXT("SYNC_RECV {0} {1} {2}\n\tACK {3}");
-static const FString SyncSendHeaderFormat = TEXT("SYNC_SEND {0} {1} {2}\n\tACK {3}");
+static const FString TickStartFormat = TEXT("STARTF\t{0}\t{1}");
+static const FString TickEndFormat = TEXT("ENDF\t{0}\t{1}");
+static const FString SimulateFrameFormat = TEXT("SIM\t{0}\n\tI1\t{1}\n\tI2\t{2}");
+static const FString RollToFormat = TEXT("ROLLTO\t{0}\t{1}");
+static const FString SyncReceiveHeaderFormat = TEXT("SYNC_RECV\t{0}\t{1}\t{2}\n\tACK\t{3}");
+static const FString SyncSendHeaderFormat = TEXT("SYNC_SEND\t{0}\t{1}\t{2}\n\tACK\t{3}");
 
 /**
  * 
