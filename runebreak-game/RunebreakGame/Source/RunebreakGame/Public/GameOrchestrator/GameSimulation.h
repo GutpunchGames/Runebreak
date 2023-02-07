@@ -43,7 +43,7 @@ public:
 	UObject* Player2InputBuffer;
 
 	UFUNCTION()
-	void LoadSnapshot(int Frame, FSavedSimulation SavedSimulation);
+	void LoadSnapshot(FSavedSimulation SavedSimulation);
 
 	UPROPERTY()
 	TArray<ASimulationActor*> SimulationActors;
@@ -64,7 +64,11 @@ private:
 	UPROPERTY()
 	int ActorIdCounter = 0;
 
+	UPROPERTY()
+	UClass* PlayerClass;
+
 	ASimulationActor* SpawnPlayer(int PlayerIndex, UClass* PlayerClass, FVector const& PlayerSpawnPoint);
+	ASimulationActor* SpawnSimulationActor(UClass* Class);
 	ASimulationActor* SpawnSimulationActor(UClass* Class, FVector const& Location);
 	void DestroySimulationActor(int ActorId);
 	void DestroyAllActors();

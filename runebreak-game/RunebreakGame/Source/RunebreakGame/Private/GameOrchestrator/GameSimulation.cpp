@@ -7,7 +7,7 @@
 #include <RunebreakGame/Public/GameOrchestrator/InputBuffer/RemoteInputBuffer.h>
 
 void UGameSimulation::Initialize(
-	UClass* PlayerClass,
+	UClass* _PlayerClass,
 	FVector Player1SpawnPoint,
 	FVector Player2SpawnPoint,
 	bool IsPlayer1Remote,
@@ -18,6 +18,8 @@ void UGameSimulation::Initialize(
 	if (IsPlayer1Remote && IsPlayer2Remote) {
 		UE_LOG(LogTemp, Error, TEXT("two remote players is not supported"))
 	}
+	
+	PlayerClass = _PlayerClass;
 	GameLogger = _GameLogger;
 	FrameCount = 0;
 	Player1InputBuffer = IsPlayer1Remote ? Cast<UObject>(NewObject<URemoteInputBuffer>(this, "Player1InputBuffer")): Cast<UObject>(NewObject<ULocalInputBuffer>(this, "Player1InputBuffer"));
@@ -61,8 +63,18 @@ void UGameSimulation::AdvanceFrame() {
 	FrameCount++;
 }
 
-void UGameSimulation::LoadSnapshot(int Frame, FSavedSimulation SavedSimulation) {
-	// todo: do this
+void UGameSimulation::LoadSnapshot(FSavedSimulation SavedSimulation) {
+	DestroyAllActors();
+	// todo: do this smartly
+	FrameCount = SavedSimulation.Frame;
+	for (int i = 0; i < SavedSimulation.Actors.Num(); i++) {
+		FSavedActor SavedActor = SavedSimulation.Actors[i];
+		// todo: encode actor type in SavedActor and use it here
+		ASimulationActor* RestoredActor = SpawnSimulationActor(PlayerClass);
+		RestoredActor->ActorId = SavedActor.ActorId;
+		RestoredActor->Deserialize(SavedActor.Data);
+	}
+
 }
 
 int UGameSimulation::GetFrameCount() {
@@ -74,10 +86,14 @@ void UGameSimulation::HandleSync(int Player, const FSyncMessage& SyncMessage) {
 	Cast<URemoteInputBuffer>(InputBuffer)->AddRemoteInputs(SyncMessage.RecentInputs);
 }
 
-ASimulationActor* UGameSimulation::SpawnPlayer(int PlayerIndex, UClass* PlayerClass, FVector const& PlayerSpawnPoint) {
+ASimulationActor* UGameSimulation::SpawnPlayer(int PlayerIndex, UClass* _PlayerClass, FVector const& PlayerSpawnPoint) {
 	ASimulationActor* Player = SpawnSimulationActor(PlayerClass, PlayerSpawnPoint);
 	Cast<ASimulationMovingBall>(Player)->PlayerIndex = PlayerIndex;
 	return Player;
+}
+
+ASimulationActor* UGameSimulation::SpawnSimulationActor(UClass* Class) {
+	return SpawnSimulationActor(Class, FVector(0, 0, 0));
 }
 
 ASimulationActor* UGameSimulation::SpawnSimulationActor(UClass* Class, FVector const& Location) {

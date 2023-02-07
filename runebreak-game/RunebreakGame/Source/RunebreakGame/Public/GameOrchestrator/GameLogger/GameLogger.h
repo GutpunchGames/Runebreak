@@ -30,13 +30,13 @@ GAME
 	STG <stage>
 TICK <frame> <chksum>
 	# if we receive remote input...
-	SYNC_RECV <player> <start_frame> <count>
+	SYNC_RECV <player> <origin_frame> <count>
 		ACK <frame_ack>
 		<frame> <input>
 		<frame> <input>
 		...
 	# if we broadcast input...
-	SYNC_SEND <player> <start_frame> <count>
+	SYNC_SEND <player> <origin_frame> <count>
 		ACK <frame_ack>
 		<frame> <input>
 		<frame> <input>

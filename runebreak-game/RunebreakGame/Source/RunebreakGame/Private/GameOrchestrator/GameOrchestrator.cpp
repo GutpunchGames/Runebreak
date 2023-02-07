@@ -171,13 +171,22 @@ void AGameOrchestrator::Tick(float DeltaSeconds) {
 			UObject* RemoteInputBuffer = IsPlayer1Remote ? GameSimulation->Player1InputBuffer : GameSimulation->Player2InputBuffer;
 			int EarliestDiscrepancy = Cast<URemoteInputBuffer>(RemoteInputBuffer)->ConsumeDiscrepancy();
 			if (EarliestDiscrepancy != -1 && EarliestDiscrepancy < CurrentFrame) {
+				// do rollback
 				int RollbackTarget = FMath::Max(0, EarliestDiscrepancy - 1); // can't roll back to negative frames, bit of a redundant check
 				int Delta = CurrentFrame - RollbackTarget;
-				FString LogMessage = FString::Printf(TEXT("Would have rolled back from frame %d to frame %d, a %d frame rollback"), CurrentFrame, RollbackTarget, Delta);
+				FSavedSimulation RollbackTargetSnapshot = SavedStateManager->GetSavedState(RollbackTarget);
+				GameLogger->LogRollback(RollbackTarget, RollbackTargetSnapshot.Checksum);
+				GameSimulation->LoadSnapshot(SavedStateManager->GetSavedState(RollbackTarget));
+				int NumFramesToResimulate = Delta;
+				for (int i = 0; i < NumFramesToResimulate; i++) {
+					GameSimulation->AdvanceFrame();
+				}
+				FString LogMessage = FString::Printf(TEXT("rolled back from frame %d to frame %d, a %d frame rollback"), CurrentFrame, RollbackTarget, Delta);
 				GEngine->AddOnScreenDebugMessage(INDEX_NONE, 1, FColor::Red, *LogMessage, true);
 			}
 		}
 
+		// todo: get this in sync with GameSimulation
 		if (IsAnyPlayerRemote) {
 			GameSocket->CurrentFrame = GameSocket->CurrentFrame + 1;
 		}

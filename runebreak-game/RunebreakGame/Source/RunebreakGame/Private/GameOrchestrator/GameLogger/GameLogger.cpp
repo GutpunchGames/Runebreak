@@ -47,7 +47,7 @@ void UGameLogger::LogSimulate(int Frame, FString Input1, FString Input2) {
 }
 
 void UGameLogger::LogSyncReceive(int Player, const FSyncMessage& SyncMessage) {
-	const FString HeaderLog = FString::Format(*SyncReceiveHeaderFormat, { Player, SyncMessage.RecentInputs[0].Frame, SyncMessage.RecentInputs.Num(), SyncMessage.FrameAck });
+	const FString HeaderLog = FString::Format(*SyncReceiveHeaderFormat, { Player, SyncMessage.OriginFrame, SyncMessage.RecentInputs.Num(), SyncMessage.FrameAck });
 	AppendBytes(HeaderLog);
 
 	for (int i = 0; i < SyncMessage.RecentInputs.Num(); i++) {
@@ -59,8 +59,7 @@ void UGameLogger::LogSyncReceive(int Player, const FSyncMessage& SyncMessage) {
 }
 
 void UGameLogger::LogSyncSend(int Player, const FSyncMessage& SyncMessage) {
-	int NumInputs = SyncMessage.RecentInputs.Num();
-	const FString HeaderLog = FString::Format(*SyncSendHeaderFormat, { Player, SyncMessage.RecentInputs[0].Frame, NumInputs, SyncMessage.FrameAck });
+	const FString HeaderLog = FString::Format(*SyncSendHeaderFormat, { Player, SyncMessage.OriginFrame, SyncMessage.RecentInputs.Num(), SyncMessage.FrameAck });
 	AppendBytes(HeaderLog);
 
 	for (int i = 0; i < SyncMessage.RecentInputs.Num(); i++) {

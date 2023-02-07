@@ -5,9 +5,6 @@
 #include "Misc/SecureHash.h"
 #include <Utilities/Base64Utilities.h>
 
-//To do: 
-//1. Created saved actors
-//2. Add saved actors to simulation snapshot
 FString USavedStateManager::Save(int Frame, TArray<ASimulationActor*> Actors) {
 		FSavedSimulation SavedSimulation;
 		SavedSimulation.Frame = Frame;
