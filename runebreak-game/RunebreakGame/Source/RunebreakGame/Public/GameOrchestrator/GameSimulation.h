@@ -11,6 +11,15 @@
 #include "GameOrchestrator/GameLogger/GameLogger.h"
 #include "GameSimulation.generated.h"
 
+USTRUCT()
+struct FFrameInputs {
+	GENERATED_BODY()
+
+public:
+	FInput Player1Input;
+	FInput Player2Input;
+};
+
 UCLASS()
 class RUNEBREAKGAME_API UGameSimulation : public UObject
 {
@@ -28,7 +37,7 @@ public:
 	);
 	void AddPlayer1Input(const FInput& Input);
 	void AddPlayer2Input(const FInput& Input);
-	void AdvanceFrame();
+	FFrameInputs AdvanceFrame();
 
 	UFUNCTION(BlueprintCallable)
 	int GetFrameCount();

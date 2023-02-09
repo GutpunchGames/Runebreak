@@ -49,18 +49,20 @@ void UGameSimulation::AddPlayer2Input(const FInput& Input) {
 	Cast<ULocalInputBuffer>(Player2InputBuffer)->AddInput(Input);
 }
 
-void UGameSimulation::AdvanceFrame() {
+FFrameInputs UGameSimulation::AdvanceFrame() {
 	IInputBuffer* P1InputBuffer = Cast<IInputBuffer>(Player1InputBuffer);
 	IInputBuffer* P2InputBuffer = Cast<IInputBuffer>(Player2InputBuffer);
-	FInput P1Input = P1InputBuffer->GetInput(FrameCount);
-	FInput P2Input = P2InputBuffer->GetInput(FrameCount);
 
-	GameLogger->LogSimulate(FrameCount, P1Input.ToString(), P2Input.ToString());
+	FFrameInputs Inputs;
+	Inputs.Player1Input = P1InputBuffer->GetInput(FrameCount);
+	Inputs.Player2Input = P2InputBuffer->GetInput(FrameCount);
 
 	for (int i = 0; i < SimulationActors.Num(); i++) {
 		SimulationActors[i]->SimulationTick(FrameCount, P1InputBuffer, P2InputBuffer);
 	}
+
 	FrameCount++;
+	return Inputs;
 }
 
 void UGameSimulation::LoadSnapshot(FSavedSimulation SavedSimulation) {

@@ -41,8 +41,9 @@ void UGameLogger::LogRollback(int Frame, FString Checksum) {
 	AppendBytes(Log);
 }
 
-void UGameLogger::LogSimulate(int Frame, FString Input1, FString Input2) {
-	const FString Log = FString::Format(*SimulateFrameFormat, { Frame, Input1, Input2 });
+static const FString SimulateFrameFormat = TEXT("SIM\t{0}\n\tCHK_START {1}\n\tCHK_END {2}\n\tI1\t{3}\n\tI2\t{4}");
+void UGameLogger::LogSimulate(int Frame, FString StartChecksum, FString EndChecksum, FString Input1, FString Input2) {
+	const FString Log = FString::Format(*SimulateFrameFormat, { Frame, StartChecksum, EndChecksum, Input1, Input2 });
 	AppendBytes(Log);
 }
 
@@ -73,5 +74,5 @@ void UGameLogger::LogSyncSend(int Player, const FSyncMessage& SyncMessage) {
 void UGameLogger::AppendBytes(const FString& Bytes) {
 	FString TestFilePath = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir()) + TEXT("/" + FilePath);
 	UE_LOG(LogTemp, Warning, TEXT("GameLog: my file path: %s"), *TestFilePath);
-	FFileHelper::SaveStringToFile(Bytes + "\n", *TestFilePath, FFileHelper::EEncodingOptions::ForceUTF8, &IFileManager::Get(), EFileWrite::FILEWRITE_Append);
+	FFileHelper::SaveStringToFile(Bytes + "\n", *TestFilePath, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM, &IFileManager::Get(), EFileWrite::FILEWRITE_Append);
 }

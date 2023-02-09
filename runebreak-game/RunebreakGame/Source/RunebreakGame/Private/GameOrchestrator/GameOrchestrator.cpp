@@ -179,7 +179,11 @@ void AGameOrchestrator::Tick(float DeltaSeconds) {
 				GameSimulation->LoadSnapshot(SavedStateManager->GetSavedState(RollbackTarget));
 				int NumFramesToResimulate = Delta;
 				for (int i = 0; i < NumFramesToResimulate; i++) {
-					GameSimulation->AdvanceFrame();
+					int Frame = GameSimulation->GetFrameCount();
+					FString StartChecksum = SavedStateManager->GetSavedState(Frame).Checksum;
+					FFrameInputs FrameInputs = GameSimulation->AdvanceFrame();
+					FString EndChecksum = SavedStateManager->Save(Frame + 1, GameSimulation->SimulationActors);
+					GameLogger->LogSimulate(Frame, StartChecksum, EndChecksum, FrameInputs.Player1Input.ToString(), FrameInputs.Player2Input.ToString());
 				}
 				FString LogMessage = FString::Printf(TEXT("rolled back from frame %d to frame %d, a %d frame rollback"), CurrentFrame, RollbackTarget, Delta);
 				GEngine->AddOnScreenDebugMessage(INDEX_NONE, 1, FColor::Red, *LogMessage, true);
@@ -191,10 +195,14 @@ void AGameOrchestrator::Tick(float DeltaSeconds) {
 			GameSocket->CurrentFrame = GameSocket->CurrentFrame + 1;
 		}
 
-		GameSimulation->AdvanceFrame();
+		int Frame = GameSimulation->GetFrameCount();
+		FString StartChecksum = SavedStateManager->GetSavedState(Frame).Checksum;
+		FFrameInputs FrameInputs = GameSimulation->AdvanceFrame();
+		FString EndChecksum = SavedStateManager->Save(Frame + 1, GameSimulation->SimulationActors);
+		GameLogger->LogSimulate(Frame, StartChecksum, EndChecksum, FrameInputs.Player1Input.ToString(), FrameInputs.Player2Input.ToString());
+		GameLogger->LogTickEnd(Frame, EndChecksum);
+
 		OnFrameAdvancedDelegate.ExecuteIfBound();
-		FString Checksum = SavedStateManager->Save(GameSimulation->GetFrameCount(), GameSimulation->SimulationActors);
-		GameLogger->LogTickEnd(GameSimulation->GetFrameCount() - 1, Checksum);
 	}
 }
 

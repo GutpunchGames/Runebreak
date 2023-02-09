@@ -10,9 +10,8 @@
 
 static const FString GameStartFormat = TEXT("GAME\n\tP1\t{0}\n\tP2\t{1}\n\tSTG\t{2}");
 static const FString GameEndFormat = TEXT("ENDGAME");
-static const FString TickStartFormat = TEXT("STARTF\t{0}\t{1}");
-static const FString TickEndFormat = TEXT("ENDF\t{0}\t{1}");
-static const FString SimulateFrameFormat = TEXT("SIM\t{0}\n\tI1\t{1}\n\tI2\t{2}");
+static const FString TickStartFormat = TEXT("TICK\t{0}\t{1}");
+static const FString TickEndFormat = TEXT("ENDTICK\t{0}\t{1}");
 static const FString RollToFormat = TEXT("ROLLTO\t{0}\t{1}");
 static const FString SyncReceiveHeaderFormat = TEXT("SYNC_RECV\t{0}\t{1}\t{2}\n\tACK\t{3}");
 static const FString SyncSendHeaderFormat = TEXT("SYNC_SEND\t{0}\t{1}\t{2}\n\tACK\t{3}");
@@ -75,7 +74,7 @@ public:
 	UFUNCTION()
 	void LogRollback(int Frame, FString Checksum);
 	UFUNCTION()
-	void LogSimulate(int Frame, FString Input1, FString Input2);
+	void LogSimulate(int Frame, FString StartChecksum, FString EndChecksum, FString Input1, FString Input2);
 	UFUNCTION()
 	void LogSyncReceive(int Player, const FSyncMessage& SyncMessage);
 	UFUNCTION()
