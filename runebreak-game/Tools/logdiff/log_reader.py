@@ -56,6 +56,8 @@ class LogReader:
       # tick simulation 
       elif (line.startswith('SIM')):
         self.read_sim(cursor)
+      elif (line.startswith('ENDGAME')):
+        return tick
       else:
         print('unsupported line: {}, {}'.format(line, cursor.cursor))
         raise(RuntimeError())

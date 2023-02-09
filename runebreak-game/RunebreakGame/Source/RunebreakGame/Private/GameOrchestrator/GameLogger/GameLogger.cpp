@@ -73,6 +73,5 @@ void UGameLogger::LogSyncSend(int Player, const FSyncMessage& SyncMessage) {
 
 void UGameLogger::AppendBytes(const FString& Bytes) {
 	FString TestFilePath = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir()) + TEXT("/" + FilePath);
-	UE_LOG(LogTemp, Warning, TEXT("GameLog: my file path: %s"), *TestFilePath);
 	FFileHelper::SaveStringToFile(Bytes + "\n", *TestFilePath, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM, &IFileManager::Get(), EFileWrite::FILEWRITE_Append);
 }

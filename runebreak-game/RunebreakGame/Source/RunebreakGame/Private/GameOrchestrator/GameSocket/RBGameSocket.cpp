@@ -105,11 +105,11 @@ void ARBGameSocket::Teardown() {
 }
 
 void ARBGameSocket::LogSend(int Type, const FString& Payload) {
-	UE_LOG(LogTemp, Warning, TEXT("SEND: %d -- %s"), Type, *Payload);
+	//UE_LOG(LogTemp, Warning, TEXT("SEND: %d -- %s"), Type, *Payload);
 }
 
 void ARBGameSocket::LogRecv(int Type, const FString& Payload) {
-	UE_LOG(LogTemp, Warning, TEXT("RECV: %d -- %s"), Type, *Payload);
+	//UE_LOG(LogTemp, Warning, TEXT("RECV: %d -- %s"), Type, *Payload);
 }
 
 void ARBGameSocket::Tick(float DeltaSeconds) {

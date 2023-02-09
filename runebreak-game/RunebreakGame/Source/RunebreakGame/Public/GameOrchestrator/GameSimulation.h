@@ -16,7 +16,9 @@ struct FFrameInputs {
 	GENERATED_BODY()
 
 public:
+	UPROPERTY()
 	FInput Player1Input;
+	UPROPERTY()
 	FInput Player2Input;
 };
 
