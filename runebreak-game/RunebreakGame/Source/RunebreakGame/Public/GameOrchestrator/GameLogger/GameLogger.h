@@ -84,6 +84,9 @@ private:
 	UPROPERTY()
 	FString FilePath;
 
+	UPROPERTY()
+	bool IsInitialized;
+
 	UFUNCTION()
 	void AppendBytes(const FString& Bytes);
 };

@@ -3,11 +3,19 @@
 URemoteInputBuffer::URemoteInputBuffer() {
 	Inputs.SetNumUninitialized(65535);
 	EarliestDiscrepancy = -1;
+	FInput DefaultInput;
+	DefaultInput.Frame = 0;
+	DefaultInput.MoveDirection = 0;
+	Inputs[0] = DefaultInput;
 }
 
 URemoteInputBuffer::URemoteInputBuffer(const FObjectInitializer& ObjectInitializer) {
 	Inputs.SetNumUninitialized(65535);
 	EarliestDiscrepancy = -1;
+	FInput DefaultInput;
+	DefaultInput.Frame = 0;
+	DefaultInput.MoveDirection = 0;
+	Inputs[0] = DefaultInput;
 }
 
 URemoteInputBuffer::~URemoteInputBuffer() {

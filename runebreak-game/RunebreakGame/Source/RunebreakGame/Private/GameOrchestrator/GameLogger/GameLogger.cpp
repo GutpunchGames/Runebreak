@@ -13,6 +13,7 @@ UGameLogger::~UGameLogger()
 
 void UGameLogger::Initialize(FString _FilePath) {
 	FilePath = _FilePath;
+	IsInitialized = true;
 	UE_LOG(LogTemp, Warning, TEXT("Game Log: initialized file path: %s"), *FilePath);
 }
 
@@ -72,6 +73,9 @@ void UGameLogger::LogSyncSend(int Player, const FSyncMessage& SyncMessage) {
 }
 
 void UGameLogger::AppendBytes(const FString& Bytes) {
+	if (!IsInitialized) {
+		return;
+	}
 	FString TestFilePath = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir()) + TEXT("/" + FilePath);
 	FFileHelper::SaveStringToFile(Bytes + "\n", *TestFilePath, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM, &IFileManager::Get(), EFileWrite::FILEWRITE_Append);
 }
