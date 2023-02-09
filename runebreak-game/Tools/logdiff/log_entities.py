@@ -1,12 +1,12 @@
 class Tick:
-  def __init__(self, target_frame, checksum):
-    self.target_frame = target_frame
+  def __init__(self, frame, checksum):
+    self.frame = frame
     self.checksum = checksum
 
   def pretty_string(self):
-    fmt = 'Frame: {target_frame} -- {chksum}'
+    fmt = 'Frame: {frame} -- {chksum}'
     return fmt.format(
-      target_frame = self.target_frame,
+      frame = self.frame,
       chksum = self.checksum)
 
   def pretty_print(self):
@@ -38,6 +38,6 @@ class GameLog:
 
   def pretty_print(self):
     last_tick = self.ticks[-1]
-    last_frame = last_tick.target_frame
-    print('Total ticks: {total} -- Last frame: {last_frame}'.format(total = len(self.ticks), last_frame = last_frame))
+    frame = last_tick.frame
+    print('Total ticks: {total} -- Frame: {frame}'.format(total = len(self.ticks), frame = frame))
   
