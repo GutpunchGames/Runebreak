@@ -3,79 +3,77 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "include/ggponet.h"
 #include "GameFramework/Actor.h"
-#include "GameOrchestrator/PlayerSpawnConfig.h"
-#include"GameOrchestrator/GameSocket/InputsMessage.h"
-#include <RunebreakGame/Public/GameOrchestrator/PlayerSpawnPoint.h>
-#include <RunebreakGame/Public/GameOrchestrator/PlayerInputProcessor.h>
-#include <RunebreakGame/Public/GameOrchestrator/GameSimulation.h>
-#include <RunebreakGame/Public/GameOrchestrator/SaveState.h>
-#include <RunebreakGame/Public/GameOrchestrator/Input.h>
-#include <RunebreakGame/Public/GameOrchestrator/GameSocket/RBGameSocket.h>
-#include "GameOrchestrator/GameLogger/GameLogger.h"
 #include "GameOrchestrator.generated.h"
 
-DECLARE_DYNAMIC_DELEGATE(FOnFrameAdvanced);
+#define NETWORK_GRAPH_STEPS 720
 
-UCLASS(Blueprintable)
+UENUM(BlueprintType)
+enum class ENetworkGraphType : uint8
+{
+	PING           UMETA(DisplayName = "Ping"),
+	SYNC           UMETA(DisplayName = "Fairness"),
+	REMOTE_SYNC    UMETA(DisplayName = "Remote Fairness"),
+};
+
+USTRUCT(BlueprintType)
+struct FNetworkGraphData {
+	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int32   Fairness;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int32   RemoteFairness;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int32   Ping;
+};
+
+USTRUCT(BlueprintType)
+struct FNetworkGraphPlayer {
+	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TArray<FNetworkGraphData> PlayerData;
+};
+
+UCLASS()
 class RUNEBREAKGAME_API AGameOrchestrator : public AActor
 {
 	GENERATED_BODY()
-
-public:
+	
+public:	
+	// Sets default values for this actor's properties
 	AGameOrchestrator();
 
-	UFUNCTION(BlueprintCallable)
-	virtual void PrepareGame(FPlayerSpawnConfig Player1SpawnConfig, FPlayerSpawnConfig Player2SpawnConfig, int LocalPort, int InputDelay);
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
-	virtual void Tick(float DeltaSeconds) override;
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	/**
+	 * Called from BeginPlay() after creating the game state.
+	 * Can be overridden by a blueprint to create actors that represent the game state.
+	 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GGPO")
+	void OnSessionStarted();
+	virtual void OnSessionStarted_Implementation();
 
-	UPROPERTY(EditInstanceOnly)
-	UClass* PlayerClass;
-
-	UPROPERTY(EditInstanceOnly, BlueprintReadOnly)
-	ARBGameSocket* GameSocket;
-
-	UPROPERTY(EditInstanceOnly)
-	bool LogSocketMessages;
-
-	UPROPERTY(BlueprintReadWrite)
-	FOnFrameAdvanced OnFrameAdvancedDelegate;
-
-	UPROPERTY(BlueprintReadOnly)
-	UGameSimulation* GameSimulation;
-
-	UPROPERTY(BlueprintReadOnly)
-	bool IsAnyPlayerRemote;
+	TArray<FNetworkGraphPlayer> NetworkGraphData;
 
 private:
-	UPROPERTY()
-	UGameLogger* GameLogger;
+	/** Starts a GGPO game session. */
+	bool TryStartGGPOPlayerSession(int32 NumPlayers, const UGGPONetwork* NetworkAddresses);
 
-	UPROPERTY()
-	USavedStateManager* SavedStateManager;
+	/** Gets stats about the network connection. */
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Game State")
+	TArray<FGGPONetworkStats> GetNetworkStats();
 
-	UPROPERTY()
-	UPlayerInputProcessor* Player1InputProcessor;
-	UPROPERTY()
-	UPlayerInputProcessor* Player2InputProcessor;
+	bool bSessionStarted;
 
-	UPROPERTY()
-	bool IsPlayer1Remote;
-	UPROPERTY()
-	bool IsPlayer2Remote;
+	float ElapsedTime;
 
-	UPROPERTY()
-	bool IsCorrectingRift;
-
-	UPROPERTY()
-	float RiftPauseThresholdFrames = 4;
-
-	UFUNCTION()
-	float ComputeRift();
-
-	UFUNCTION()
-	void HandleSyncMessage(const FSyncMessage& SyncMessage);
 };
