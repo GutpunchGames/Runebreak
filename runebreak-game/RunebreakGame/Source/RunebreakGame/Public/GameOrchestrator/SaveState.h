@@ -26,6 +26,8 @@ public:
 	TArray<FSavedActor> Actors;
 	FString Checksum;
 	int Frame;
+
+	void ComputeChecksum(const FString& SerializedActors);
 };
 
 UCLASS()
@@ -34,7 +36,8 @@ class RUNEBREAKGAME_API USavedStateManager : public UObject
 	GENERATED_BODY()
 
 public:
-	void Save(int Frame, TArray<ASimulationActor*> Actors);
+	// returns checksum
+	FString Save(int Frame, TArray<ASimulationActor*> Actors);
 	FSavedSimulation GetSavedState(int Frame);
 
 private:

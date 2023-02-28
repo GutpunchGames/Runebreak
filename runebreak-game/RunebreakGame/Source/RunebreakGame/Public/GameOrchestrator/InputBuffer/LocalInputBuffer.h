@@ -26,6 +26,7 @@ public:
 
 	virtual FInput GetInput(int Frame) override;
 
+	// pass -1 to get all inputs
 	UFUNCTION()
 	TArray<FInput> GetInputsSince(int FrameExclusive);
 

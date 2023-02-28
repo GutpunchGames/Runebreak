@@ -9,15 +9,23 @@ AGameOrchestrator::AGameOrchestrator() {
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = false;
 	IsCorrectingRift = false;
+
+	SavedStateManager = CreateDefaultSubobject<USavedStateManager>("SavedStateManager");
 }
 
 void AGameOrchestrator::PrepareGame(FPlayerSpawnConfig Player1SpawnConfig, FPlayerSpawnConfig Player2SpawnConfig, int LocalPort, int InputDelay) {
+	GameLogger = NewObject<UGameLogger>(this, "GameLogger");
 	Player1InputProcessor = NewObject<UPlayerInputProcessor>(this, "GameOrchestratorPlayer1InputProcessor");
 	Player2InputProcessor = NewObject<UPlayerInputProcessor>(this, "GameOrchestratorPlayer2InputProcessor");
 
 	IsPlayer1Remote = Player1SpawnConfig.ClientType == PlayerClientType::Remote;
 	IsPlayer2Remote = Player2SpawnConfig.ClientType == PlayerClientType::Remote;
 	IsAnyPlayerRemote = IsPlayer1Remote || IsPlayer2Remote;
+
+	int LogDiscriminator = FMath::RandRange(0, 9999);
+
+	int Player = !IsAnyPlayerRemote ? 0 : !IsPlayer1Remote ? 1 : 2;
+	GameLogger->Initialize(FString::Printf(TEXT("p%d-%04d.txt"), Player, LogDiscriminator));
 
 	if (IsPlayer1Remote && IsPlayer2Remote) {
 		UE_LOG(LogTemp, Error, TEXT("two remote players is not supported"))
@@ -41,7 +49,7 @@ void AGameOrchestrator::PrepareGame(FPlayerSpawnConfig Player1SpawnConfig, FPlay
 	Player2SpawnLocation.Y = 100;
 	Player2SpawnLocation.Z = 0;
 	GameSimulation = NewObject<UGameSimulation>(this, "GameOrchestratorGameSimulation");
-	GameSimulation->Initialize(PlayerClass, Player1SpawnLocation, Player2SpawnLocation, IsPlayer1Remote, IsPlayer2Remote, InputDelay);
+	GameSimulation->Initialize(PlayerClass, Player1SpawnLocation, Player2SpawnLocation, IsPlayer1Remote, IsPlayer2Remote, InputDelay, GameLogger);
 
 	if (IsPlayer1Remote) {
 		FRBGameSocketConfig GameSocketConfig;
@@ -76,6 +84,7 @@ void AGameOrchestrator::PrepareGame(FPlayerSpawnConfig Player1SpawnConfig, FPlay
 	}
 
 	PrimaryActorTick.SetTickFunctionEnable(true);
+	GameLogger->LogGameStart(TEXT("RYU"), TEXT("RYU"), TEXT("ALLEY"));
 }
 
 // 60fps frame limited ticks
@@ -87,8 +96,11 @@ void AGameOrchestrator::Tick(float DeltaSeconds) {
 
 	int CurrentFrame = GameSimulation->GetFrameCount();
 	if (CurrentFrame == 0) {
-		GameSimulation->SaveSnapshot();
+		SavedStateManager->Save(0, GameSimulation->SimulationActors);
 	}
+
+	FString BeginChecksum = SavedStateManager->GetSavedState(CurrentFrame).Checksum;
+	GameLogger->LogTickStart(CurrentFrame, BeginChecksum);
 
 	if (IsAnyPlayerRemote) {
 		GameSocket->SendPing(GameSimulation->GetFrameCount());
@@ -123,6 +135,8 @@ void AGameOrchestrator::Tick(float DeltaSeconds) {
 			SyncMessage.OriginFrame = GameSimulation->GetFrameCount();
 			SyncMessage.FrameAck = GameSocket->NetworkMonitor->NetworkStatistics.MostRecentRemoteFrame;
 
+			GameLogger->LogSyncSend(1, SyncMessage);
+
 			GameSocket->SendSync(SyncMessage);
 		}
 		else if (IsPlayer1Remote && !IsPlayer2Remote) {
@@ -138,6 +152,8 @@ void AGameOrchestrator::Tick(float DeltaSeconds) {
 
 			SyncMessage.OriginFrame = GameSimulation->GetFrameCount();
 			SyncMessage.FrameAck = GameSocket->NetworkMonitor->NetworkStatistics.MostRecentRemoteFrame;
+
+			GameLogger->LogSyncSend(2, SyncMessage);
 
 			GameSocket->SendSync(SyncMessage);
 		}
@@ -155,20 +171,38 @@ void AGameOrchestrator::Tick(float DeltaSeconds) {
 			UObject* RemoteInputBuffer = IsPlayer1Remote ? GameSimulation->Player1InputBuffer : GameSimulation->Player2InputBuffer;
 			int EarliestDiscrepancy = Cast<URemoteInputBuffer>(RemoteInputBuffer)->ConsumeDiscrepancy();
 			if (EarliestDiscrepancy != -1 && EarliestDiscrepancy < CurrentFrame) {
+				// do rollback
 				int RollbackTarget = FMath::Max(0, EarliestDiscrepancy - 1); // can't roll back to negative frames, bit of a redundant check
 				int Delta = CurrentFrame - RollbackTarget;
-				FString LogMessage = FString::Printf(TEXT("Would have rolled back from frame %d to frame %d, a %d frame rollback"), CurrentFrame, RollbackTarget, Delta);
+				FSavedSimulation RollbackTargetSnapshot = SavedStateManager->GetSavedState(RollbackTarget);
+				GameLogger->LogRollback(RollbackTarget, RollbackTargetSnapshot.Checksum);
+				GameSimulation->LoadSnapshot(SavedStateManager->GetSavedState(RollbackTarget));
+				int NumFramesToResimulate = Delta;
+				for (int i = 0; i < NumFramesToResimulate; i++) {
+					int Frame = GameSimulation->GetFrameCount();
+					FString StartChecksum = SavedStateManager->GetSavedState(Frame).Checksum;
+					FFrameInputs FrameInputs = GameSimulation->AdvanceFrame();
+					FString EndChecksum = SavedStateManager->Save(Frame + 1, GameSimulation->SimulationActors);
+					GameLogger->LogSimulate(Frame, StartChecksum, EndChecksum, FrameInputs.Player1Input.ToString(), FrameInputs.Player2Input.ToString());
+				}
+				FString LogMessage = FString::Printf(TEXT("rolled back from frame %d to frame %d, a %d frame rollback"), CurrentFrame, RollbackTarget, Delta);
 				GEngine->AddOnScreenDebugMessage(INDEX_NONE, 1, FColor::Red, *LogMessage, true);
 			}
 		}
 
+		// todo: get this in sync with GameSimulation
 		if (IsAnyPlayerRemote) {
 			GameSocket->CurrentFrame = GameSocket->CurrentFrame + 1;
 		}
 
-		GameSimulation->AdvanceFrame();
+		int Frame = GameSimulation->GetFrameCount();
+		FString StartChecksum = SavedStateManager->GetSavedState(Frame).Checksum;
+		FFrameInputs FrameInputs = GameSimulation->AdvanceFrame();
+		FString EndChecksum = SavedStateManager->Save(Frame + 1, GameSimulation->SimulationActors);
+		GameLogger->LogSimulate(Frame, StartChecksum, EndChecksum, FrameInputs.Player1Input.ToString(), FrameInputs.Player2Input.ToString());
+		GameLogger->LogTickEnd(Frame, EndChecksum);
+
 		OnFrameAdvancedDelegate.ExecuteIfBound();
-		GameSimulation->SaveSnapshot();
 	}
 }
 
@@ -177,11 +211,14 @@ void AGameOrchestrator::HandleSyncMessage(const FSyncMessage& SyncMessage) {
 		return;
 	}
 
+	int Player = IsPlayer1Remote ? 1 : 2;
+
+	GameLogger->LogSyncReceive(Player, SyncMessage);
 	if (IsPlayer1Remote) {
-		GameSimulation->HandleSync(1, SyncMessage);
+		GameSimulation->HandleSync(Player, SyncMessage);
 	}
 	else {
-		GameSimulation->HandleSync(2, SyncMessage);
+		GameSimulation->HandleSync(Player, SyncMessage);
 	}
 }
 
@@ -207,6 +244,8 @@ void AGameOrchestrator::EndPlay(const EEndPlayReason::Type EndPlayReason) {
 		UE_LOG(LogTemp, Warning, TEXT("Tearing down socket"))
 		GameSocket->Teardown();
 	}
+
+	GameLogger->LogGameEnd();
 }
 
 

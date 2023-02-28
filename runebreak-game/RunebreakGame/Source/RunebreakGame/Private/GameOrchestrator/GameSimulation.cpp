@@ -7,17 +7,20 @@
 #include <RunebreakGame/Public/GameOrchestrator/InputBuffer/RemoteInputBuffer.h>
 
 void UGameSimulation::Initialize(
-	UClass* PlayerClass,
+	UClass* _PlayerClass,
 	FVector Player1SpawnPoint,
 	FVector Player2SpawnPoint,
 	bool IsPlayer1Remote,
 	bool IsPlayer2Remote,
-	int InputDelay
+	int InputDelay,
+	UGameLogger* _GameLogger
 ) {
 	if (IsPlayer1Remote && IsPlayer2Remote) {
 		UE_LOG(LogTemp, Error, TEXT("two remote players is not supported"))
 	}
-	SavedStateManager = NewObject<USavedStateManager>(this, "SavedStateManager");
+	
+	PlayerClass = _PlayerClass;
+	GameLogger = _GameLogger;
 	FrameCount = 0;
 	Player1InputBuffer = IsPlayer1Remote ? Cast<UObject>(NewObject<URemoteInputBuffer>(this, "Player1InputBuffer")): Cast<UObject>(NewObject<ULocalInputBuffer>(this, "Player1InputBuffer"));
 	Player2InputBuffer = IsPlayer2Remote ? Cast<UObject>(NewObject<URemoteInputBuffer>(this, "Player2InputBuffer")): Cast<UObject>(NewObject<ULocalInputBuffer>(this, "Player2InputBuffer"));
@@ -46,19 +49,34 @@ void UGameSimulation::AddPlayer2Input(const FInput& Input) {
 	Cast<ULocalInputBuffer>(Player2InputBuffer)->AddInput(Input);
 }
 
-void UGameSimulation::AdvanceFrame() {
+FFrameInputs UGameSimulation::AdvanceFrame() {
+	IInputBuffer* P1InputBuffer = Cast<IInputBuffer>(Player1InputBuffer);
+	IInputBuffer* P2InputBuffer = Cast<IInputBuffer>(Player2InputBuffer);
+
+	FFrameInputs Inputs;
+	Inputs.Player1Input = P1InputBuffer->GetInput(FrameCount);
+	Inputs.Player2Input = P2InputBuffer->GetInput(FrameCount);
+
 	for (int i = 0; i < SimulationActors.Num(); i++) {
-		SimulationActors[i]->SimulationTick(FrameCount, Cast<IInputBuffer>(Player1InputBuffer), Cast<IInputBuffer>(Player2InputBuffer));
+		SimulationActors[i]->SimulationTick(FrameCount, P1InputBuffer, P2InputBuffer);
 	}
+
 	FrameCount++;
+	return Inputs;
 }
 
-void UGameSimulation::SaveSnapshot() {
-	SavedStateManager->Save(FrameCount, SimulationActors);
-}
+void UGameSimulation::LoadSnapshot(FSavedSimulation SavedSimulation) {
+	DestroyAllActors();
+	// todo: do this smartly
+	FrameCount = SavedSimulation.Frame;
+	for (int i = 0; i < SavedSimulation.Actors.Num(); i++) {
+		FSavedActor SavedActor = SavedSimulation.Actors[i];
+		// todo: encode actor type in SavedActor and use it here
+		ASimulationActor* RestoredActor = SpawnSimulationActor(PlayerClass);
+		RestoredActor->ActorId = SavedActor.ActorId;
+		RestoredActor->Deserialize(SavedActor.Data);
+	}
 
-void UGameSimulation::LoadSnapshot(int Frame) {
-	// todo: do this
 }
 
 int UGameSimulation::GetFrameCount() {
@@ -70,10 +88,14 @@ void UGameSimulation::HandleSync(int Player, const FSyncMessage& SyncMessage) {
 	Cast<URemoteInputBuffer>(InputBuffer)->AddRemoteInputs(SyncMessage.RecentInputs);
 }
 
-ASimulationActor* UGameSimulation::SpawnPlayer(int PlayerIndex, UClass* PlayerClass, FVector const& PlayerSpawnPoint) {
+ASimulationActor* UGameSimulation::SpawnPlayer(int PlayerIndex, UClass* _PlayerClass, FVector const& PlayerSpawnPoint) {
 	ASimulationActor* Player = SpawnSimulationActor(PlayerClass, PlayerSpawnPoint);
 	Cast<ASimulationMovingBall>(Player)->PlayerIndex = PlayerIndex;
 	return Player;
+}
+
+ASimulationActor* UGameSimulation::SpawnSimulationActor(UClass* Class) {
+	return SpawnSimulationActor(Class, FVector(0, 0, 0));
 }
 
 ASimulationActor* UGameSimulation::SpawnSimulationActor(UClass* Class, FVector const& Location) {
