@@ -1,4 +1,5 @@
 #include "GameOrchestrator/GameOrchestrator.h"
+#include "GameOrchestrator/RBPlayerController.h"
 #include "GGPOGameInstance.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 
@@ -160,7 +161,7 @@ void AGameOrchestrator::Init(uint16 localport, int32 num_players, GGPOPlayer* pl
     GGPOErrorCode result;
 
     // Initialize the game state
-    gs.Init(num_players);
+    gs.Init();
     ngs.num_players = num_players;
 
     // Fill in a ggpo callbacks structure to pass to start_session.
@@ -423,12 +424,16 @@ void AGameOrchestrator::RunFrame(int32 local_input)
 int32 AGameOrchestrator::GetLocalInputs()
 {
     const UObject* world = (UObject*)GetWorld();
-    //ARBPlayerC* Controller = Cast<AVectorWarPlayerController>(UGameplayStatics::GetPlayerController(world, 0));
-    //if (Controller)
-    //{
-    //    return Controller->GetVectorWarInput();
-    //}
-    return 0;
+    ARBPlayerController* Controller = Cast<ARBPlayerController>(UGameplayStatics::GetPlayerController(world, 0));
+    if (Controller)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Got input"))
+        return Controller->GetPlayerInput();
+    }
+    else {
+        UE_LOG(LogTemp, Warning, TEXT("Failed to get input"))
+		return 0;
+    }
 }
 
 FTransform AGameOrchestrator::GetPlayerTransform(int32 PlayerIndex) {

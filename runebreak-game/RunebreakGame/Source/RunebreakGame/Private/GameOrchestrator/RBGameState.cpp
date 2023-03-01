@@ -1,6 +1,7 @@
+#include "GameOrchestrator/RBInput.h"
 #include "GameOrchestrator/RBGameState.h"
 
-void GameState::Init(int num_players)
+void GameState::Init()
 {
     Position pos;
     pos.x = 0;
@@ -15,22 +16,17 @@ void GameState::Init(int num_players)
     _players[0] = player;
 }
 
-void GameState::GetShipAI(int i, double* heading, double* thrust, int* fire)
-{
-}
-
-void GameState::ParseShipInputs(int inputs, int i, double* heading, double* thrust, int* fire)
-{
-}
-
-void GameState::MoveShip(int which, double heading, double thrust, int fire)
-{
-}
-
 void GameState::Update(int inputs[], int disconnect_flags)
 {
     _framenumber++;
-    _players[0].position.y = _players[0].position.y + 10;
+    int MoveUp = inputs[0] & INPUT_MOVE_UP;
+    int MoveDown = inputs[0] & INPUT_MOVE_DOWN;
+    if (MoveUp) {
+		_players[0].position.y = _players[0].position.y + 10;
+    }
+    else if (MoveDown) {
+		_players[0].position.y = _players[0].position.y - 10;
+    }
     UE_LOG(LogTemp, Warning, TEXT("GameState Update, frame: %d"), _framenumber)
 }
 

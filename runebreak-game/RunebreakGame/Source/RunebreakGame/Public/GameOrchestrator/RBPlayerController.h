@@ -13,5 +13,7 @@ UCLASS()
 class RUNEBREAKGAME_API ARBPlayerController : public APlayerController
 {
 	GENERATED_BODY()
-	
+
+public:
+	int32 GetPlayerInput();
 };
