@@ -10,6 +10,7 @@
 #include "GameOrchestrator.generated.h"
 
 #define NETWORK_GRAPH_STEPS 720
+#define SYNC_TEST
 
 UENUM(BlueprintType)
 enum class ENetworkGraphType : uint8
@@ -156,6 +157,4 @@ private:
 	 * text at the bottom of the screen to notify the user.
 	 */
 	bool __cdecl on_event_callback(GGPOEvent* info);
-
-
 };

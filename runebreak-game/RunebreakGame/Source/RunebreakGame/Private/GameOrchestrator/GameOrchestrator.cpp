@@ -1,9 +1,20 @@
 #include "GameOrchestrator/GameOrchestrator.h"
 #include "GameOrchestrator/RBPlayerController.h"
+#include "GameOrchestrator/Checksum.h"
 #include "GGPOGameInstance.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 
-#define FRAME_DELAY 2
+// UE4: allow Windows platform types to avoid naming collisions
+//  this must be undone at the bottom of this file
+#include "Windows/AllowWindowsPlatformTypes.h"
+#include "Windows/prewindowsapi.h"
+
+#include <windows.h>
+#include <stdio.h>
+#include <math.h>
+#include <timeapi.h>
+
+#define FRAME_DELAY 0
 #define FRAME_RATE 60
 #define ONE_FRAME (1.0f / FRAME_RATE)
 
@@ -71,21 +82,21 @@ void AGameOrchestrator::Tick(float DeltaTime)
 
 TArray<FGGPONetworkStats> AGameOrchestrator::GetNetworkStats()
 {
-    //GGPOPlayerHandle RemoteHandles[MAX_PLAYERS];
-    //int Count = 0;
-    //for (int i = 0; i < ngs.num_players; i++) {
-    //    if (ngs.players[i].type == EGGPOPlayerType::REMOTE) {
-    //        RemoteHandles[Count++] = ngs.players[i].handle;
-    //    }
-    //}
+    GGPOPlayerHandle RemoteHandles[MAX_PLAYERS];
+    int Count = 0;
+    for (int i = 0; i < ngs.num_players; i++) {
+        if (ngs.players[i].type == EGGPOPlayerType::REMOTE) {
+            RemoteHandles[Count++] = ngs.players[i].handle;
+        }
+    }
 
     TArray<FGGPONetworkStats> Result;
-    //for (int i = 0; i < Count; i++)
-    //{
-    //    FGGPONetworkStats Stats = { 0 };
-    //    GGPONet::ggpo_get_network_stats(ggpo, RemoteHandles[i], &Stats);
-    //    Result.Add(Stats);
-    //}
+    for (int i = 0; i < Count; i++)
+    {
+        FGGPONetworkStats Stats = { 0 };
+        GGPONet::ggpo_get_network_stats(ggpo, RemoteHandles[i], &Stats);
+        Result.Add(Stats);
+    }
 
     return Result;
 }
@@ -203,59 +214,34 @@ bool AGameOrchestrator::begin_game_callback(const char*)
 {
     return true;
 }
+
 bool AGameOrchestrator::save_game_state_callback(unsigned char** buffer, int32* len, int32* checksum, int32)
 {
-    //*len = sizeof(gs);
-    //*buffer = (unsigned char*)malloc(*len);
-    //if (!*buffer) {
-    //    return false;
-    //}
-    //memcpy(*buffer, &gs, *len);
-    //*checksum = fletcher32_checksum((short*)*buffer, *len / 2);
+    *len = sizeof(gs);
+    *buffer = (unsigned char*)malloc(*len);
+    if (!*buffer) {
+        return false;
+    }
+    memcpy(*buffer, &gs, *len);
+    *checksum = fletcher32_checksum((short*)*buffer, *len / 2);
     return true;
 }
 bool AGameOrchestrator::load_game_state_callback(unsigned char* buffer, int32 len)
 {
-    //memcpy(&gs, buffer, len);
+    memcpy(&gs, buffer, len);
     return true;
 }
 bool AGameOrchestrator::log_game_state(char* filename, unsigned char* buffer, int32)
 {
-    //FILE* fp = nullptr;
-    //fopen_s(&fp, filename, "w");
-    //if (fp) {
-    //    GameState* gamestate = (GameState*)buffer;
-    //    fprintf(fp, "GameState object.\n");
-    //    fprintf(fp, "  bounds: %ld,%ld x %ld,%ld.\n", gamestate->_bounds.left, gamestate->_bounds.top,
-    //        gamestate->_bounds.right, gamestate->_bounds.bottom);
-    //    fprintf(fp, "  num_ships: %d.\n", gamestate->_num_ships);
-    //    for (int i = 0; i < gamestate->_num_ships; i++) {
-    //        Ship* ship = gamestate->_ships + i;
-    //        fprintf(fp, "  ship %d position:  %.4f, %.4f\n", i, ship->position.x, ship->position.y);
-    //        fprintf(fp, "  ship %d velocity:  %.4f, %.4f\n", i, ship->velocity.dx, ship->velocity.dy);
-    //        fprintf(fp, "  ship %d radius:    %d.\n", i, ship->radius);
-    //        fprintf(fp, "  ship %d heading:   %d.\n", i, ship->heading);
-    //        fprintf(fp, "  ship %d health:    %d.\n", i, ship->health);
-    //        fprintf(fp, "  ship %d speed:     %d.\n", i, ship->speed);
-    //        fprintf(fp, "  ship %d cooldown:  %d.\n", i, ship->cooldown);
-    //        fprintf(fp, "  ship %d score:     %d.\n", i, ship->score);
-    //        for (int j = 0; j < MAX_BULLETS; j++) {
-    //            Bullet* bullet = ship->bullets + j;
-    //            fprintf(fp, "  ship %d bullet %d: %.2f %.2f -> %.2f %.2f.\n", i, j,
-    //                bullet->position.x, bullet->position.y,
-    //                bullet->velocity.dx, bullet->velocity.dy);
-    //        }
-    //    }
-    //    fclose(fp);
-    //}
     return true;
 }
+
 void AGameOrchestrator::free_buffer(void* buffer)
 {
     free(buffer);
 }
-bool AGameOrchestrator::advance_frame_callback(int32)
-{
+
+bool AGameOrchestrator::advance_frame_callback(int32) {
     int inputs[2] = { 0 };
     int disconnect_flags;
 
@@ -265,8 +251,8 @@ bool AGameOrchestrator::advance_frame_callback(int32)
     AdvanceFrame(inputs, disconnect_flags);
     return true;
 }
-bool AGameOrchestrator::on_event_callback(GGPOEvent* info)
-{
+
+bool AGameOrchestrator::on_event_callback(GGPOEvent* info) {
     int progress;
     switch (info->code) {
     case GGPO_EVENTCODE_CONNECTED_TO_PEER:
@@ -283,10 +269,9 @@ bool AGameOrchestrator::on_event_callback(GGPOEvent* info)
         ngs.SetConnectState(EPlayerConnectState::Running);
         break;
     case GGPO_EVENTCODE_CONNECTION_INTERRUPTED:
-        // todo: support this
-        //ngs.SetDisconnectTimeout(info->u.connection_interrupted.player,
-        //    get_time(),
-        //    info->u.connection_interrupted.disconnect_timeout);
+        ngs.SetDisconnectTimeout(info->u.connection_interrupted.player,
+            timeGetTime(),
+            info->u.connection_interrupted.disconnect_timeout);
         break;
     case GGPO_EVENTCODE_CONNECTION_RESUMED:
         ngs.SetConnectState(info->u.connection_resumed.player, EPlayerConnectState::Running);
@@ -295,15 +280,13 @@ bool AGameOrchestrator::on_event_callback(GGPOEvent* info)
         ngs.SetConnectState(info->u.disconnected.player, EPlayerConnectState::Disconnected);
         break;
     case GGPO_EVENTCODE_TIMESYNC:
-        // todo: support this
-        //Sleep(1000 * info->u.timesync.frames_ahead / 60);
+        Sleep(1000 * info->u.timesync.frames_ahead / 60);
         break;
     }
     return true;
 }
 
-GGPOSessionCallbacks AGameOrchestrator::CreateCallbacks()
-{
+GGPOSessionCallbacks AGameOrchestrator::CreateCallbacks() {
     GGPOSessionCallbacks cb = { 0 };
 
     cb.begin_game = std::bind(&AGameOrchestrator::begin_game_callback, this, std::placeholders::_1);
@@ -327,7 +310,7 @@ void AGameOrchestrator::AdvanceFrame(int32 inputs[], int32 disconnect_flags)
     // update the checksums to display in the top of the window.  this
     // helps to detect desyncs.
     ngs.now.framenumber = gs._framenumber;
-    //ngs.now.checksum = fletcher32_checksum((short*)&gs, sizeof(gs) / 2);
+    ngs.now.checksum = fletcher32_checksum((short*)&gs, sizeof(gs) / 2);
     if ((gs._framenumber % 90) == 0) {
         ngs.periodic = ngs.now;
     }
@@ -421,8 +404,7 @@ void AGameOrchestrator::RunFrame(int32 local_input)
     }
 }
 
-int32 AGameOrchestrator::GetLocalInputs()
-{
+int32 AGameOrchestrator::GetLocalInputs() {
     const UObject* world = (UObject*)GetWorld();
     ARBPlayerController* Controller = Cast<ARBPlayerController>(UGameplayStatics::GetPlayerController(world, 0));
     if (Controller)
@@ -443,3 +425,8 @@ FTransform AGameOrchestrator::GetPlayerTransform(int32 PlayerIndex) {
     FTransform Result = FTransform(Rotation, Position);
     return Result;
 }
+
+// UE4: disallow windows platform types
+//  this was enabled at the top of the file
+#include "Windows/PostWindowsApi.h"
+#include "Windows/HideWindowsPlatformTypes.h"
