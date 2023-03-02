@@ -4,15 +4,21 @@
 #include "GGPOGameInstance.h"
 #include "include/ggponet.h"
 
-void UGGPOGameInstance::CreateNetwork(int32 NumPlayers, int32 PlayerIndex, int32 LocalPort, TArray<FString> RemoteAddresses)
+void UGGPOGameInstance::CreateNetwork(int32 PlayerIndex, int32 LocalPort, FString RemoteAddress)
 {
+	TArray<FString> RemoteAddresses;
+	if (!RemoteAddress.IsEmpty()) {
+		RemoteAddresses.Add(RemoteAddress);
+	}
+
 	UGGPONetwork* addresses = UGGPONetwork::CreateNetwork(
 		this,
 		FName(FString(TEXT("GGPONetwork"))),
-		NumPlayers,
+		2,
 		PlayerIndex,
 		LocalPort,
 		RemoteAddresses);
+
 	NetworkAddresses = addresses;
 }
 
