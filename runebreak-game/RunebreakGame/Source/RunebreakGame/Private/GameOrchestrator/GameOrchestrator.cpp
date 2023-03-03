@@ -138,12 +138,12 @@ bool AGameOrchestrator::TryStartGGPOPlayerSession(
             // The local player
             if (NetworkAddresses->IsPlayerLocal(i)) {
                 Players[i].type = EGGPOPlayerType::LOCAL;
-                continue;
             }
-
-            Players[i].type = EGGPOPlayerType::REMOTE;
-            Players[i].u.remote.port = (uint16)NetworkAddresses->GetAddress(i)->GetPort();
-            NetworkAddresses->GetAddress(i)->GetIpAddress(Players[i].u.remote.ip_address);
+            else {
+                Players[i].type = EGGPOPlayerType::REMOTE;
+                Players[i].u.remote.port = (uint16)NetworkAddresses->GetAddress(i)->GetPort();
+                NetworkAddresses->GetAddress(i)->GetIpAddress(Players[i].u.remote.ip_address);
+            }
         }
     }
 
@@ -179,6 +179,7 @@ void AGameOrchestrator::Init(uint16 localport, int32 num_players, GGPOPlayer* pl
     GGPONet::ggpo_set_disconnect_timeout(ggpo, 3000);
     GGPONet::ggpo_set_disconnect_notify_start(ggpo, 1000);
 
+    bool IsAnyPlayerRemote = false;
 	UE_LOG(LogTemp, Warning, TEXT("About to add %d players"), num_players)
     int i;
     for (i = 0; i < num_players; i++) {
@@ -195,17 +196,21 @@ void AGameOrchestrator::Init(uint16 localport, int32 num_players, GGPOPlayer* pl
             GGPONet::ggpo_set_frame_delay(ggpo, handle, FRAME_DELAY);
         }
         else {
+            ngs.local_player_handles[i] = GGPO_INVALID_HANDLE;
             ngs.players[i].connect_progress = 0;
+            IsAnyPlayerRemote = true;
             UE_LOG(LogTemp, Warning, TEXT("Added remote player handle in index: %d"), i)
         }
     }
 
-    GGPOErrorCode Result = GGPONet::ggpo_try_synchronize_local(ggpo);
-    if (Result == GGPO_OK) {
-        UE_LOG(LogTemp, Warning, TEXT("succeeded local synchronize"))
-    }
-    else {
-        UE_LOG(LogTemp, Warning, TEXT("failed local synchronize: %d"), Result)
+    if (!IsAnyPlayerRemote) {
+        GGPOErrorCode Result = GGPONet::ggpo_try_synchronize_local(ggpo);
+        if (Result == GGPO_OK) {
+            UE_LOG(LogTemp, Warning, TEXT("succeeded local synchronize"))
+        }
+        else {
+            UE_LOG(LogTemp, Warning, TEXT("failed local synchronize: %d"), Result)
+        }
     }
 }
 
@@ -389,10 +394,10 @@ void AGameOrchestrator::RunFrame(int32 local_input)
 #endif
         UE_LOG(LogTemp, Warning, TEXT("Local input: %d"), local_input)
         result = GGPONet::ggpo_add_local_input(ggpo, ngs.local_player_handles[0], &local_input, sizeof(local_input));
-    }
 
-    if (!GGPO_SUCCEEDED(result)) {
-        UE_LOG(LogTemp, Warning, TEXT("Failed to add first local input: %d"), result)
+		if (!GGPO_SUCCEEDED(result)) {
+			UE_LOG(LogTemp, Warning, TEXT("Failed to add first local input: %d"), result)
+		}
     }
 
     if (ngs.local_player_handles[1] != GGPO_INVALID_HANDLE) {
@@ -401,10 +406,11 @@ void AGameOrchestrator::RunFrame(int32 local_input)
 #endif
         UE_LOG(LogTemp, Warning, TEXT("Local input: %d"), local_input)
         result = GGPONet::ggpo_add_local_input(ggpo, ngs.local_player_handles[1], &local_input, sizeof(local_input));
-    }
 
-    if (!GGPO_SUCCEEDED(result)) {
-        UE_LOG(LogTemp, Warning, TEXT("Failed to add second local input: %d"), result)
+
+		if (!GGPO_SUCCEEDED(result)) {
+			UE_LOG(LogTemp, Warning, TEXT("Failed to add second local input: %d"), result)
+		}
     }
 
     // synchronize these inputs with ggpo.  If we have enough input to proceed

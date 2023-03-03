@@ -630,7 +630,8 @@ Peer2PeerBackend::CheckInitialSync()
       for (i = 0; i < _num_players; i++) {
          // xxx: IsInitialized() must go... we're actually using it as a proxy for "represents the local player"
          if (_endpoints[i].IsInitialized() && !_endpoints[i].IsSynchronized() && !_local_connect_status[i].disconnected) {
-            return;
+			  UE_LOG(LogTemp, Warning, TEXT("endpoint %d failed check"), i)
+			  return;
          }
       }
       for (i = 0; i < _num_spectators; i++) {
