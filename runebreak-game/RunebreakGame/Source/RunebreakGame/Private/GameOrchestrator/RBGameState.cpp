@@ -1,5 +1,5 @@
-#include "GameOrchestrator/RBInput.h"
 #include "GameOrchestrator/RBGameState.h"
+#include "GameOrchestrator/RBInput.h"
 
 void GameState::Init()
 {

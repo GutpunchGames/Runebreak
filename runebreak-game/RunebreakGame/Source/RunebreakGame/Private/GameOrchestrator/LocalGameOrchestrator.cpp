@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "GameOrchestrator/GameOrchestrator.h"
+#include "GameOrchestrator/LocalGameOrchestrator.h"
 
 // Sets default values
-AGameOrchestrator::AGameOrchestrator()
+ALocalGameOrchestrator::ALocalGameOrchestrator()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -12,22 +12,16 @@ AGameOrchestrator::AGameOrchestrator()
 }
 
 // Called when the game starts or when spawned
-void AGameOrchestrator::BeginPlay()
+void ALocalGameOrchestrator::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
 // Called every frame
-void AGameOrchestrator::Tick(float DeltaTime)
+void ALocalGameOrchestrator::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
 
-void AGameOrchestrator::OnSessionStarted_Implementation() {
-}
-
-FTransform AGameOrchestrator::GetPlayerTransform(int32 PlayerIndex) {
-	return FTransform();
-}

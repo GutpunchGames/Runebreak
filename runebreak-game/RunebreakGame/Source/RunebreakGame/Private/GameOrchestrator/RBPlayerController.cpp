@@ -1,5 +1,5 @@
-#include "GameOrchestrator/RBInput.h"
 #include "GameOrchestrator/RBPlayerController.h"
+#include "GameOrchestrator/RBInput.h"
 
 int32 ARBPlayerController::GetPlayerInput()
 {
