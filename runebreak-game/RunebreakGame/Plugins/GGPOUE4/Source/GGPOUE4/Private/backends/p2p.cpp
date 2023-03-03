@@ -573,7 +573,7 @@ Peer2PeerBackend::SetDisconnectNotifyStart(int timeout)
 GGPOErrorCode
 Peer2PeerBackend::TrySynchronizeLocal()
 {
-    if (_num_players <= 1 && _num_spectators == 0) {
+    if (_num_players <= 2 && _num_spectators == 0) {
         // xxx: Same as below in CheckInitialSync(), IsInitialized() is used
         // to test "represents the local player"
         if (_num_players == 0 || !_endpoints[0].IsInitialized()) {
@@ -622,6 +622,8 @@ Peer2PeerBackend::CheckInitialSync()
 {
    int i;
 
+   UE_LOG(LogTemp, Warning, TEXT("CheckInitialSync"))
+
    if (_synchronizing) {
       // Check to see if everyone is now synchronized.  If so,
       // go ahead and tell the client that we're ok to accept input.
@@ -641,5 +643,6 @@ Peer2PeerBackend::CheckInitialSync()
       info.code = GGPO_EVENTCODE_RUNNING;
       _callbacks.on_event(&info);
       _synchronizing = false;
+      UE_LOG(LogTemp, Warning, TEXT("Check Initial Sync Complete"))
    }
 }

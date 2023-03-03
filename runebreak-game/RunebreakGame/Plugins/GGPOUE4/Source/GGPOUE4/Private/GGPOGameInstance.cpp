@@ -4,7 +4,7 @@
 #include "GGPOGameInstance.h"
 #include "include/ggponet.h"
 
-void UGGPOGameInstance::CreateNetwork(int32 PlayerIndex, int32 LocalPort, FString RemoteAddress)
+void UGGPOGameInstance::CreateNetwork(TSet<int32> LocalPlayerIndices, int32 LocalPort, FString RemoteAddress)
 {
 	TArray<FString> RemoteAddresses;
 	if (!RemoteAddress.IsEmpty()) {
@@ -15,10 +15,11 @@ void UGGPOGameInstance::CreateNetwork(int32 PlayerIndex, int32 LocalPort, FStrin
 		this,
 		FName(FString(TEXT("GGPONetwork"))),
 		2,
-		PlayerIndex,
+		LocalPlayerIndices,
 		LocalPort,
 		RemoteAddresses);
 
-	NetworkAddresses = addresses;
+	UE_LOG(LogTemp, Warning, TEXT("Created network with num players: %d"), addresses->NumPlayers())
+	GGPONetwork = addresses;
 }
 

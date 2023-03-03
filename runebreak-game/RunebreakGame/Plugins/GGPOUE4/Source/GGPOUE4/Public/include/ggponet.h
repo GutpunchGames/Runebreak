@@ -128,7 +128,6 @@ public:
     /** Gets the port. */
     UFUNCTION(BlueprintCallable, BlueprintPure, Category = "GGPO")
         bool IsSameAddress(const UGGPONetworkAddress* Other) const;
-
 };
 
 /**
@@ -141,16 +140,20 @@ class GGPOUE4_API UGGPONetwork : public UObject
 
 private:
     UPROPERTY()
-        int32 LocalPlayerIndex = -1;
-    UPROPERTY()
         TArray<UGGPONetworkAddress*> Addresses;
+
+    UPROPERTY()
+        TSet<int32> _LocalPlayers;
+
+    UPROPERTY()
+        int32 _LocalPort;
 
 public:
     UGGPONetwork() {}
 
     /** Creates a collection of network addresses. */
     UFUNCTION(BlueprintCallable, Category = "GGPO")
-        static UGGPONetwork* CreateNetwork(UObject* Outer, const FName Name, int32 NumPlayers, int32 PlayerIndex, int32 LocalPort, TArray<FString> RemoteAddresses);
+        static UGGPONetwork* CreateNetwork(UObject* Outer, const FName Name, int32 NumPlayers, TSet<int32> LocalPlayers, int32 LocalPort, TArray<FString> RemoteAddresses);
 
     /** Returns whether all addresses are valid. */
     UFUNCTION(BlueprintCallable, BlueprintPure, Category = "GGPO")
@@ -165,13 +168,12 @@ public:
     /** Gets the total number of players on the network. */
     UFUNCTION(BlueprintCallable, BlueprintPure, Category = "GGPO")
         int32 NumPlayers() const;
-    /** Gets the local player index. */
-    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "GGPO")
-        int32 GetPlayerIndex() const;
     /** Gets the local port. */
     UFUNCTION(BlueprintCallable, BlueprintPure, Category = "GGPO")
         int32 GetLocalPort() const;
 
+    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "GGPO")
+        bool IsPlayerLocal(int32 PlayerIndex) const;
 };
 
 

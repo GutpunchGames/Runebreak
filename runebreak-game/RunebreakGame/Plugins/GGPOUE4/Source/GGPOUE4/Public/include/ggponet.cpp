@@ -75,17 +75,22 @@ bool UGGPONetworkAddress::IsSameAddress(const UGGPONetworkAddress* Other) const
 }
 
 // UGGPONetwork
-
-UGGPONetwork* UGGPONetwork::CreateNetwork(UObject* Outer, const FName Name, int32 NumPlayers, int32 PlayerIndex, int32 LocalPort, TArray<FString> RemoteAddresses)
+UGGPONetwork* UGGPONetwork::CreateNetwork(UObject* Outer,
+    const FName Name,
+    int32 NumPlayers,
+    TSet<int32> LocalPlayers,
+    int32 LocalPort,
+    TArray<FString> RemoteAddresses)
 {
     UGGPONetwork* Result = NewObject<UGGPONetwork>(Outer, Name);
+    Result->_LocalPlayers = LocalPlayers;
+    Result->_LocalPort = LocalPort;
 
-    Result->LocalPlayerIndex = PlayerIndex - 1;
     int32 remoteIndex = 0;
     for (int32 i = 0; i < NumPlayers; i++)
     {
         // Only the port matters for local player
-        if (i == Result->LocalPlayerIndex)
+        if (LocalPlayers.Contains(i))
         {
             // Create a GGPO Network Address and add to the addresses
             UGGPONetworkAddress* address = UGGPONetworkAddress::CreateLocalAddress(
@@ -100,6 +105,7 @@ UGGPONetwork* UGGPONetwork::CreateNetwork(UObject* Outer, const FName Name, int3
             if (remoteIndex >= RemoteAddresses.Num())
             {
                 Result->Addresses.Empty();
+                UE_LOG(LogTemp, Error, TEXT("GGPO: Ran out of remote addresses"))
                 break;
             }
 
@@ -114,6 +120,11 @@ UGGPONetwork* UGGPONetwork::CreateNetwork(UObject* Outer, const FName Name, int3
     }
 
     return Result;
+}
+
+bool UGGPONetwork::IsPlayerLocal(int32 PlayerIndex) const
+{
+    return _LocalPlayers.Contains(PlayerIndex);
 }
 
 bool UGGPONetwork::AllValidAddresses() const
@@ -132,6 +143,7 @@ bool UGGPONetwork::AllValidAddresses() const
 
     return AllUniqueAddresses();
 }
+
 bool UGGPONetwork::AllUniqueAddresses() const
 {
     for (int32 i = 0; i < Addresses.Num(); i++)
@@ -158,16 +170,9 @@ int32 UGGPONetwork::NumPlayers() const
 {
     return Addresses.Num();
 }
-int32 UGGPONetwork::GetPlayerIndex() const
-{
-    return LocalPlayerIndex;
-}
+
 int32 UGGPONetwork::GetLocalPort() const
 {
-    // Just in case
-    if (LocalPlayerIndex <= -1)
-        return 7000;
-
-    return Addresses[LocalPlayerIndex]->GetPort();
+    return _LocalPort;
 }
 

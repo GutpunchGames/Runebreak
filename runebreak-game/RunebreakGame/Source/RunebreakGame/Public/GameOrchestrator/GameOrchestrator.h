@@ -10,7 +10,7 @@
 #include "GameOrchestrator.generated.h"
 
 #define NETWORK_GRAPH_STEPS 720
-#define SYNC_TEST
+//#define SYNC_TEST
 
 UENUM(BlueprintType)
 enum class ENetworkGraphType : uint8
@@ -80,7 +80,7 @@ private:
 	 * Initialize the vector war game.  This initializes the game state and
 	 * creates a new network session.
 	 */
-	void Init(uint16 localport, int32 num_players, GGPOPlayer* players, int32 num_spectators);
+	void Init(uint16 localport, int32 num_players, GGPOPlayer* players);
 
 	/** Starts a GGPO game session. */
 	bool TryStartGGPOPlayerSession(int32 NumPlayers, const UGGPONetwork* NetworkAddresses);

@@ -53,7 +53,7 @@ struct NonGameState {
 
     void UpdateConnectProgress(GGPOPlayerHandle handle, int progress);
 
-    GGPOPlayerHandle     local_player_handle;
+    GGPOPlayerHandle     local_player_handles[2];
     FPlayerConnectionInfo players[MAX_PLAYERS];
     int                  num_players;
 
