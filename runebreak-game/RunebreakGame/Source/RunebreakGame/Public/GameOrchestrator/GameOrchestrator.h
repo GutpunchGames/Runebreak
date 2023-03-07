@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "GameOrchestrator/RBGameState.h"
+#include "GameOrchestrator/RBGameSimulation.h"
 #include "GameOrchestrator/RBNonGameState.h"
 #include "GameOrchestrator.generated.h"
 
@@ -34,6 +34,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	virtual FTransform GetPlayerTransform(int32 PlayerIndex);
 
-	GameState gs = { 0 };
+	RBGameSimulation Simulation = { 0 };
 	NonGameState ngs = { 0 };
+
+	float ElapsedTime = 0;;
 };

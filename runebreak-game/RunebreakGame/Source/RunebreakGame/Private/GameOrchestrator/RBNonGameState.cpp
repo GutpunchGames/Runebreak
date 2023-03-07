@@ -11,7 +11,7 @@
 #include <timeapi.h>
 
 void NonGameState::SetConnectState(GGPOPlayerHandle handle, EPlayerConnectState state) {
-    for (int i = 0; i < num_players; i++) {
+    for (int i = 0; i < NumPlayers; i++) {
         if (players[i].handle == handle) {
             players[i].connect_progress = 0;
             players[i].state = state;
@@ -21,7 +21,7 @@ void NonGameState::SetConnectState(GGPOPlayerHandle handle, EPlayerConnectState 
 }
 
 void NonGameState::SetDisconnectTimeout(GGPOPlayerHandle handle, int when, int timeout) {
-    for (int i = 0; i < num_players; i++) {
+    for (int i = 0; i < NumPlayers; i++) {
         if (players[i].handle == handle) {
             players[i].disconnect_start = when;
             players[i].disconnect_timeout = timeout;
@@ -38,13 +38,13 @@ float NonGameState::GetDisconnectTime(int32 index) const
 }
 
 void NonGameState::SetConnectState(EPlayerConnectState state) {
-    for (int i = 0; i < num_players; i++) {
+    for (int i = 0; i < NumPlayers; i++) {
         players[i].state = state;
     }
 }
 
 void NonGameState::UpdateConnectProgress(GGPOPlayerHandle handle, int progress) {
-    for (int i = 0; i < num_players; i++) {
+    for (int i = 0; i < NumPlayers; i++) {
         if (players[i].handle == handle) {
             players[i].connect_progress = progress;
             break;

@@ -54,6 +54,10 @@ void AGGPOGameOrchestrator::BeginPlay()
 
     if (bSessionStarted)
     {
+		// Initialize the game state
+		Simulation.Init();
+		ngs.NumPlayers = NumPlayers;
+
         OnSessionStarted();
 
         NetworkGraphData.Empty();
@@ -89,7 +93,7 @@ TArray<FGGPONetworkStats> AGGPOGameOrchestrator::GetNetworkStats()
 {
     GGPOPlayerHandle RemoteHandles[MAX_PLAYERS];
     int Count = 0;
-    for (int i = 0; i < ngs.num_players; i++) {
+    for (int i = 0; i < ngs.NumPlayers; i++) {
         if (ngs.players[i].type == EGGPOPlayerType::REMOTE) {
             RemoteHandles[Count++] = ngs.players[i].handle;
         }
@@ -165,10 +169,6 @@ void AGGPOGameOrchestrator::ConfigureGGPO(uint16 localport, int32 num_players, G
 {
     GGPOErrorCode result;
 
-    // Initialize the game state
-    gs.Init();
-    ngs.num_players = num_players;
-
     // Fill in a ggpo callbacks structure to pass to start_session.
     GGPOSessionCallbacks cb = CreateCallbacks();
 
@@ -226,18 +226,18 @@ bool AGGPOGameOrchestrator::begin_game_callback(const char*)
 
 bool AGGPOGameOrchestrator::save_game_state_callback(unsigned char** buffer, int32* len, int32* checksum, int32)
 {
-    *len = sizeof(gs);
+    *len = sizeof(Simulation);
     *buffer = (unsigned char*)malloc(*len);
     if (!*buffer) {
         return false;
     }
-    memcpy(*buffer, &gs, *len);
+    memcpy(*buffer, &Simulation, *len);
     *checksum = fletcher32_checksum((short*)*buffer, *len / 2);
     return true;
 }
 bool AGGPOGameOrchestrator::load_game_state_callback(unsigned char* buffer, int32 len)
 {
-    memcpy(&gs, buffer, len);
+    memcpy(&Simulation, buffer, len);
     return true;
 }
 bool AGGPOGameOrchestrator::log_game_state(char* filename, unsigned char* buffer, int32)
@@ -314,13 +314,13 @@ GGPOSessionCallbacks AGGPOGameOrchestrator::CreateCallbacks() {
 
 void AGGPOGameOrchestrator::AdvanceFrame(int32 inputs[], int32 disconnect_flags)
 {
-    gs.Update(inputs, disconnect_flags);
+    Simulation.Update(inputs, disconnect_flags);
 
     // update the checksums to display in the top of the window.  this
     // helps to detect desyncs.
-    ngs.now.framenumber = gs._framenumber;
-    ngs.now.checksum = fletcher32_checksum((short*)&gs, sizeof(gs) / 2);
-    if ((gs._framenumber % 90) == 0) {
+    ngs.now.framenumber = Simulation._framenumber;
+    ngs.now.checksum = fletcher32_checksum((short*)&Simulation, sizeof(Simulation) / 2);
+    if ((Simulation._framenumber % 90) == 0) {
         ngs.periodic = ngs.now;
     }
 
@@ -330,7 +330,7 @@ void AGGPOGameOrchestrator::AdvanceFrame(int32 inputs[], int32 disconnect_flags)
     // Update the performance monitor display.
     GGPOPlayerHandle handles[MAX_PLAYERS];
     int count = 0;
-    for (int i = 0; i < ngs.num_players; i++) {
+    for (int i = 0; i < ngs.NumPlayers; i++) {
         if (ngs.players[i].type == EGGPOPlayerType::REMOTE) {
             handles[count++] = ngs.players[i].handle;
         }
@@ -452,7 +452,7 @@ int32 AGGPOGameOrchestrator::GetLocalInputs() {
 }
 
 FTransform AGGPOGameOrchestrator::GetPlayerTransform(int32 PlayerIndex) {
-    const Player player = gs._players[PlayerIndex];
+    const Player player = Simulation._players[PlayerIndex];
     FVector Position = FVector(0, (float)player.position.x, (float)player.position.y);
     FQuat Rotation = FRotator(0, 0, 0).Quaternion();
     FTransform Result = FTransform(Rotation, Position);

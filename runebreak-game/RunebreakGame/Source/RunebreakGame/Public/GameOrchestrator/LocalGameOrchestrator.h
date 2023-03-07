@@ -19,8 +19,18 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void OnSessionStarted_Implementation();
+
+	void TickGameState();
+
+	void RunFrame();
+
+	void GetLocalInputs();
+
+	FTransform GetPlayerTransform(int32 PlayerIndex);
+
+	int32 Inputs[2] = { 0, 0 };
 };

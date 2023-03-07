@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "include/ggponet.h"
-#include "GameOrchestrator/RBGameState.h"
 #include "GameOrchestrator/RBNonGameState.h"
 #include "GameOrchestrator/GameOrchestrator.h"
 #include "GGPOGameOrchestrator.generated.h"
@@ -63,7 +62,6 @@ public:
 
 	TArray<FNetworkGraphPlayer> NetworkGraphData;
 
-	GameState gs = { 0 };
 	NonGameState ngs = { 0 };
 
 protected:
@@ -104,8 +102,6 @@ protected:
 	TArray<FGGPONetworkStats> GetNetworkStats();
 
 	bool bSessionStarted;
-
-	float ElapsedTime;
 
 	void TickGameState();
 
