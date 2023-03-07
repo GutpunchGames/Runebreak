@@ -16,9 +16,9 @@ ALocalGameOrchestrator::ALocalGameOrchestrator()
 }
 
 // Called when the game starts or when spawned
-void ALocalGameOrchestrator::BeginPlay()
+void ALocalGameOrchestrator::Init()
 {
-    Super::BeginPlay();
+    Super::Init();
 
     UE_LOG(LogTemp, Warning, TEXT("BeginPlay"))
 

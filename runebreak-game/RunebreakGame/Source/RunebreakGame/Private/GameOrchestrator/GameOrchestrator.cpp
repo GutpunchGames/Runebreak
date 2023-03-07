@@ -11,18 +11,15 @@ AGameOrchestrator::AGameOrchestrator()
 
 }
 
-// Called when the game starts or when spawned
-void AGameOrchestrator::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
 // Called every frame
 void AGameOrchestrator::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AGameOrchestrator::Init()
+{
 }
 
 void AGameOrchestrator::OnSessionStarted_Implementation() {

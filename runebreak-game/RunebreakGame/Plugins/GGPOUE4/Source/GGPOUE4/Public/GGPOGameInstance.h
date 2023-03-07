@@ -24,4 +24,8 @@ public:
     /** Creates a collection of network addresses. */
     UFUNCTION(BlueprintCallable, Category = "GGPO")
         void CreateNetwork(TSet<int32> LocalPlayerIndices, int32 LocalPort, FString RemoteAddress);
+
+    /** Creates a network for a sync test.*/
+    UFUNCTION(BlueprintCallable, Category = "GGPO")
+        void CreateSyncTestNetwork();
 };

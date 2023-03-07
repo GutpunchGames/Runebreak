@@ -23,3 +23,21 @@ void UGGPOGameInstance::CreateNetwork(TSet<int32> LocalPlayerIndices, int32 Loca
 	GGPONetwork = addresses;
 }
 
+void UGGPOGameInstance::CreateSyncTestNetwork()
+{
+	TArray<FString> RemoteAddresses;
+	TSet<int32> LocalPlayerIndices;
+	LocalPlayerIndices.Emplace(0);
+
+	UGGPONetwork* addresses = UGGPONetwork::CreateNetwork(
+		this,
+		FName(FString(TEXT("GGPONetwork"))),
+		1,
+		LocalPlayerIndices,
+		9000,
+		RemoteAddresses);
+
+	UE_LOG(LogTemp, Warning, TEXT("Created network with num players: %d"), addresses->NumPlayers())
+	GGPONetwork = addresses;
+}
+

@@ -9,7 +9,6 @@
 #include "GGPOGameOrchestrator.generated.h"
 
 #define NETWORK_GRAPH_STEPS 720
-//#define SYNC_TEST
 
 UENUM(BlueprintType)
 enum class ENetworkGraphType : uint8
@@ -48,10 +47,6 @@ public:
 	// Sets default values for this actor's properties
 	AGGPOGameOrchestrator();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -60,9 +55,18 @@ public:
 
 	virtual void OnSessionStarted_Implementation() override;
 
+	UPROPERTY()
 	TArray<FNetworkGraphPlayer> NetworkGraphData;
 
 	NonGameState ngs = { 0 };
+
+	UPROPERTY(BlueprintReadWrite)
+	bool IsSyncTest = false;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 FrameDelay = 0;
+
+	virtual void Init() override;
 
 protected:
 	/*
@@ -101,6 +105,7 @@ protected:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Game State")
 	TArray<FGGPONetworkStats> GetNetworkStats();
 
+	UPROPERTY()
 	bool bSessionStarted;
 
 	void TickGameState();

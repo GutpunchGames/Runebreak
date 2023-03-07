@@ -14,7 +14,6 @@
 #include <math.h>
 #include <timeapi.h>
 
-#define FRAME_DELAY 0
 #define FRAME_RATE 60
 #define ONE_FRAME (1.0f / FRAME_RATE)
 
@@ -26,14 +25,17 @@ AGGPOGameOrchestrator::AGGPOGameOrchestrator()
 }
 
 // Called when the game starts or when spawned
-void AGGPOGameOrchestrator::BeginPlay()
+void AGGPOGameOrchestrator::Init()
 {
-    Super::BeginPlay();
+    Super::Init();
 
     UE_LOG(LogTemp, Warning, TEXT("BeginPlay"))
 
     UGGPONetwork* GGPONetwork = nullptr;
-    int32 NumPlayers = 2;
+	int32 NumPlayers = 2;
+    if (IsSyncTest) {
+        NumPlayers = 1;
+    }
 
     // If this is a GGPO game instance
     UGameInstance* GameInstance = GetGameInstance();
@@ -50,24 +52,23 @@ void AGGPOGameOrchestrator::BeginPlay()
     UE_LOG(LogTemp, Warning, TEXT("got num players: %d"), NumPlayers)
     bSessionStarted = TryStartGGPOSession(NumPlayers, GGPONetwork);
 
-    UE_LOG(LogTemp, Warning, TEXT("Session Started: %b"), bSessionStarted)
-
     if (bSessionStarted)
     {
-		// Initialize the game state
-		Simulation.Init();
-		ngs.NumPlayers = NumPlayers;
+			UE_LOG(LogTemp, Warning, TEXT("Session Started: %b"), bSessionStarted)
+			// Initialize the game state
+			Simulation.Init();
+			ngs.NumPlayers = NumPlayers;
 
-        OnSessionStarted();
+			OnSessionStarted();
 
-        NetworkGraphData.Empty();
-        TArray<FGGPONetworkStats> Network = GetNetworkStats();
-        int32 Count = Network.Num();
-        for (int32 i = 0; i < Count; i++)
-        {
-            NetworkGraphData.Add(FNetworkGraphPlayer{ });
-        }
-    }
+			NetworkGraphData.Empty();
+			TArray<FGGPONetworkStats> Network = GetNetworkStats();
+			int32 Count = Network.Num();
+			for (int32 i = 0; i < Count; i++)
+			{
+				NetworkGraphData.Add(FNetworkGraphPlayer{ });
+			}
+		}
     else
     {
         UE_LOG(LogTemp, Error, TEXT("Failed to create GGPO session"));
@@ -172,11 +173,12 @@ void AGGPOGameOrchestrator::ConfigureGGPO(uint16 localport, int32 num_players, G
     // Fill in a ggpo callbacks structure to pass to start_session.
     GGPOSessionCallbacks cb = CreateCallbacks();
 
-#if defined(SYNC_TEST)
-    result = GGPONet::ggpo_start_synctest(&ggpo, &cb, "vectorwar", num_players, sizeof(int), 1);
-#else
-    result = GGPONet::ggpo_start_session(&ggpo, &cb, "vectorwar", num_players, sizeof(int), localport);
-#endif
+    if (IsSyncTest) {
+        result = GGPONet::ggpo_start_synctest(&ggpo, &cb, "vectorwar", num_players, sizeof(int), 1);
+    }
+    else {
+        result = GGPONet::ggpo_start_session(&ggpo, &cb, "vectorwar", num_players, sizeof(int), localport);
+    }
 
     // automatically disconnect clients after 3000 ms and start our count-down timer
     // for disconnects after 1000 ms.   To completely disable disconnects, simply use
@@ -195,13 +197,12 @@ void AGGPOGameOrchestrator::ConfigureGGPO(uint16 localport, int32 num_players, G
         ngs.players[i].type = players[i].type;
         if (players[i].type == EGGPOPlayerType::LOCAL) {
             ngs.players[i].connect_progress = 100;
-            ngs.local_player_handles[i] = handle;
+            ngs.local_player_handle = handle;
             UE_LOG(LogTemp, Warning, TEXT("Added local player handle in index: %d"), i)
             ngs.SetConnectState(handle, EPlayerConnectState::Connecting);
-            GGPONet::ggpo_set_frame_delay(ggpo, handle, FRAME_DELAY);
+            GGPONet::ggpo_set_frame_delay(ggpo, handle, FrameDelay);
         }
         else {
-            ngs.local_player_handles[i] = GGPO_INVALID_HANDLE;
             ngs.players[i].connect_progress = 0;
             IsAnyPlayerRemote = true;
             UE_LOG(LogTemp, Warning, TEXT("Added remote player handle in index: %d"), i)
@@ -393,28 +394,15 @@ void AGGPOGameOrchestrator::RunFrame(int32 local_input)
     int disconnect_flags;
     int inputs[2] = { 0 };
 
-    if (ngs.local_player_handles[0] != GGPO_INVALID_HANDLE) {
-#if defined(SYNC_TEST)
-        local_input = rand(); // test: use random inputs to demonstrate sync testing
-#endif
+    if (ngs.local_player_handle != GGPO_INVALID_HANDLE) {
+        if (IsSyncTest) {
+            local_input = rand(); // test: use random inputs to demonstrate sync testing
+		}
         UE_LOG(LogTemp, Warning, TEXT("Local input: %d"), local_input)
-        result = GGPONet::ggpo_add_local_input(ggpo, ngs.local_player_handles[0], &local_input, sizeof(local_input));
+        result = GGPONet::ggpo_add_local_input(ggpo, ngs.local_player_handle, &local_input, sizeof(local_input));
 
 		if (!GGPO_SUCCEEDED(result)) {
 			UE_LOG(LogTemp, Warning, TEXT("Failed to add first local input: %d"), result)
-		}
-    }
-
-    if (ngs.local_player_handles[1] != GGPO_INVALID_HANDLE) {
-#if defined(SYNC_TEST)
-        local_input = rand(); // test: use random inputs to demonstrate sync testing
-#endif
-        UE_LOG(LogTemp, Warning, TEXT("Local input: %d"), local_input)
-        result = GGPONet::ggpo_add_local_input(ggpo, ngs.local_player_handles[1], &local_input, sizeof(local_input));
-
-
-		if (!GGPO_SUCCEEDED(result)) {
-			UE_LOG(LogTemp, Warning, TEXT("Failed to add second local input: %d"), result)
 		}
     }
 
