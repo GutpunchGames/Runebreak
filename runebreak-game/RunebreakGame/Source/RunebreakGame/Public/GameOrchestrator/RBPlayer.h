@@ -21,7 +21,6 @@ class URBPlayer : public USimulationEntity {
 GENERATED_BODY()
 
 public:
-	void Initialize(FPosition Position, int32 PlayerIndex);
 	virtual void SimulationTick(URBGameSimulation* Simulation) override;
 	virtual FSerializedEntity Serialize() override;
 	virtual void Deserialize(FSerializedEntity SerializedEntity) override;

@@ -1,10 +1,5 @@
 #include "GameOrchestrator/RBPlayer.h"
 
-void URBPlayer::Initialize(FPosition Position, int32 PlayerIndex) {
-    State.Position = Position;
-    State.PlayerIndex = PlayerIndex;
-}
-
 void URBPlayer::SimulationTick(URBGameSimulation* Simulation) {
     int Inputs = Simulation->_inputs[State.PlayerIndex];
     int MoveUp = Inputs & INPUT_MOVE_UP;
