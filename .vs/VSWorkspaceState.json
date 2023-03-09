@@ -5,9 +5,11 @@
     "\\runebreak-game\\RunebreakGame",
     "\\runebreak-game\\RunebreakGame\\Source",
     "\\runebreak-game\\RunebreakGame\\Source\\RunebreakGame",
+    "\\runebreak-game\\RunebreakGame\\Source\\RunebreakGame\\Private",
+    "\\runebreak-game\\RunebreakGame\\Source\\RunebreakGame\\Private\\GameOrchestrator",
     "\\runebreak-game\\RunebreakGame\\Source\\RunebreakGame\\Public",
     "\\runebreak-game\\RunebreakGame\\Source\\RunebreakGame\\Public\\GameOrchestrator"
   ],
-  "SelectedNode": "\\runebreak-game\\RunebreakGame\\RunebreakGame.sln",
+  "SelectedNode": "\\runebreak-game\\RunebreakGame\\Source\\RunebreakGame\\Private\\GameOrchestrator\\LocalGameOrchestrator.cpp",
   "PreviewInSolutionExplorer": false
 }
