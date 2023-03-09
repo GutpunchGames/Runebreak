@@ -54,7 +54,6 @@ void ALocalGameOrchestrator::TickGameState()
 void ALocalGameOrchestrator::RunFrame()
 {
     Simulation.Update(Inputs, 0);
-	UE_LOG(LogTemp, Warning, TEXT("synchronize_input success"))
 }
 
 void ALocalGameOrchestrator::GetLocalInputs() {
@@ -73,9 +72,9 @@ void ALocalGameOrchestrator::GetLocalInputs() {
     }
 }
 
-FTransform ALocalGameOrchestrator::GetPlayerTransform(int32 PlayerIndex) {
-    const FRBPlayer player = Simulation._players[PlayerIndex];
-    FVector Position = FVector(0, (float)player.position.x, (float)player.position.y);
+FTransform ALocalGameOrchestrator::GetPlayerTransform(int PlayerId) {
+    FRBPlayer* Player = Simulation.GetPlayer(PlayerId);
+    FVector Position = FVector(0, (float)Player->position.x, (float)Player->position.y);
     FQuat Rotation = FRotator(0, 0, 0).Quaternion();
     FTransform Result = FTransform(Rotation, Position);
     return Result;

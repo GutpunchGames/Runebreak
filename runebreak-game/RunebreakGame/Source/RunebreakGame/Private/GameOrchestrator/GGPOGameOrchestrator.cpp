@@ -208,16 +208,6 @@ void AGGPOGameOrchestrator::ConfigureGGPO(uint16 localport, int32 num_players, G
             UE_LOG(LogTemp, Warning, TEXT("Added remote player handle in index: %d"), i)
         }
     }
-
-    if (!IsAnyPlayerRemote) {
-        GGPOErrorCode Result = GGPONet::ggpo_try_synchronize_local(ggpo);
-        if (Result == GGPO_OK) {
-            UE_LOG(LogTemp, Warning, TEXT("succeeded local synchronize"))
-        }
-        else {
-            UE_LOG(LogTemp, Warning, TEXT("failed local synchronize: %d"), Result)
-        }
-    }
 }
 
 bool AGGPOGameOrchestrator::begin_game_callback(const char*)
@@ -227,20 +217,14 @@ bool AGGPOGameOrchestrator::begin_game_callback(const char*)
 
 bool AGGPOGameOrchestrator::save_game_state_callback(unsigned char** buffer, int32* len, int32* checksum, int32)
 {
-    *len = sizeof(Simulation);
-    *buffer = (unsigned char*)malloc(*len);
-    if (!*buffer) {
-        return false;
-    }
-    memcpy(*buffer, &Simulation, *len);
-    *checksum = fletcher32_checksum((short*)*buffer, *len / 2);
-    return true;
+    return Simulation.Save(buffer, len, checksum);
 }
+
 bool AGGPOGameOrchestrator::load_game_state_callback(unsigned char* buffer, int32 len)
 {
-    memcpy(&Simulation, buffer, len);
-    return true;
+    return Simulation.Load(buffer, len);
 }
+
 bool AGGPOGameOrchestrator::log_game_state(char* filename, unsigned char* buffer, int32)
 {
     return true;
@@ -320,7 +304,6 @@ void AGGPOGameOrchestrator::AdvanceFrame(int32 inputs[], int32 disconnect_flags)
     // update the checksums to display in the top of the window.  this
     // helps to detect desyncs.
     ngs.now.framenumber = Simulation._framenumber;
-    ngs.now.checksum = fletcher32_checksum((short*)&Simulation, sizeof(Simulation) / 2);
     if ((Simulation._framenumber % 90) == 0) {
         ngs.periodic = ngs.now;
     }
@@ -439,9 +422,9 @@ int32 AGGPOGameOrchestrator::GetLocalInputs() {
     }
 }
 
-FTransform AGGPOGameOrchestrator::GetPlayerTransform(int32 PlayerIndex) {
-    const FRBPlayer player = Simulation._players[PlayerIndex];
-    FVector Position = FVector(0, (float)player.position.x, (float)player.position.y);
+FTransform AGGPOGameOrchestrator::GetPlayerTransform(int PlayerId) {
+    FRBPlayer* Player = Simulation.GetPlayer(PlayerId);
+    FVector Position = FVector(0, (float)Player->position.x, (float)Player->position.y);
     FQuat Rotation = FRotator(0, 0, 0).Quaternion();
     FTransform Result = FTransform(Rotation, Position);
     return Result;

@@ -32,7 +32,7 @@ public:
 	virtual void OnSessionStarted_Implementation();
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	virtual FTransform GetPlayerTransform(int32 PlayerIndex);
+	virtual FTransform GetPlayerTransform(int PlayerId);
 
 	FRBGameSimulation Simulation;
 	NonGameState ngs = { 0 };

@@ -15,7 +15,6 @@ AGameOrchestrator::AGameOrchestrator()
 void AGameOrchestrator::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void AGameOrchestrator::Init()
@@ -25,6 +24,6 @@ void AGameOrchestrator::Init()
 void AGameOrchestrator::OnSessionStarted_Implementation() {
 }
 
-FTransform AGameOrchestrator::GetPlayerTransform(int32 PlayerIndex) {
+FTransform AGameOrchestrator::GetPlayerTransform(int PlayerId) {
 	return FTransform();
 }

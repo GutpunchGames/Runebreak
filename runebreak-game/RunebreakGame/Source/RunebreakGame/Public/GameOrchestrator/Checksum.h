@@ -4,4 +4,4 @@
 
 #include "CoreMinimal.h"
 
-int fletcher32_checksum(short* data, size_t len);
+int fletcher32_checksum(char* data, size_t len);
