@@ -51,8 +51,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	FTransform GetPlayerTransform(int PlayerId) override;
-
 	virtual void OnSessionStarted_Implementation() override;
 
 	UPROPERTY()

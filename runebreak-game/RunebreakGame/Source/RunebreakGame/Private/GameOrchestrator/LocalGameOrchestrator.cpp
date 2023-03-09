@@ -71,11 +71,3 @@ void ALocalGameOrchestrator::GetLocalInputs() {
          Inputs[1] = 0;
     }
 }
-
-FTransform ALocalGameOrchestrator::GetPlayerTransform(int PlayerId) {
-    FRBPlayer* Player = Simulation.GetPlayer(PlayerId);
-    FVector Position = FVector(0, (float)Player->position.x, (float)Player->position.y);
-    FQuat Rotation = FRotator(0, 0, 0).Quaternion();
-    FTransform Result = FTransform(Rotation, Position);
-    return Result;
-}

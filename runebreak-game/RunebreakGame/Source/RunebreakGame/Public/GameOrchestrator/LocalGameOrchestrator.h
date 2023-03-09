@@ -30,7 +30,5 @@ protected:
 
 	void GetLocalInputs();
 
-	FTransform GetPlayerTransform(int PlayerId);
-
 	int32 Inputs[2] = { 0, 0 };
 };

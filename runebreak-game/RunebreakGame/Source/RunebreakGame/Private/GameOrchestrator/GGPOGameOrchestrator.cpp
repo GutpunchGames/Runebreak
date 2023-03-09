@@ -422,14 +422,6 @@ int32 AGGPOGameOrchestrator::GetLocalInputs() {
     }
 }
 
-FTransform AGGPOGameOrchestrator::GetPlayerTransform(int PlayerId) {
-    FRBPlayer* Player = Simulation.GetPlayer(PlayerId);
-    FVector Position = FVector(0, (float)Player->position.x, (float)Player->position.y);
-    FQuat Rotation = FRotator(0, 0, 0).Quaternion();
-    FTransform Result = FTransform(Rotation, Position);
-    return Result;
-}
-
 // UE4: disallow windows platform types
 //  this was enabled at the top of the file
 #include "Windows/PostWindowsApi.h"

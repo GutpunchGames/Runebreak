@@ -50,18 +50,6 @@ FRBPlayer* FRBGameSimulation::GetPlayer(int PlayerId) {
     return FAILURE;
 }
 
-void FSimulationEntity::SimulationTick(FRBGameSimulation* Simulation) { }
-FSerializedEntity FSimulationEntity::Serialize() { 
-    FSerializedEntity result;
-    result.EntityType = -1;
-    result.Size = 0;
-    return result;
-}
-
-int32 FSerializedEntity::ComputeChecksum() { 
-    return fletcher32_checksum(Bytes, Size);
-}
-
 bool FRBGameSimulation::Save(unsigned char** buffer, int32* len, int32* checksum)
 {
     FSerializedSimulation SerializedSimulation;
@@ -79,15 +67,6 @@ bool FRBGameSimulation::Save(unsigned char** buffer, int32* len, int32* checksum
     return true;
 }
 
-int32 FSerializedSimulation::ComputeChecksum() {
-    int32 Checksum = 0;
-    for (int i = 0; i < NumEntities; i++) {
-        Checksum += Entities[i].ComputeChecksum();
-    }
-
-    return Checksum;
-}
-
 bool FRBGameSimulation::Load(unsigned char* buffer, int32 len)
 {
     FSerializedSimulation SerializedSimulation;
@@ -99,32 +78,3 @@ bool FRBGameSimulation::Load(unsigned char* buffer, int32 len)
     return true;
 }
 
-void FSimulationEntity::Deserialize(FSerializedEntity SerializedEntity) { }
-
-FSerializedEntity FRBPlayer::Serialize() {
-    FSerializedEntity result;
-    result.EntityType = 0;
-    result.Size = sizeof(*this);
-    memcpy(result.Bytes, this, result.Size);
-    return result;
-}
-
-void FRBPlayer::Deserialize(FSerializedEntity SerializedEntity) {
-    memcpy(this, SerializedEntity.Bytes, SerializedEntity.Size);
-}
-
-void FRBPlayer::SimulationTick(FRBGameSimulation* Simulation) {
-    if (!Simulation) {
-        UE_LOG(LogTemp, Warning, TEXT("BAD SIM"))
-        return;
-    }
-    int Inputs = Simulation->_inputs[PlayerIndex];
-    int MoveUp = Inputs & INPUT_MOVE_UP;
-    int MoveDown = Inputs & INPUT_MOVE_DOWN;
-    if (MoveUp) {
-		position.y = position.y + 10;
-    }
-    else if (MoveDown) {
-		position.y = position.y - 10;
-    }
-};
