@@ -53,7 +53,6 @@ void ALocalGameOrchestrator::TickGameState()
 
 void ALocalGameOrchestrator::RunFrame()
 {
-    GGPOErrorCode result = GGPO_OK;
     Simulation.Update(Inputs, 0);
 	UE_LOG(LogTemp, Warning, TEXT("synchronize_input success"))
 }
@@ -65,14 +64,17 @@ void ALocalGameOrchestrator::GetLocalInputs() {
     if (Controller)
     {
          Inputs[0] = Controller->GetPlayerInput();
+         Inputs[1] = 0;
     }
     else {
         UE_LOG(LogTemp, Warning, TEXT("Failed to get input"))
+         Inputs[0] = 0;
+         Inputs[1] = 0;
     }
 }
 
 FTransform ALocalGameOrchestrator::GetPlayerTransform(int32 PlayerIndex) {
-    const Player player = Simulation._players[PlayerIndex];
+    const FRBPlayer player = Simulation._players[PlayerIndex];
     FVector Position = FVector(0, (float)player.position.x, (float)player.position.y);
     FQuat Rotation = FRotator(0, 0, 0).Quaternion();
     FTransform Result = FTransform(Rotation, Position);

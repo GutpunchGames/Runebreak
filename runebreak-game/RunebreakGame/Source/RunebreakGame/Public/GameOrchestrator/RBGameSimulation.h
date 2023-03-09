@@ -1,30 +1,40 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 #pragma once
 
-/*
- * Encapsulates all the game state for the Runebreak application inside
- * a single structure.  This makes it trivial to implement our GGPO
- * save and load functions.
- */
+#include "CoreMinimal.h"
 
-struct Position {
-	double x, y;
+// forward declaration
+struct FRBGameSimulation;
+
+struct FPosition {
+	double x;
+	double y;
 };
 
-struct Velocity {
-	double dx, dy;
+struct FVelocity {
+	double dx;
+	double dy;
 };
 
-struct Player {
-	Position position;
-	Velocity velocity;
+struct FSimulationEntity {
+	int32 Id;
+
+	virtual void Serialize(void* OutState, int32* Size);
+	virtual void SimulationTick(FRBGameSimulation* Simulation);
 };
 
-struct RBGameSimulation {
+struct FRBPlayer : public FSimulationEntity {
+	FPosition position;
+	FVelocity velocity;
+	int32 PlayerIndex;
+
+	virtual void SimulationTick(FRBGameSimulation* Simulation) override;
+};
+
+struct FRBGameSimulation {
+	int	_framenumber;
+	FRBPlayer _players[2];
+	int32 _inputs[2];
+
 	void Init();
 	void Update(int inputs[], int disconnect_flags);
-
-public:
-	int         _framenumber;
-	Player      _players[2];
 };

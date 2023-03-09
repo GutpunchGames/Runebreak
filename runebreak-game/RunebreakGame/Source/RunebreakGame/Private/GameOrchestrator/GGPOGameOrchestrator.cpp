@@ -392,7 +392,7 @@ void AGGPOGameOrchestrator::RunFrame(int32 local_input)
 {
     GGPOErrorCode result = GGPO_OK;
     int disconnect_flags;
-    int inputs[2] = { 0 };
+    int inputs[2] = { 0, 0 };
 
     if (ngs.local_player_handle != GGPO_INVALID_HANDLE) {
         if (IsSyncTest) {
@@ -440,7 +440,7 @@ int32 AGGPOGameOrchestrator::GetLocalInputs() {
 }
 
 FTransform AGGPOGameOrchestrator::GetPlayerTransform(int32 PlayerIndex) {
-    const Player player = Simulation._players[PlayerIndex];
+    const FRBPlayer player = Simulation._players[PlayerIndex];
     FVector Position = FVector(0, (float)player.position.x, (float)player.position.y);
     FQuat Rotation = FRotator(0, 0, 0).Quaternion();
     FTransform Result = FTransform(Rotation, Position);
