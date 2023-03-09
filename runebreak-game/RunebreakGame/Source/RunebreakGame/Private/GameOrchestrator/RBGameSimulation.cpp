@@ -8,17 +8,17 @@ void URBGameSimulation::Init()
     pos.x = 0;
     pos.y = 0;
 
-    FRBPlayer* player1 = new FRBPlayer();
-    player1->position = pos;
-    player1->position.x = -100;
-    player1->PlayerIndex = 0;
+    URBPlayer* player1 = NewObject<URBPlayer>(this, "Player 1");
+    player1->State.Position = pos;
+    player1->State.Position.x = -100;
+    player1->State.PlayerIndex = 0;
     player1->Id = 0;
     Entities[0] = player1;
 
-    FRBPlayer* player2 = new FRBPlayer();
-    player2->position = pos;
-    player2->position.x = 100;
-    player2->PlayerIndex = 1;
+    URBPlayer* player2 = NewObject<URBPlayer>(this, "Player 2");
+    player2->State.Position = pos;
+    player2->State.Position.x = 100;
+    player2->State.PlayerIndex = 1;
     player2->Id = 1;
     Entities[1] = player2;
 
@@ -31,22 +31,25 @@ void URBGameSimulation::Update(int inputs[], int disconnect_flags)
     _inputs[0] = inputs[0];
     _inputs[1] = inputs[1];
 
+    UE_LOG(LogTemp, Warning, TEXT("Update with inputs: %d"), _inputs[0])
+
     for (int i = 0; i < NumEntities; i++) {
+		UE_LOG(LogTemp, Warning, TEXT("Updating entity: %d"), i)
         Entities[i]->SimulationTick(this);
     }
 }
 
-FRBPlayer* URBGameSimulation::GetPlayer(int PlayerId) {
+URBPlayer* URBGameSimulation::GetPlayer(int PlayerId) {
     for (int i = 0; i < NumEntities; i++) {
-        FSimulationEntity* Entity = Entities[i];
+        USimulationEntity* Entity = Entities[i];
         if (Entity->Id == PlayerId) {
-			FRBPlayer* Player = static_cast<FRBPlayer*>(Entities[i]);
+			URBPlayer* Player = static_cast<URBPlayer*>(Entities[i]);
             return Player;
         }
     }
 
-    FRBPlayer* FAILURE = new FRBPlayer();
-    FAILURE->position.y = 100;
+    URBPlayer* FAILURE = NewObject<URBPlayer>(this, "Failure Player");
+    FAILURE->State.Position.y = 100;
     return FAILURE;
 }
 

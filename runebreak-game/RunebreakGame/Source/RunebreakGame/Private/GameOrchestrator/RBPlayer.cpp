@@ -1,25 +1,30 @@
 #include "GameOrchestrator/RBPlayer.h"
 
-void FRBPlayer::SimulationTick(URBGameSimulation* Simulation) {
-    int Inputs = Simulation->_inputs[PlayerIndex];
+void URBPlayer::Initialize(FPosition Position, int32 PlayerIndex) {
+    State.Position = Position;
+    State.PlayerIndex = PlayerIndex;
+}
+
+void URBPlayer::SimulationTick(URBGameSimulation* Simulation) {
+    int Inputs = Simulation->_inputs[State.PlayerIndex];
     int MoveUp = Inputs & INPUT_MOVE_UP;
     int MoveDown = Inputs & INPUT_MOVE_DOWN;
     if (MoveUp) {
-		position.y = position.y + 10;
+		State.Position.y = State.Position.y + 10;
     }
     else if (MoveDown) {
-		position.y = position.y - 10;
+		State.Position.y = State.Position.y - 10;
     }
 };
 
-FSerializedEntity FRBPlayer::Serialize() {
+FSerializedEntity URBPlayer::Serialize() {
     FSerializedEntity result;
     result.EntityType = 0;
-    result.Size = sizeof(*this);
-    memcpy(result.Bytes, this, result.Size);
+    result.Size = sizeof(State);
+    memcpy(result.Bytes, &State, result.Size);
     return result;
 }
 
-void FRBPlayer::Deserialize(FSerializedEntity SerializedEntity) {
-    memcpy(this, SerializedEntity.Bytes, SerializedEntity.Size);
+void URBPlayer::Deserialize(FSerializedEntity SerializedEntity) {
+    memcpy(&State, SerializedEntity.Bytes, SerializedEntity.Size);
 }

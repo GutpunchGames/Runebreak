@@ -1,9 +1,15 @@
 #pragma once
 
+#include "CoreMinimal.h"
 #include "GameOrchestrator/RBGamePrimitives.h"
 #include "GameOrchestrator/RBGameSerialization.h"
+#include "RBSimulationEntity.generated.h"
 
-struct FSimulationEntity {
+UCLASS()
+class USimulationEntity : public UObject {
+	GENERATED_BODY()
+
+public:
 	int32 Id;
 
 	virtual void SimulationTick(URBGameSimulation* Simulation);

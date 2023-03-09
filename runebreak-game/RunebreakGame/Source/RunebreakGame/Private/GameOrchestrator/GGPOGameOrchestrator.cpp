@@ -381,7 +381,6 @@ void AGGPOGameOrchestrator::RunFrame(int32 local_input)
         if (IsSyncTest) {
             local_input = rand(); // test: use random inputs to demonstrate sync testing
 		}
-        UE_LOG(LogTemp, Warning, TEXT("Local input: %d"), local_input)
         result = GGPONet::ggpo_add_local_input(ggpo, ngs.local_player_handle, &local_input, sizeof(local_input));
 
 		if (!GGPO_SUCCEEDED(result)) {
@@ -398,7 +397,6 @@ void AGGPOGameOrchestrator::RunFrame(int32 local_input)
             // inputs[0] and inputs[1] contain the inputs for p1 and p2.  Advance
             // the game by 1 frame using those inputs.
             AdvanceFrame(inputs, disconnect_flags);
-            UE_LOG(LogTemp, Warning, TEXT("synchronize_input success"))
         }
         else {
 			UE_LOG(LogTemp, Warning, TEXT("Failed to synchronize inputs: %d"), result)

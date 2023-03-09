@@ -25,8 +25,8 @@ void AGameOrchestrator::OnSessionStarted_Implementation() {
 }
 
 FTransform AGameOrchestrator::GetPlayerTransform(int PlayerId) {
-    FRBPlayer* Player = Simulation->GetPlayer(PlayerId);
-    FVector Position = FVector(0, (float)Player->position.x, (float)Player->position.y);
+    URBPlayer* Player = Simulation->GetPlayer(PlayerId);
+    FVector Position = FVector(0, (float)Player->State.Position.x, (float)Player->State.Position.y);
     FQuat Rotation = FRotator(0, 0, 0).Quaternion();
     FTransform Result = FTransform(Rotation, Position);
     return Result;

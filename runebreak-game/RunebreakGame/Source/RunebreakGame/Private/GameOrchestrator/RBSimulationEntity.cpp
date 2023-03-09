@@ -1,11 +1,12 @@
 #include "GameOrchestrator/RBSimulationEntity.h"
 
-void FSimulationEntity::SimulationTick(URBGameSimulation* Simulation) { }
-FSerializedEntity FSimulationEntity::Serialize() { 
+void USimulationEntity::SimulationTick(URBGameSimulation* Simulation) { }
+
+FSerializedEntity USimulationEntity::Serialize() { 
     FSerializedEntity result;
     result.EntityType = -1;
     result.Size = 0;
     return result;
 }
 
-void FSimulationEntity::Deserialize(FSerializedEntity SerializedEntity) { }
+void USimulationEntity::Deserialize(FSerializedEntity SerializedEntity) { }

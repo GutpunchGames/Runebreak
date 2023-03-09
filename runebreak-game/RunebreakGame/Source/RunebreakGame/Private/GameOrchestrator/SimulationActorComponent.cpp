@@ -23,6 +23,3 @@ void USimulationActorComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
-//
-//void USimulationActorComponent::SimulationTick_Implementation(FRBGameSimulation Simulation) { }
-//
