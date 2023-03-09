@@ -31,10 +31,7 @@ void URBGameSimulation::Update(int inputs[], int disconnect_flags)
     _inputs[0] = inputs[0];
     _inputs[1] = inputs[1];
 
-    UE_LOG(LogTemp, Warning, TEXT("Update with inputs: %d"), _inputs[0])
-
     for (int i = 0; i < NumEntities; i++) {
-		UE_LOG(LogTemp, Warning, TEXT("Updating entity: %d"), i)
         Entities[i]->SimulationTick(this);
     }
 }
