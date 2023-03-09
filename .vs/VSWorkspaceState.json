@@ -10,6 +10,6 @@
     "\\runebreak-game\\RunebreakGame\\Source\\RunebreakGame\\Public",
     "\\runebreak-game\\RunebreakGame\\Source\\RunebreakGame\\Public\\GameOrchestrator"
   ],
-  "SelectedNode": "\\runebreak-game\\RunebreakGame\\Source\\RunebreakGame\\Private\\GameOrchestrator\\LocalGameOrchestrator.cpp",
+  "SelectedNode": "\\runebreak-game\\RunebreakGame\\Source\\RunebreakGame\\Public\\GameOrchestrator\\RBGameSimulation.h",
   "PreviewInSolutionExplorer": false
 }

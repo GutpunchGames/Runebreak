@@ -56,7 +56,7 @@ void AGGPOGameOrchestrator::Init()
     {
 			UE_LOG(LogTemp, Warning, TEXT("Session Started: %b"), bSessionStarted)
 			// Initialize the game state
-			Simulation.Init();
+			Simulation->Init();
 			ngs.NumPlayers = NumPlayers;
 
 			OnSessionStarted();
@@ -217,12 +217,12 @@ bool AGGPOGameOrchestrator::begin_game_callback(const char*)
 
 bool AGGPOGameOrchestrator::save_game_state_callback(unsigned char** buffer, int32* len, int32* checksum, int32)
 {
-    return Simulation.Save(buffer, len, checksum);
+    return Simulation->Save(buffer, len, checksum);
 }
 
 bool AGGPOGameOrchestrator::load_game_state_callback(unsigned char* buffer, int32 len)
 {
-    return Simulation.Load(buffer, len);
+    return Simulation->Load(buffer, len);
 }
 
 bool AGGPOGameOrchestrator::log_game_state(char* filename, unsigned char* buffer, int32)
@@ -299,12 +299,12 @@ GGPOSessionCallbacks AGGPOGameOrchestrator::CreateCallbacks() {
 
 void AGGPOGameOrchestrator::AdvanceFrame(int32 inputs[], int32 disconnect_flags)
 {
-    Simulation.Update(inputs, disconnect_flags);
+    Simulation->Update(inputs, disconnect_flags);
 
     // update the checksums to display in the top of the window.  this
     // helps to detect desyncs.
-    ngs.now.framenumber = Simulation._framenumber;
-    if ((Simulation._framenumber % 90) == 0) {
+    ngs.now.framenumber = Simulation->_framenumber;
+    if ((Simulation->_framenumber % 90) == 0) {
         ngs.periodic = ngs.now;
     }
 

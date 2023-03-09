@@ -23,12 +23,4 @@ protected:
 
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	//virtual void Sync(FRBGameSimulation Simulation);
-
-	//UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Simulation Actor")
-	//void SimulationTick(FRBGameSimulation Simulation);
-	//virtual void SimulationTick_Implementation(FRBGameSimulation Simulation);
-
-	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	//FString SimulationEntityId;
 };

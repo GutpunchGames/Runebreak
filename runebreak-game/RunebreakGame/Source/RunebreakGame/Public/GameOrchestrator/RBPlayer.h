@@ -8,7 +8,7 @@ struct FRBPlayer : public FSimulationEntity {
 	FPosition position;
 	int32 PlayerIndex;
 
-	virtual void SimulationTick(FRBGameSimulation* Simulation) override;
+	virtual void SimulationTick(URBGameSimulation* Simulation) override;
 	virtual FSerializedEntity Serialize() override;
 	virtual void Deserialize(FSerializedEntity SerializedEntity) override;
 };

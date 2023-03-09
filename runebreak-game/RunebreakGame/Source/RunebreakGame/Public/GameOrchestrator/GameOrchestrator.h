@@ -34,7 +34,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	virtual FTransform GetPlayerTransform(int PlayerId);
 
-	FRBGameSimulation Simulation;
+	UPROPERTY()
+	URBGameSimulation* Simulation;
+
 	NonGameState ngs = { 0 };
 
 	float ElapsedTime = 0;;

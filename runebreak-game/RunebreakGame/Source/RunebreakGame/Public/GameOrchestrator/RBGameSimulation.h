@@ -1,8 +1,14 @@
 #pragma once
 
+#include "CoreMinimal.h"
 #include "GameOrchestrator/RBPlayer.h"
+#include "RBGameSimulation.generated.h"
 
-struct FRBGameSimulation {
+UCLASS()
+class URBGameSimulation : public UObject {
+	GENERATED_BODY()
+
+public:
 	int	_framenumber;
 	int NumEntities;
 	FSimulationEntity* Entities[2];

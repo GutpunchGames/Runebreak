@@ -23,7 +23,7 @@ void ALocalGameOrchestrator::Init()
     UE_LOG(LogTemp, Warning, TEXT("BeginPlay"))
 
 	// Initialize the game state
-	Simulation.Init();
+	Simulation->Init();
 
 	OnSessionStarted();
 }
@@ -53,7 +53,7 @@ void ALocalGameOrchestrator::TickGameState()
 
 void ALocalGameOrchestrator::RunFrame()
 {
-    Simulation.Update(Inputs, 0);
+    Simulation->Update(Inputs, 0);
 }
 
 void ALocalGameOrchestrator::GetLocalInputs() {

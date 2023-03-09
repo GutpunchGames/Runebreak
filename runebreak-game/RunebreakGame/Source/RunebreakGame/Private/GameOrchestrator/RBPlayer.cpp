@@ -1,6 +1,6 @@
 #include "GameOrchestrator/RBPlayer.h"
 
-void FRBPlayer::SimulationTick(FRBGameSimulation* Simulation) {
+void FRBPlayer::SimulationTick(URBGameSimulation* Simulation) {
     int Inputs = Simulation->_inputs[PlayerIndex];
     int MoveUp = Inputs & INPUT_MOVE_UP;
     int MoveDown = Inputs & INPUT_MOVE_DOWN;

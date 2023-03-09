@@ -1,7 +1,7 @@
 #pragma once
 
 // forward declaration
-struct FRBGameSimulation;
+class URBGameSimulation;
 
 struct FPosition {
 	double x;

@@ -6,7 +6,7 @@
 struct FSimulationEntity {
 	int32 Id;
 
-	virtual void SimulationTick(FRBGameSimulation* Simulation);
+	virtual void SimulationTick(URBGameSimulation* Simulation);
 	virtual FSerializedEntity Serialize();
 	virtual void Deserialize(FSerializedEntity SerializedEntity);
 };

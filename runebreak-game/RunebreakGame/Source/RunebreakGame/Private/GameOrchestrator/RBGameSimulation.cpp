@@ -2,7 +2,7 @@
 #include "GameOrchestrator/Checksum.h"
 #include "GameOrchestrator/RBInput.h"
 
-void FRBGameSimulation::Init()
+void URBGameSimulation::Init()
 {
     FPosition pos;
     pos.x = 0;
@@ -25,7 +25,7 @@ void FRBGameSimulation::Init()
     NumEntities = 2;
 }
 
-void FRBGameSimulation::Update(int inputs[], int disconnect_flags)
+void URBGameSimulation::Update(int inputs[], int disconnect_flags)
 {
     _framenumber++;
     _inputs[0] = inputs[0];
@@ -36,7 +36,7 @@ void FRBGameSimulation::Update(int inputs[], int disconnect_flags)
     }
 }
 
-FRBPlayer* FRBGameSimulation::GetPlayer(int PlayerId) {
+FRBPlayer* URBGameSimulation::GetPlayer(int PlayerId) {
     for (int i = 0; i < NumEntities; i++) {
         FSimulationEntity* Entity = Entities[i];
         if (Entity->Id == PlayerId) {
@@ -50,7 +50,7 @@ FRBPlayer* FRBGameSimulation::GetPlayer(int PlayerId) {
     return FAILURE;
 }
 
-bool FRBGameSimulation::Save(unsigned char** buffer, int32* len, int32* checksum)
+bool URBGameSimulation::Save(unsigned char** buffer, int32* len, int32* checksum)
 {
     FSerializedSimulation SerializedSimulation;
     SerializedSimulation.NumEntities = NumEntities;
@@ -67,7 +67,7 @@ bool FRBGameSimulation::Save(unsigned char** buffer, int32* len, int32* checksum
     return true;
 }
 
-bool FRBGameSimulation::Load(unsigned char* buffer, int32 len)
+bool URBGameSimulation::Load(unsigned char* buffer, int32 len)
 {
     FSerializedSimulation SerializedSimulation;
     memcpy(&SerializedSimulation, buffer, len);
