@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "GGPOGameInstance.h"
 #include <RunebreakGame/Public/RBGameSession/RBGameSession.h>
 #include "RunebreakGameInstance.generated.h"
 
 UCLASS()
-class RUNEBREAKGAME_API URunebreakGameInstance : public UGameInstance
+class RUNEBREAKGAME_API URunebreakGameInstance : public UGGPOGameInstance
 {
 	GENERATED_BODY()
 

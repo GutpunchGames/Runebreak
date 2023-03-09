@@ -4,69 +4,38 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "GameOrchestrator/PlayerSpawnConfig.h"
-#include"GameOrchestrator/GameSocket/InputsMessage.h"
-#include <RunebreakGame/Public/GameOrchestrator/PlayerSpawnPoint.h>
-#include <RunebreakGame/Public/GameOrchestrator/PlayerInputProcessor.h>
-#include <RunebreakGame/Public/GameOrchestrator/GameSimulation.h>
-#include <RunebreakGame/Public/GameOrchestrator/Input.h>
-#include <RunebreakGame/Public/GameOrchestrator/GameSocket/RBGameSocket.h>
+#include "GameOrchestrator/RBGameSimulation.h"
+#include "GameOrchestrator/RBNonGameState.h"
 #include "GameOrchestrator.generated.h"
 
-DECLARE_DYNAMIC_DELEGATE(FOnFrameAdvanced);
-
-UCLASS(Blueprintable)
+UCLASS()
 class RUNEBREAKGAME_API AGameOrchestrator : public AActor
 {
 	GENERATED_BODY()
-
-public:
+	
+public:	
+	// Sets default values for this actor's properties
 	AGameOrchestrator();
 
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
 	UFUNCTION(BlueprintCallable)
-	virtual void PrepareGame(FPlayerSpawnConfig Player1SpawnConfig, FPlayerSpawnConfig Player2SpawnConfig, int LocalPort, int InputDelay);
+	virtual void Init();
 
-	virtual void Tick(float DeltaSeconds) override;
+	/**
+	 * Called from BeginPlay() after creating the game state.
+	 * Can be overridden by a blueprint to create actors that represent the game state.
+	 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GameOrchestrator")
+	void OnSessionStarted();
+	virtual void OnSessionStarted_Implementation();
 
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	virtual FTransform GetPlayerTransform(int PlayerId);
 
-	UPROPERTY(EditInstanceOnly)
-	UClass* PlayerClass;
+	FRBGameSimulation Simulation;
+	NonGameState ngs = { 0 };
 
-	UPROPERTY(EditInstanceOnly, BlueprintReadOnly)
-	ARBGameSocket* GameSocket;
-
-	UPROPERTY(EditInstanceOnly)
-	bool LogSocketMessages;
-
-	UPROPERTY(BlueprintReadWrite)
-	FOnFrameAdvanced OnFrameAdvancedDelegate;
-
-	UPROPERTY(BlueprintReadOnly)
-	UGameSimulation* GameSimulation;
-
-	UPROPERTY(BlueprintReadOnly)
-	bool IsAnyPlayerRemote;
-
-private:
-	UPROPERTY()
-	UPlayerInputProcessor* Player1InputProcessor;
-	UPROPERTY()
-	UPlayerInputProcessor* Player2InputProcessor;
-
-	UPROPERTY()
-	bool IsPlayer1Remote;
-	UPROPERTY()
-	bool IsPlayer2Remote;
-
-	UPROPERTY()
-	bool IsCorrectingRift;
-
-	UPROPERTY()
-	float RiftPauseThresholdFrames = 4;
-
-	float ComputeRift();
-
-	UFUNCTION()
-	void HandleSyncMessage(const FSyncMessage& SyncMessage);
+	float ElapsedTime = 0;;
 };
