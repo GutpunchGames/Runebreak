@@ -29,6 +29,8 @@ void AGGPOGameOrchestrator::Init()
 {
     Super::Init();
 
+    Simulation = NewObject<URBGameSimulation>(this, "Simulation");
+
     UE_LOG(LogTemp, Warning, TEXT("BeginPlay"))
 
     UGGPONetwork* GGPONetwork = nullptr;
@@ -79,6 +81,10 @@ void AGGPOGameOrchestrator::Init()
 void AGGPOGameOrchestrator::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+    if (!Simulation) {
+        return;
+    }
 
     ElapsedTime += DeltaTime;
 

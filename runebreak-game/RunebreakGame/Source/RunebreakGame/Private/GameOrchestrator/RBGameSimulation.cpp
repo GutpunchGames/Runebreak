@@ -4,25 +4,10 @@
 
 void URBGameSimulation::Init()
 {
-    FPosition pos;
-    pos.x = 0;
-    pos.y = 0;
-
-    URBPlayer* player1 = NewObject<URBPlayer>(this, "Player 1");
-    player1->State.Position = pos;
-    player1->State.Position.x = -100;
-    player1->State.PlayerIndex = 0;
-    player1->Id = 0;
-    Entities[0] = player1;
-
-    URBPlayer* player2 = NewObject<URBPlayer>(this, "Player 2");
-    player2->State.Position = pos;
-    player2->State.Position.x = 100;
-    player2->State.PlayerIndex = 1;
-    player2->Id = 1;
-    Entities[1] = player2;
-
-    NumEntities = 2;
+    UE_LOG(LogTemp, Warning, TEXT("Simulation START"))
+    NumEntities = 0;
+    EntityIdGenerator = 0;
+    UE_LOG(LogTemp, Warning, TEXT("Simulation Init END"))
 }
 
 void URBGameSimulation::Update(int inputs[], int disconnect_flags)
@@ -76,5 +61,42 @@ bool URBGameSimulation::Load(unsigned char* buffer, int32 len)
         Entities[i]->Deserialize(SerializedSimulation.Entities[i]);
     }
     return true;
+}
+
+// this is all placeholder/debug for now...
+UFUNCTION(BlueprintCallable)
+int32 URBGameSimulation::SpawnEntity(int32 EntityType, int DebugPlayerIndex) {
+    UE_LOG(LogTemp, Warning, TEXT("checkpoint 1: %d"), DebugPlayerIndex)
+    int32 Id = EntityIdGenerator++;
+    UE_LOG(LogTemp, Warning, TEXT("checkpoint 2"))
+    FPosition pos;
+    pos.x = 0;
+    pos.y = 0;
+
+    UE_LOG(LogTemp, Warning, TEXT("checkpoint 3"))
+
+    if (DebugPlayerIndex == 0) {
+        URBPlayer* player1 = NewObject<URBPlayer>(this, "Player 1");
+        player1->State.Position = pos;
+        player1->State.Position.x = -100;
+        player1->State.PlayerIndex = 0;
+        player1->Id = Id;
+        Entities.Emplace(player1);
+    }
+    else if (DebugPlayerIndex == 1) {
+        URBPlayer* player2 = NewObject<URBPlayer>(this, "Player 2");
+        player2->State.Position = pos;
+        player2->State.Position.x = 100;
+        player2->State.PlayerIndex = 1;
+        player2->Id = Id;
+        Entities.Emplace(player2);
+    }
+
+    UE_LOG(LogTemp, Warning, TEXT("checkpoint 4"))
+
+    NumEntities++;
+
+    UE_LOG(LogTemp, Warning, TEXT("checkpoint 5"))
+    return Id;
 }
 

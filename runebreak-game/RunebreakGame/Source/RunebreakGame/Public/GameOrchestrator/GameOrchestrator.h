@@ -35,9 +35,15 @@ public:
 	virtual FTransform GetPlayerTransform(int PlayerId);
 
 	UPROPERTY()
-	URBGameSimulation* Simulation;
+	URBGameSimulation* Simulation = 0;
 
 	NonGameState ngs = { 0 };
 
 	float ElapsedTime = 0;;
+
+	UFUNCTION(BlueprintCallable)
+	virtual AActor* SpawnEntityWithActor(UClass* ActorClassIN, int32 DebugPlayerIndex, int32& EntityIdOUT);
+
+private:
+	TMap<int32, AActor*> EntityActors;
 };

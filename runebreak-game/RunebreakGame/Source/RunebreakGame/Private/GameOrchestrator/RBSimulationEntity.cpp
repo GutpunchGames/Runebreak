@@ -10,3 +10,6 @@ FSerializedEntity USimulationEntity::Serialize() {
 }
 
 void USimulationEntity::Deserialize(FSerializedEntity SerializedEntity) { }
+
+void UTestBlueprintEntity::Method1_Implementation() {
+}

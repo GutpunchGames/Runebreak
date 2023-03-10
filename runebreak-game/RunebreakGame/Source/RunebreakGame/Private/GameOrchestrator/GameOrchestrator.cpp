@@ -31,3 +31,13 @@ FTransform AGameOrchestrator::GetPlayerTransform(int PlayerId) {
     FTransform Result = FTransform(Rotation, Position);
     return Result;
 }
+
+AActor* AGameOrchestrator::SpawnEntityWithActor(UClass* ActorClassIN, int32 DebugPlayerIndex, int32& EntityIdOUT) {
+    EntityIdOUT = Simulation->SpawnEntity(0, DebugPlayerIndex);
+    UE_LOG(LogTemp, Warning, TEXT("Spawned entity"))
+    FVector Position;
+    FRotator Rotator;
+    AActor* Actor = GetWorld()->SpawnActor(ActorClassIN, &Position, &Rotator);
+    UE_LOG(LogTemp, Warning, TEXT("Spawned actor"))
+    return Actor;
+}

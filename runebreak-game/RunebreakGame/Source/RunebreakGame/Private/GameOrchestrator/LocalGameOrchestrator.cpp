@@ -20,6 +20,8 @@ void ALocalGameOrchestrator::Init()
 {
     Super::Init();
 
+    Simulation = NewObject<URBGameSimulation>(this, "Simulation");
+
     UE_LOG(LogTemp, Warning, TEXT("BeginPlay"))
 
 	// Initialize the game state
@@ -32,6 +34,10 @@ void ALocalGameOrchestrator::Init()
 void ALocalGameOrchestrator::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+    if (!Simulation) {
+        return;
+    }
 
     ElapsedTime += DeltaTime;
 

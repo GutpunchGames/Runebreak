@@ -10,15 +10,16 @@ class URBGameSimulation : public UObject {
 
 public:
 	UPROPERTY()
-	int32 _framenumber;
-	UPROPERTY()
-	int32 NumEntities;
+	int32 _framenumber = 0;
 
 	UPROPERTY()
-	USimulationEntity* Entities[2];
+	TArray<USimulationEntity*> Entities;
 
 	UPROPERTY()
 	int32 _inputs[2];
+
+	UFUNCTION(BlueprintCallable)
+	int32 SpawnEntity(int32 EntityType, int DebugPlayerIndex);
 
 	void Init();
 	void Update(int inputs[], int disconnect_flags);
@@ -26,4 +27,11 @@ public:
 
 	bool Save(unsigned char** buffer, int32* len, int32* checksum);
 	bool Load(unsigned char* buffer, int32 len);
+
+private:
+	UPROPERTY()
+	int32 EntityIdGenerator;
+
+	UPROPERTY()
+	int32 NumEntities;
 };
