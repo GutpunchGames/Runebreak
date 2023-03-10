@@ -65,28 +65,12 @@ bool URBGameSimulation::Load(unsigned char* buffer, int32 len)
 
 // this is all placeholder/debug for now...
 UFUNCTION(BlueprintCallable)
-USimulationEntity* URBGameSimulation::SpawnEntity(UClass* EntityClassIN, int DebugPlayerIndex) {
+USimulationEntity* URBGameSimulation::SpawnEntity(UClass* EntityClassIN, int32 DebugPlayerIndex) {
     int32 Id = EntityIdGenerator++;
-
-    FPosition pos;
-    pos.x = 0;
-    pos.y = 0;
 
     USimulationEntity* Entity = NewObject<USimulationEntity>(this, EntityClassIN);
     Entity->Id = Id;
-
-    // for now, just hardcode spawning players
-    URBPlayer* Player = Cast<URBPlayer>(Entity);
-	Player->State.Position = pos;
-
-    if (DebugPlayerIndex == 0) {
-        Player->State.Position.x = -100;
-        Player->State.PlayerIndex = 0;
-    }
-    else if (DebugPlayerIndex == 1) {
-        Player->State.Position.x = 100;
-        Player->State.PlayerIndex = 1;
-    }
+    Entity->InitDefaults();
 
 	Entities.Emplace(Entity);
     NumEntities++;

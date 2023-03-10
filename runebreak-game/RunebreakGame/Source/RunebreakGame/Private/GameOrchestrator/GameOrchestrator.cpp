@@ -32,11 +32,11 @@ FTransform AGameOrchestrator::GetPlayerTransform(int PlayerId) {
     return Result;
 }
 
-AActor* AGameOrchestrator::SpawnEntityWithActor(UClass* ActorClassIN, UClass* EntityClassIN, int32 DebugPlayerIndex, int32& EntityIdOUT) {
+AActor* AGameOrchestrator::SpawnEntityWithActor(UClass* ActorClassIN, UClass* EntityClassIN, int32 DebugPlayerIndex, USimulationEntity*& EntityOUT) {
     USimulationEntity* Entity = Simulation->SpawnEntity(EntityClassIN, DebugPlayerIndex);
-    EntityIdOUT = Entity->Id;
+    EntityOUT = Entity;
 
-    UE_LOG(LogTemp, Warning, TEXT("Spawned entity with id: %d"), EntityIdOUT)
+    UE_LOG(LogTemp, Warning, TEXT("Spawned entity with id: %d"), Entity->Id)
 
     FVector Position;
     FRotator Rotator;

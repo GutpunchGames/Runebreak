@@ -10,15 +10,13 @@ class USimulationEntity : public UObject {
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(BlueprintReadOnly)
 	int32 Id;
 
+	virtual void InitDefaults();
 	virtual void SimulationTick(URBGameSimulation* Simulation);
 	virtual FSerializedEntity Serialize();
 	virtual void Deserialize(FSerializedEntity SerializedEntity);
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Test Blueprint Entity")
-	void Method1();
-	virtual void Method1_Implementation();
 };
 
 

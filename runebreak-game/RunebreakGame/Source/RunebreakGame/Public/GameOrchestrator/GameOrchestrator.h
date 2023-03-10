@@ -42,7 +42,7 @@ public:
 	float ElapsedTime = 0;;
 
 	UFUNCTION(BlueprintCallable)
-	virtual AActor* SpawnEntityWithActor(UClass* ActorClassIN, UClass* EntityClassIN, int32 DebugPlayerIndex, int32& EntityIdOUT);
+	virtual AActor* SpawnEntityWithActor(UClass* ActorClassIN, UClass* EntityClassIN, int32 DebugPlayerIndex, USimulationEntity*& EntityOUT);
 
 private:
 	TMap<int32, AActor*> EntityActors;

@@ -19,7 +19,7 @@ public:
 	int32 _inputs[2];
 
 	UFUNCTION(BlueprintCallable)
-	USimulationEntity* SpawnEntity(UClass* EntityClassIN, int DebugPlayerIndex);
+	USimulationEntity* SpawnEntity(UClass* EntityClassIN, int32 DebugPlayerIndex);
 
 	void Init();
 	void Update(int inputs[], int disconnect_flags);

@@ -13,9 +13,20 @@ struct FRBPlayerState {
 	FPosition Position;
 	UPROPERTY()
 	int32 PlayerIndex;
+	UPROPERTY()
+	int32 MoveSpeed;
 };
 
-UCLASS()
+USTRUCT(BlueprintType)
+struct FRBPlayerDefaults {
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 MoveSpeed = 10;
+};
+
+UCLASS(Blueprintable)
 class URBPlayer : public USimulationEntity {
 
 GENERATED_BODY()
@@ -27,4 +38,10 @@ public:
 
 	UPROPERTY()
 	FRBPlayerState State;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FRBPlayerDefaults PlayerDefaults;
+
+	UFUNCTION(BlueprintCallable)
+	void Initialize(int32 PlayerIndex);
 };
