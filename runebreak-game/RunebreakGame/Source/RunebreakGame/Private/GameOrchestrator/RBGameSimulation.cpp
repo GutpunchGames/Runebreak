@@ -63,7 +63,6 @@ bool URBGameSimulation::Load(unsigned char* buffer, int32 len)
     return true;
 }
 
-// this is all placeholder/debug for now...
 UFUNCTION(BlueprintCallable)
 USimulationEntity* URBGameSimulation::SpawnEntity(UClass* EntityClassIN, int32 DebugPlayerIndex) {
     int32 Id = EntityIdGenerator++;
