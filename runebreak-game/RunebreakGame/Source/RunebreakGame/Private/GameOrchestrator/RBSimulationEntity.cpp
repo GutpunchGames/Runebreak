@@ -11,5 +11,6 @@ FSerializedEntity USimulationEntity::Serialize() {
 
 void USimulationEntity::Deserialize(FSerializedEntity SerializedEntity) { }
 
-void UTestBlueprintEntity::Method1_Implementation() {
+void USimulationEntity::Method1_Implementation() {
+    UE_LOG(LogTemp, Warning, TEXT("Method1_Implementation"))
 }

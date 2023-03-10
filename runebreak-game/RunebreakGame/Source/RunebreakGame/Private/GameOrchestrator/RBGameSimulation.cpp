@@ -65,38 +65,32 @@ bool URBGameSimulation::Load(unsigned char* buffer, int32 len)
 
 // this is all placeholder/debug for now...
 UFUNCTION(BlueprintCallable)
-int32 URBGameSimulation::SpawnEntity(int32 EntityType, int DebugPlayerIndex) {
-    UE_LOG(LogTemp, Warning, TEXT("checkpoint 1: %d"), DebugPlayerIndex)
+USimulationEntity* URBGameSimulation::SpawnEntity(UClass* EntityClassIN, int DebugPlayerIndex) {
     int32 Id = EntityIdGenerator++;
-    UE_LOG(LogTemp, Warning, TEXT("checkpoint 2"))
+
     FPosition pos;
     pos.x = 0;
     pos.y = 0;
 
-    UE_LOG(LogTemp, Warning, TEXT("checkpoint 3"))
+    USimulationEntity* Entity = NewObject<USimulationEntity>(this, EntityClassIN);
+    Entity->Id = Id;
+
+    // for now, just hardcode spawning players
+    URBPlayer* Player = Cast<URBPlayer>(Entity);
+	Player->State.Position = pos;
 
     if (DebugPlayerIndex == 0) {
-        URBPlayer* player1 = NewObject<URBPlayer>(this, "Player 1");
-        player1->State.Position = pos;
-        player1->State.Position.x = -100;
-        player1->State.PlayerIndex = 0;
-        player1->Id = Id;
-        Entities.Emplace(player1);
+        Player->State.Position.x = -100;
+        Player->State.PlayerIndex = 0;
     }
     else if (DebugPlayerIndex == 1) {
-        URBPlayer* player2 = NewObject<URBPlayer>(this, "Player 2");
-        player2->State.Position = pos;
-        player2->State.Position.x = 100;
-        player2->State.PlayerIndex = 1;
-        player2->Id = Id;
-        Entities.Emplace(player2);
+        Player->State.Position.x = 100;
+        Player->State.PlayerIndex = 1;
     }
 
-    UE_LOG(LogTemp, Warning, TEXT("checkpoint 4"))
-
+	Entities.Emplace(Entity);
     NumEntities++;
 
-    UE_LOG(LogTemp, Warning, TEXT("checkpoint 5"))
-    return Id;
+    return Entity;
 }
 
