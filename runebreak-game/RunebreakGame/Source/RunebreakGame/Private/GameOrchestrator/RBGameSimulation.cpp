@@ -17,13 +17,15 @@ void URBGameSimulation::SimulationTick(int inputs[], int disconnect_flags)
     _inputs[0] = inputs[0];
     _inputs[1] = inputs[1];
 
-    for (auto& Entry : Entities) {
+    TArray<int32> Keys;
+    Entities.GenerateKeyArray(Keys);
+    for (auto& Key : Keys) {
         // move, update hitboxes, etc.
-        Entry.Value->Act(this);
+        Entities[Key]->Act(this);
     }
 
     for (auto& Entry : Entities) {
-        // comsume hitboxes.
+        // consume hitboxes.
         Entry.Value->ResolveCollisions(this);
     }
 }
@@ -52,8 +54,10 @@ bool URBGameSimulation::Load(unsigned char* buffer, int32 len)
     FSerializedSimulation SerializedSimulation;
     memcpy(&SerializedSimulation, buffer, len);
 
+    TSet<int32> KeepEntities;
     for (int i = 0; i < SerializedSimulation.NumEntities; i++) {
         int32 EntityId = SerializedSimulation.Entities[i].EntityId;
+        KeepEntities.Add(EntityId);
         USimulationEntity** ExistingEntity = (Entities.Find(EntityId));
         if (ExistingEntity) {
 			(*(ExistingEntity))->SimDeserialize(SerializedSimulation.Entities[i]);
@@ -67,6 +71,14 @@ bool URBGameSimulation::Load(unsigned char* buffer, int32 len)
             AddEntityToSimulation(Entity);
         }
     }
+
+    // delete unused entities
+    for (TMap<int32, USimulationEntity*>::TIterator Iterator = Entities.CreateIterator(); Iterator; ++Iterator) {
+        if (!KeepEntities.Contains(Iterator.Key())) {
+            Iterator.RemoveCurrent();
+        }
+    }
+
     return true;
 }
 

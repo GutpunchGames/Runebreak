@@ -33,11 +33,13 @@ void AGameOrchestrator::ActorSync() {
         ASimulationActor** EntityActorMapRef = EntityActors.Find(Entity->Id);
         if (EntityActorMapRef) {
             EntityActor = *EntityActorMapRef;
-            UE_LOG(LogTemp, Warning, TEXT("Reused actor for entity id: %d"), Entity->Id)
         }
         else {
             UE_LOG(LogTemp, Warning, TEXT("Spawning actor for entity id: %d"), Entity->Id)
 			FVector Position;
+            Position.X = 0;
+            Position.Y = 0;
+            Position.Z = 0;
 			FRotator Rotator;
 			EntityActor = Cast<ASimulationActor>(GetWorld()->SpawnActor(Entity->ActorClass, &Position, &Rotator));
         }
@@ -49,6 +51,8 @@ void AGameOrchestrator::ActorSync() {
     for (TMap<int32, ASimulationActor*>::TIterator Iterator = EntityActors.CreateIterator(); Iterator; ++Iterator)
     {
         if (!(Simulation->Entities.Contains(Iterator.Key()))) {
+            UE_LOG(LogTemp, Warning, TEXT("Despawning actor for entity id: %d"), Iterator.Key())
+			GetWorld()->DestroyActor(Iterator.Value());
             Iterator.RemoveCurrent();
         }
     }

@@ -9,6 +9,7 @@ int32 ARBPlayerController::GetPlayerInput()
     } inputtable[] = {
        { EKeys::Up,       INPUT_MOVE_UP },
        { EKeys::Down,     INPUT_MOVE_DOWN },
+       { EKeys::A,     INPUT_SHOOT },
     };
     int32 i, inputs = 0;
 

@@ -1,53 +1,49 @@
 #pragma once
 
-#include "GameOrchestrator/RBGamePrimitives.h"
-#include "GameOrchestrator/RBGameSerialization.h"
+#include "CoreMinimal.h"
 #include "GameOrchestrator/RBSimulationEntity.h"
-#include "RBPlayer.generated.h"
+#include "SelfDestructiveEntity.generated.h"
 
 USTRUCT(BlueprintType)
-struct FRBPlayerState {
+struct FSelfDestructiveEntityState {
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadOnly)
 	FPosition Position;
 	UPROPERTY(BlueprintReadOnly)
-	int32 PlayerIndex;
+	int32 MoveSpeed = 10;
 	UPROPERTY(BlueprintReadOnly)
-	int32 MoveSpeed;
+	int32 TimeAlive = 0;
 	UPROPERTY(BlueprintReadOnly)
-	TSubclassOf<USimulationEntity> FireballPrototype;
+	int32 TimeToLive;
 };
 
 USTRUCT(BlueprintType)
-struct FRBPlayerDefaults {
+struct FSelfDestructiveEntityDefaults {
 	GENERATED_BODY()
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 MoveSpeed = 10;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<USimulationEntity> FireballPrototype;
+	int32 TimeToLive = 100;
 };
 
 UCLASS(Blueprintable)
-class URBPlayer : public USimulationEntity
+class RUNEBREAKGAME_API USelfDestructiveEntity : public USimulationEntity
 {
 
 GENERATED_BODY()
 
 public:
+	virtual void InitDefaults() override;
 	virtual void Act(URBGameSimulation* Simulation) override;
 	virtual FSerializedEntity SimSerialize() override;
 	virtual void SimDeserialize(FSerializedEntity SerializedEntity) override;
 
 	UPROPERTY(BlueprintReadOnly)
-	FRBPlayerState State;
+	FSelfDestructiveEntityState State;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FRBPlayerDefaults PlayerDefaults;
-
-	UFUNCTION(BlueprintCallable)
-	void Initialize(int32 PlayerIndex);
+	FSelfDestructiveEntityDefaults Defaults;
 };
