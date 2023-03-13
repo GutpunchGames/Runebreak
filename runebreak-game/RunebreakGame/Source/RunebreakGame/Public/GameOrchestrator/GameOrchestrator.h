@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "GameOrchestrator/SimulationActor.h"
 #include "GameOrchestrator/RBGameSimulation.h"
 #include "GameOrchestrator/RBNonGameState.h"
 #include "GameOrchestrator.generated.h"

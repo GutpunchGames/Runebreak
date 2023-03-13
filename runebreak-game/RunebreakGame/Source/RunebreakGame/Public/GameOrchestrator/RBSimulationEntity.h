@@ -3,7 +3,6 @@
 #include "CoreMinimal.h"
 #include "GameOrchestrator/RBGamePrimitives.h"
 #include "GameOrchestrator/RBGameSerialization.h"
-#include "GameOrchestrator/SimulationActor.h"
 #include "RBSimulationEntity.generated.h"
 
 UCLASS()
@@ -20,8 +19,8 @@ public:
 	virtual void InitDefaults();
 	virtual void Act(URBGameSimulation* Simulation);
 	virtual void ResolveCollisions(URBGameSimulation* Simulation);
-	virtual FSerializedEntity Serialize();
-	virtual void Deserialize(FSerializedEntity SerializedEntity);
+	virtual FSerializedEntity SimSerialize();
+	virtual void SimDeserialize(FSerializedEntity SerializedEntity);
 };
 
 

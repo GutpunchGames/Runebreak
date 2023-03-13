@@ -33,8 +33,8 @@ GENERATED_BODY()
 
 public:
 	virtual void Act(URBGameSimulation* Simulation) override;
-	virtual FSerializedEntity Serialize() override;
-	virtual void Deserialize(FSerializedEntity SerializedEntity) override;
+	virtual FSerializedEntity SimSerialize() override;
+	virtual void SimDeserialize(FSerializedEntity SerializedEntity) override;
 
 	UPROPERTY(BlueprintReadOnly)
 	FRBPlayerState State;

@@ -33,7 +33,7 @@ bool URBGameSimulation::Save(unsigned char** buffer, int32* len, int32* checksum
     FSerializedSimulation SerializedSimulation;
     SerializedSimulation.NumEntities = NumEntities;
     for (int i = 0; i < NumEntities; i++) {
-        SerializedSimulation.Entities[i] = Entities[i]->Serialize();
+        SerializedSimulation.Entities[i] = Entities[i]->SimSerialize();
     }
     *len = sizeof(SerializedSimulation);
     *buffer = (unsigned char*) malloc(*len);
@@ -51,7 +51,7 @@ bool URBGameSimulation::Load(unsigned char* buffer, int32 len)
     memcpy(&SerializedSimulation, buffer, len);
 
     for (int i = 0; i < SerializedSimulation.NumEntities; i++) {
-        Entities[i]->Deserialize(SerializedSimulation.Entities[i]);
+        Entities[i]->SimDeserialize(SerializedSimulation.Entities[i]);
     }
     return true;
 }

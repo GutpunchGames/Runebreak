@@ -6,6 +6,7 @@
 // forward declarations
 class URBGameSimulation;
 class USimulationEntity;
+class ASimulationActor;
 
 USTRUCT(BlueprintType)
 struct FPosition {
