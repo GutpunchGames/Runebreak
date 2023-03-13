@@ -28,17 +28,30 @@ void AGameOrchestrator::ActorSync() {
     // update existence. todo: only loop over entities marked for existence-syncing
     for (auto& Entry : Simulation->Entities) {
         USimulationEntity* Entity = Entry.Value;
-        if (!EntityActors.Contains(Entity->Id)) {
+        ASimulationActor* EntityActor;
+
+        ASimulationActor** EntityActorMapRef = EntityActors.Find(Entity->Id);
+        if (EntityActorMapRef) {
+            EntityActor = *EntityActorMapRef;
+            UE_LOG(LogTemp, Warning, TEXT("Reused actor for entity id: %d"), Entity->Id)
+        }
+        else {
+            UE_LOG(LogTemp, Warning, TEXT("Spawning actor for entity id: %d"), Entity->Id)
 			FVector Position;
 			FRotator Rotator;
-            ASimulationActor* Actor = Cast<ASimulationActor>(GetWorld()->SpawnActor(Entity->ActorClass, &Position, &Rotator));
-            UE_LOG(LogTemp, Warning, TEXT("Spawned actor"))
-            Actor->BindEntity(Entity);
-            EntityActors.Add(Entity->Id, Actor);
+			EntityActor = Cast<ASimulationActor>(GetWorld()->SpawnActor(Entity->ActorClass, &Position, &Rotator));
         }
+		EntityActor->BindEntity(Entity);
+		EntityActors.Add(Entity->Id, EntityActor);
     }
 
-    // todo: delete unneeded actors, return them to a pool
+    // todo: delete unneeded actors. TODO: return them to a pool
+    for (TMap<int32, ASimulationActor*>::TIterator Iterator = EntityActors.CreateIterator(); Iterator; ++Iterator)
+    {
+        if (!(Simulation->Entities.Contains(Iterator.Key()))) {
+            Iterator.RemoveCurrent();
+        }
+    }
 
     // update rendering
     for (auto& Entry : Simulation->Entities) {

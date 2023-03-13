@@ -1,9 +1,10 @@
 #pragma once
 
 struct FSerializedEntity {
-	int32 EntityType;
-	int32 Size;
+	TSubclassOf<USimulationEntity> EntityClass;
+	TSubclassOf<ASimulationActor> ActorClass;
 	int32 EntityId;
+	int32 Size;
 	char Bytes[64]; // todo: this is just a test
 
 	int32 ComputeChecksum();

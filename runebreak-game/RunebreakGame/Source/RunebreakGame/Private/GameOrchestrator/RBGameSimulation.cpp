@@ -60,7 +60,11 @@ bool URBGameSimulation::Load(unsigned char* buffer, int32 len)
         }
         else {
             // todo: spawn the entity we need
-            UE_LOG(LogTemp, Warning, TEXT("FAILED TO FIND ENTITY TO DESERIALIZE"))
+            UE_LOG(LogTemp, Warning, TEXT("FAILED TO FIND ENTITY TO DESERIALIZE. SPAWNING ONE INSTEAD"))
+			TSubclassOf<USimulationEntity> RuntimeClass = SerializedSimulation.Entities[i].EntityClass;
+			USimulationEntity* Entity = NewObject<USimulationEntity>(this, RuntimeClass);
+			Entity->SimDeserialize(SerializedSimulation.Entities[i]);
+            AddEntityToSimulation(Entity);
         }
     }
     return true;
@@ -70,12 +74,16 @@ USimulationEntity* URBGameSimulation::SpawnEntity(UClass* EntityClassIN) {
     int32 Id = EntityIdGenerator++;
 
     USimulationEntity* Entity = NewObject<USimulationEntity>(this, EntityClassIN);
+    Entity->EntityClass = EntityClassIN;
     Entity->Id = Id;
     Entity->InitDefaults();
 
-    Entities.Add(Entity->Id, Entity);
-
+    AddEntityToSimulation(Entity);
     return Entity;
+}
+
+void URBGameSimulation::AddEntityToSimulation(USimulationEntity* Entity) {
+    Entities.Add(Entity->Id, Entity);
 }
 
 bool URBGameSimulation::RemoveEntity(int32 EntityId) {

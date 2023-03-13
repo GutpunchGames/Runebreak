@@ -35,4 +35,6 @@ private:
 
 	UPROPERTY()
 	int32 NumEntities;
+
+	void AddEntityToSimulation(USimulationEntity* Entity);
 };

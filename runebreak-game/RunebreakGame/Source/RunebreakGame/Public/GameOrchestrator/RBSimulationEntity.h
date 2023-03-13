@@ -16,6 +16,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ASimulationActor> ActorClass;
 
+	UPROPERTY()
+	TSubclassOf<USimulationEntity> EntityClass;
+
 	virtual void InitDefaults();
 	virtual void Act(URBGameSimulation* Simulation);
 	virtual void ResolveCollisions(URBGameSimulation* Simulation);
