@@ -17,12 +17,12 @@ void URBGameSimulation::SimulationTick(int inputs[], int disconnect_flags)
     _inputs[0] = inputs[0];
     _inputs[1] = inputs[1];
 
-    for (auto& Entry : EntityIndex) {
+    for (auto& Entry : Entities) {
         // move, update hitboxes, etc.
         Entry.Value->Act(this);
     }
 
-    for (auto& Entry : EntityIndex) {
+    for (auto& Entry : Entities) {
         // comsume hitboxes.
         Entry.Value->ResolveCollisions(this);
     }
@@ -31,9 +31,9 @@ void URBGameSimulation::SimulationTick(int inputs[], int disconnect_flags)
 bool URBGameSimulation::Save(unsigned char** buffer, int32* len, int32* checksum)
 {
     FSerializedSimulation SerializedSimulation;
-    SerializedSimulation.NumEntities = EntityIndex.Num();
+    SerializedSimulation.NumEntities = Entities.Num();
     int i = 0;
-    for (auto& Entry : EntityIndex) {
+    for (auto& Entry : Entities) {
         SerializedSimulation.Entities[i] = Entry.Value->SimSerialize();
         i++;
     }
@@ -54,7 +54,7 @@ bool URBGameSimulation::Load(unsigned char* buffer, int32 len)
 
     for (int i = 0; i < SerializedSimulation.NumEntities; i++) {
         int32 EntityId = SerializedSimulation.Entities[i].EntityId;
-        USimulationEntity** ExistingEntity = (EntityIndex.Find(EntityId));
+        USimulationEntity** ExistingEntity = (Entities.Find(EntityId));
         if (ExistingEntity) {
 			(*(ExistingEntity))->SimDeserialize(SerializedSimulation.Entities[i]);
         }
@@ -73,11 +73,11 @@ USimulationEntity* URBGameSimulation::SpawnEntity(UClass* EntityClassIN) {
     Entity->Id = Id;
     Entity->InitDefaults();
 
-    EntityIndex.Add(Entity->Id, Entity);
+    Entities.Add(Entity->Id, Entity);
 
     return Entity;
 }
 
 bool URBGameSimulation::RemoveEntity(int32 EntityId) {
-    return EntityIndex.Remove(EntityId) > 0;
+    return Entities.Remove(EntityId) > 0;
 }

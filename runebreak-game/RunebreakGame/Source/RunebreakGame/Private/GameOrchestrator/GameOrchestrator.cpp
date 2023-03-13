@@ -26,7 +26,7 @@ void AGameOrchestrator::OnSessionStarted_Implementation() {
 
 void AGameOrchestrator::ActorSync() {
     // update existence. todo: only loop over entities marked for existence-syncing
-    for (auto& Entry : Simulation->EntityIndex) {
+    for (auto& Entry : Simulation->Entities) {
         USimulationEntity* Entity = Entry.Value;
         if (!EntityActors.Contains(Entity->Id)) {
 			FVector Position;
@@ -41,7 +41,7 @@ void AGameOrchestrator::ActorSync() {
     // todo: delete unneeded actors, return them to a pool
 
     // update rendering
-    for (auto& Entry : Simulation->EntityIndex) {
+    for (auto& Entry : Simulation->Entities) {
         USimulationEntity* Entity = Entry.Value;
 		EntityActors[Entity->Id]->UpdateRendering();
     }

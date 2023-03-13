@@ -13,7 +13,7 @@ public:
 	int32 _framenumber = 0;
 
 	UPROPERTY()
-	TMap<int32, USimulationEntity*> EntityIndex;
+	TMap<int32, USimulationEntity*> Entities;
 
 	UPROPERTY()
 	int32 _inputs[2];
