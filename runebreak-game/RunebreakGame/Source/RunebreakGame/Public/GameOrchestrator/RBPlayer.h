@@ -5,15 +5,15 @@
 #include "GameOrchestrator/RBSimulationEntity.h"
 #include "RBPlayer.generated.h"
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FRBPlayerState {
 	GENERATED_BODY()
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	FPosition Position;
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	int32 PlayerIndex;
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	int32 MoveSpeed;
 };
 
@@ -32,11 +32,11 @@ class URBPlayer : public USimulationEntity {
 GENERATED_BODY()
 
 public:
-	virtual void SimulationTick(URBGameSimulation* Simulation) override;
+	virtual void Act(URBGameSimulation* Simulation) override;
 	virtual FSerializedEntity Serialize() override;
 	virtual void Deserialize(FSerializedEntity SerializedEntity) override;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	FRBPlayerState State;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

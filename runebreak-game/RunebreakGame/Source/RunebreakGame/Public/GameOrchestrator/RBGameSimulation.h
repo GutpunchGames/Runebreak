@@ -19,11 +19,10 @@ public:
 	int32 _inputs[2];
 
 	UFUNCTION(BlueprintCallable)
-	USimulationEntity* SpawnEntity(UClass* EntityClassIN, int32 DebugPlayerIndex);
+	USimulationEntity* SpawnEntity(UClass* EntityClassIN);
 
 	void Init();
-	void Update(int inputs[], int disconnect_flags);
-	URBPlayer* GetPlayer(int PlayerId);
+	void SimulationTick(int inputs[], int disconnect_flags);
 
 	bool Save(unsigned char** buffer, int32* len, int32* checksum);
 	bool Load(unsigned char* buffer, int32 len);

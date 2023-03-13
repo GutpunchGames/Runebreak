@@ -1,6 +1,8 @@
 #include "GameOrchestrator/RBSimulationEntity.h"
 
-void USimulationEntity::SimulationTick(URBGameSimulation* Simulation) { }
+void USimulationEntity::Act(URBGameSimulation* Simulation) { }
+
+void USimulationEntity::ResolveCollisions(URBGameSimulation* Simulation) { }
 
 FSerializedEntity USimulationEntity::Serialize() { 
     FSerializedEntity result;

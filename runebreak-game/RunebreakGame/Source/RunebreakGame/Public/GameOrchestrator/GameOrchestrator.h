@@ -31,19 +31,16 @@ public:
 	void OnSessionStarted();
 	virtual void OnSessionStarted_Implementation();
 
-	UFUNCTION(BlueprintCallable, BlueprintPure)
-	virtual FTransform GetPlayerTransform(int PlayerId);
-
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	URBGameSimulation* Simulation = 0;
 
 	NonGameState ngs = { 0 };
 
 	float ElapsedTime = 0;;
 
-	UFUNCTION(BlueprintCallable)
-	virtual AActor* SpawnEntityWithActor(UClass* ActorClassIN, UClass* EntityClassIN, int32 DebugPlayerIndex, USimulationEntity*& EntityOUT);
+protected:
+	void ActorSync();
 
 private:
-	TMap<int32, AActor*> EntityActors;
+	TMap<int32, ASimulationActor*> EntityActors;
 };

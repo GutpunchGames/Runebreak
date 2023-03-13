@@ -24,23 +24,23 @@ void AGameOrchestrator::Init()
 void AGameOrchestrator::OnSessionStarted_Implementation() {
 }
 
-FTransform AGameOrchestrator::GetPlayerTransform(int PlayerId) {
-    URBPlayer* Player = Simulation->GetPlayer(PlayerId);
-    FVector Position = FVector(0, (float)Player->State.Position.x, (float)Player->State.Position.y);
-    FQuat Rotation = FRotator(0, 0, 0).Quaternion();
-    FTransform Result = FTransform(Rotation, Position);
-    return Result;
-}
+void AGameOrchestrator::ActorSync() {
+    // update existence. todo: only loop over entities marked for existence-syncing
+    for (auto& Entity : Simulation->Entities) {
+        if (!EntityActors.Contains(Entity->Id)) {
+			FVector Position;
+			FRotator Rotator;
+            ASimulationActor* Actor = Cast<ASimulationActor>(GetWorld()->SpawnActor(Entity->ActorClass, &Position, &Rotator));
+            UE_LOG(LogTemp, Warning, TEXT("Spawned actor"))
+            Actor->BindEntity(Entity);
+            EntityActors.Add(Entity->Id, Actor);
+        }
+    }
 
-AActor* AGameOrchestrator::SpawnEntityWithActor(UClass* ActorClassIN, UClass* EntityClassIN, int32 DebugPlayerIndex, USimulationEntity*& EntityOUT) {
-    USimulationEntity* Entity = Simulation->SpawnEntity(EntityClassIN, DebugPlayerIndex);
-    EntityOUT = Entity;
+    // todo: delete unneeded actors, return them to a pool
 
-    UE_LOG(LogTemp, Warning, TEXT("Spawned entity with id: %d"), Entity->Id)
-
-    FVector Position;
-    FRotator Rotator;
-    AActor* Actor = GetWorld()->SpawnActor(ActorClassIN, &Position, &Rotator);
-    UE_LOG(LogTemp, Warning, TEXT("Spawned actor"))
-    return Actor;
+    // update rendering
+    for (auto& Entity : Simulation->Entities) {
+		EntityActors[Entity->Id]->UpdateRendering();
+    }
 }

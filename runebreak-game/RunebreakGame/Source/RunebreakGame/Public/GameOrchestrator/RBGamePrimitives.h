@@ -3,28 +3,29 @@
 #include "CoreMinimal.h"
 #include "RBGamePrimitives.generated.h"
 
-// forward declaration
+// forward declarations
 class URBGameSimulation;
+class USimulationEntity;
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FPosition {
 	GENERATED_BODY()
 
-	UPROPERTY()
-	double x;
+	UPROPERTY(BlueprintReadWrite)
+	float x;
 
-	UPROPERTY()
-	double y;
+	UPROPERTY(BlueprintReadWrite)
+	float y;
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FVelocity {
 	GENERATED_BODY()
 
-	UPROPERTY()
-	double dx;
+	UPROPERTY(BlueprintReadWrite)
+	float dx;
 
-	UPROPERTY()
-	double dy;
+	UPROPERTY(BlueprintReadWrite)
+	float dy;
 };
 

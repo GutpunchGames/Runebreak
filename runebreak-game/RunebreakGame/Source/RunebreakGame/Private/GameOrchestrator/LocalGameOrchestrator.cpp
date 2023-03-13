@@ -26,7 +26,7 @@ void ALocalGameOrchestrator::Init()
 
 	// Initialize the game state
 	Simulation->Init();
-
+    ActorSync();
 	OnSessionStarted();
 }
 
@@ -46,6 +46,8 @@ void ALocalGameOrchestrator::Tick(float DeltaTime)
         TickGameState();
         ElapsedTime -= ONE_FRAME;
     }
+
+    ActorSync();
 }
 
 void ALocalGameOrchestrator::OnSessionStarted_Implementation() { 
@@ -59,7 +61,7 @@ void ALocalGameOrchestrator::TickGameState()
 
 void ALocalGameOrchestrator::RunFrame()
 {
-    Simulation->Update(Inputs, 0);
+    Simulation->SimulationTick(Inputs, 0);
 }
 
 void ALocalGameOrchestrator::GetLocalInputs() {

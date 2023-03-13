@@ -7,32 +7,25 @@ void URBGameSimulation::Init()
     UE_LOG(LogTemp, Warning, TEXT("Simulation START"))
     NumEntities = 0;
     EntityIdGenerator = 0;
+
     UE_LOG(LogTemp, Warning, TEXT("Simulation Init END"))
 }
 
-void URBGameSimulation::Update(int inputs[], int disconnect_flags)
+void URBGameSimulation::SimulationTick(int inputs[], int disconnect_flags)
 {
     _framenumber++;
     _inputs[0] = inputs[0];
     _inputs[1] = inputs[1];
 
-    for (int i = 0; i < NumEntities; i++) {
-        Entities[i]->SimulationTick(this);
-    }
-}
-
-URBPlayer* URBGameSimulation::GetPlayer(int PlayerId) {
-    for (int i = 0; i < NumEntities; i++) {
-        USimulationEntity* Entity = Entities[i];
-        if (Entity->Id == PlayerId) {
-			URBPlayer* Player = static_cast<URBPlayer*>(Entities[i]);
-            return Player;
-        }
+    for (auto& Entity : Entities) {
+        // move, update hitboxes, etc.
+        Entity->Act(this);
     }
 
-    URBPlayer* FAILURE = NewObject<URBPlayer>(this, "Failure Player");
-    FAILURE->State.Position.y = 100;
-    return FAILURE;
+    for (auto& Entity : Entities) {
+        // comsume hitboxes.
+        Entity->ResolveCollisions(this);
+    }
 }
 
 bool URBGameSimulation::Save(unsigned char** buffer, int32* len, int32* checksum)
@@ -63,8 +56,7 @@ bool URBGameSimulation::Load(unsigned char* buffer, int32 len)
     return true;
 }
 
-UFUNCTION(BlueprintCallable)
-USimulationEntity* URBGameSimulation::SpawnEntity(UClass* EntityClassIN, int32 DebugPlayerIndex) {
+USimulationEntity* URBGameSimulation::SpawnEntity(UClass* EntityClassIN) {
     int32 Id = EntityIdGenerator++;
 
     USimulationEntity* Entity = NewObject<USimulationEntity>(this, EntityClassIN);

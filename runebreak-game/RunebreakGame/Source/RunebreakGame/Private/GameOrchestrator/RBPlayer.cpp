@@ -6,7 +6,7 @@ void URBPlayer::Initialize(int32 PlayerIndex) {
 	State.MoveSpeed = PlayerDefaults.MoveSpeed;
 }
 
-void URBPlayer::SimulationTick(URBGameSimulation* Simulation) {
+void URBPlayer::Act(URBGameSimulation* Simulation) {
     int Inputs = Simulation->_inputs[State.PlayerIndex];
     int MoveUp = Inputs & INPUT_MOVE_UP;
     int MoveDown = Inputs & INPUT_MOVE_DOWN;

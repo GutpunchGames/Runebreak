@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameOrchestrator/RBGamePrimitives.h"
 #include "GameOrchestrator/RBGameSerialization.h"
+#include "GameOrchestrator/SimulationActor.h"
 #include "RBSimulationEntity.generated.h"
 
 UCLASS()
@@ -13,8 +14,12 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	int32 Id;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ASimulationActor> ActorClass;
+
 	virtual void InitDefaults();
-	virtual void SimulationTick(URBGameSimulation* Simulation);
+	virtual void Act(URBGameSimulation* Simulation);
+	virtual void ResolveCollisions(URBGameSimulation* Simulation);
 	virtual FSerializedEntity Serialize();
 	virtual void Deserialize(FSerializedEntity SerializedEntity);
 };

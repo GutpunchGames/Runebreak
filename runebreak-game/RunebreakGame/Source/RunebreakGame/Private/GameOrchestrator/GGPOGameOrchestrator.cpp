@@ -60,7 +60,7 @@ void AGGPOGameOrchestrator::Init()
 			// Initialize the game state
 			Simulation->Init();
 			ngs.NumPlayers = NumPlayers;
-
+			ActorSync();
 			OnSessionStarted();
 
 			NetworkGraphData.Empty();
@@ -305,7 +305,7 @@ GGPOSessionCallbacks AGGPOGameOrchestrator::CreateCallbacks() {
 
 void AGGPOGameOrchestrator::AdvanceFrame(int32 inputs[], int32 disconnect_flags)
 {
-    Simulation->Update(inputs, disconnect_flags);
+    Simulation->SimulationTick(inputs, disconnect_flags);
 
     // update the checksums to display in the top of the window.  this
     // helps to detect desyncs.
@@ -336,6 +336,7 @@ void AGGPOGameOrchestrator::TickGameState()
 {
     int32 Input = GetLocalInputs();
     RunFrame(Input);
+    ActorSync();
 
     // Network data
     TArray<FGGPONetworkStats> Network = GetNetworkStats();
