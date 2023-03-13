@@ -12,9 +12,6 @@ public:
 	UPROPERTY()
 	int32 _framenumber = 0;
 
-	//UPROPERTY()
-	//TArray<USimulationEntity*> Entities;
-
 	UPROPERTY()
 	TMap<int32, USimulationEntity*> EntityIndex;
 
