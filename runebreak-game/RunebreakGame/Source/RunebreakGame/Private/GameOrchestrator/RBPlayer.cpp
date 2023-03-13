@@ -22,6 +22,7 @@ FSerializedEntity URBPlayer::SimSerialize() {
     FSerializedEntity result;
     result.EntityType = 0;
     result.Size = sizeof(State);
+    result.EntityId = Id;
     memcpy(result.Bytes, &State, result.Size);
     return result;
 }

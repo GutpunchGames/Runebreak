@@ -17,23 +17,25 @@ void URBGameSimulation::SimulationTick(int inputs[], int disconnect_flags)
     _inputs[0] = inputs[0];
     _inputs[1] = inputs[1];
 
-    for (auto& Entity : Entities) {
+    for (auto& Entry : EntityIndex) {
         // move, update hitboxes, etc.
-        Entity->Act(this);
+        Entry.Value->Act(this);
     }
 
-    for (auto& Entity : Entities) {
+    for (auto& Entry : EntityIndex) {
         // comsume hitboxes.
-        Entity->ResolveCollisions(this);
+        Entry.Value->ResolveCollisions(this);
     }
 }
 
 bool URBGameSimulation::Save(unsigned char** buffer, int32* len, int32* checksum)
 {
     FSerializedSimulation SerializedSimulation;
-    SerializedSimulation.NumEntities = NumEntities;
-    for (int i = 0; i < NumEntities; i++) {
-        SerializedSimulation.Entities[i] = Entities[i]->SimSerialize();
+    SerializedSimulation.NumEntities = EntityIndex.Num();
+    int i = 0;
+    for (auto& Entry : EntityIndex) {
+        SerializedSimulation.Entities[i] = Entry.Value->SimSerialize();
+        i++;
     }
     *len = sizeof(SerializedSimulation);
     *buffer = (unsigned char*) malloc(*len);
@@ -51,7 +53,15 @@ bool URBGameSimulation::Load(unsigned char* buffer, int32 len)
     memcpy(&SerializedSimulation, buffer, len);
 
     for (int i = 0; i < SerializedSimulation.NumEntities; i++) {
-        Entities[i]->SimDeserialize(SerializedSimulation.Entities[i]);
+        int32 EntityId = SerializedSimulation.Entities[i].EntityId;
+        USimulationEntity** ExistingEntity = (EntityIndex.Find(EntityId));
+        if (ExistingEntity) {
+			(*(ExistingEntity))->SimDeserialize(SerializedSimulation.Entities[i]);
+        }
+        else {
+            // todo: spawn the entity we need
+            UE_LOG(LogTemp, Warning, TEXT("FAILED TO FIND ENTITY TO DESERIALIZE"))
+        }
     }
     return true;
 }
@@ -63,9 +73,11 @@ USimulationEntity* URBGameSimulation::SpawnEntity(UClass* EntityClassIN) {
     Entity->Id = Id;
     Entity->InitDefaults();
 
-	Entities.Emplace(Entity);
-    NumEntities++;
+    EntityIndex.Add(Entity->Id, Entity);
 
     return Entity;
 }
 
+bool URBGameSimulation::RemoveEntity(int32 EntityId) {
+    return EntityIndex.Remove(EntityId) > 0;
+}

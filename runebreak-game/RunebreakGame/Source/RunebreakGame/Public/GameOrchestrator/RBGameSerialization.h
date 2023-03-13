@@ -3,6 +3,7 @@
 struct FSerializedEntity {
 	int32 EntityType;
 	int32 Size;
+	int32 EntityId;
 	char Bytes[64]; // todo: this is just a test
 
 	int32 ComputeChecksum();

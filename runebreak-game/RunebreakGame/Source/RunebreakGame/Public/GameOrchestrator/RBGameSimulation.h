@@ -12,14 +12,19 @@ public:
 	UPROPERTY()
 	int32 _framenumber = 0;
 
+	//UPROPERTY()
+	//TArray<USimulationEntity*> Entities;
+
 	UPROPERTY()
-	TArray<USimulationEntity*> Entities;
+	TMap<int32, USimulationEntity*> EntityIndex;
 
 	UPROPERTY()
 	int32 _inputs[2];
 
 	UFUNCTION(BlueprintCallable)
 	USimulationEntity* SpawnEntity(UClass* EntityClassIN);
+
+	bool RemoveEntity(int32 EntityId);
 
 	void Init();
 	void SimulationTick(int inputs[], int disconnect_flags);
