@@ -133,7 +133,7 @@ private:
 	/*
 	 * Log the gamestate.  Used by the synctest debugging tool.
 	 */
-	bool __cdecl log_game_state(char* filename, unsigned char* buffer, int32);
+	bool __cdecl log_game_state(char* filename, unsigned char* buffer, int32 len);
 	/*
 	 * Free a save state buffer previously returned in vw_save_game_state_callback.
 	 */

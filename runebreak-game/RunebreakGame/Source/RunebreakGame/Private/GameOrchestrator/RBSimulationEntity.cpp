@@ -4,41 +4,26 @@ void USimulationEntity::Act(URBGameSimulation* Simulation) { }
 
 void USimulationEntity::ResolveCollisions(URBGameSimulation* Simulation) { }
 
-void* USimulationEntity::GetState(int32 &SizeOUT) {
-    SizeOUT = 0;
-    return nullptr;
-}
-
-FSerializedEntity USimulationEntity::SimSerialize() { 
-    FSerializedEntity result;
-    result.EntityId = Id;
-    result.EntityClass = EntityClass;
-    result.ActorClass = ActorClass;
-    void* StateRef = GetState(result.Size);
-    if (result.Size > 0) {
-        memcpy(result.Bytes, StateRef, result.Size);
-    }
-    return result;
-}
-
-void USimulationEntity::SimDeserialize(const FSerializedEntity& SerializedEntity) { 
-    Id = SerializedEntity.EntityId;
-    EntityClass = SerializedEntity.EntityClass;
-    ActorClass = SerializedEntity.ActorClass;
-
-    // this means that state structs need to be of fixed size, for now, or else
-    // garbage data could be left over if the serialized struct instance was smaller than
-    // the current one.
-    int32 Size;
-    void* State = GetState(Size);
-    if (State != nullptr) {
-		memcpy(State, SerializedEntity.Bytes, SerializedEntity.Size);
-    }
-
-    if (Size != SerializedEntity.Size) {
-        UE_LOG(LogTemp, Fatal, TEXT("mismatched sizes"))
-    }
-}
-
 void USimulationEntity::InitDefaults() {
+}
+
+void USimulationEntity::SerializeToBuffer(unsigned char* buffer, int32* bytes_written) {
+    *bytes_written = 0;
+    memcpy(buffer + *bytes_written, &Id, sizeof(Id));
+    (*bytes_written) += sizeof(Id);
+    memcpy(buffer + *bytes_written, &EntityClass, sizeof(EntityClass));
+    UE_LOG(LogTemp, Warning, TEXT("Serialized class type: %s"), *(EntityClass->GetName()))
+    (*bytes_written) += sizeof(EntityClass);
+    memcpy(buffer + *bytes_written, &ActorClass, sizeof(ActorClass));
+    (*bytes_written) += sizeof(ActorClass);
+}
+
+void USimulationEntity::DeserializeFromBuffer(unsigned char* buffer, int32* bytes_read) {
+    *bytes_read = 0;
+    memcpy(&Id, buffer + *bytes_read, sizeof(Id));
+    (*bytes_read) += sizeof(Id);
+    memcpy(&EntityClass, buffer + *bytes_read, sizeof(EntityClass));
+    (*bytes_read) += sizeof(EntityClass);
+    memcpy(&ActorClass, buffer + *bytes_read, sizeof(ActorClass));
+    (*bytes_read) += sizeof(ActorClass);
 }

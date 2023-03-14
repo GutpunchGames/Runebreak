@@ -22,9 +22,9 @@ public:
 	virtual void InitDefaults();
 	virtual void Act(URBGameSimulation* Simulation);
 	virtual void ResolveCollisions(URBGameSimulation* Simulation);
-	virtual void* GetState(int32& SizeOUT);
-	FSerializedEntity SimSerialize();
-	void SimDeserialize(const FSerializedEntity& SerializedEntity);
+
+	virtual void SerializeToBuffer(unsigned char* buffer, int32* bytes_written);
+	virtual void DeserializeFromBuffer(unsigned char* buffer, int32* bytes_read);
 };
 
 

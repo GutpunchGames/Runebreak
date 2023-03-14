@@ -18,7 +18,3 @@ void USelfDestructiveEntity::Act(URBGameSimulation* Simulation) {
     }
 }
 
-void* USelfDestructiveEntity::GetState(int32& SizeOUT) {
-    SizeOUT = sizeof(State);
-    return &State;
-}

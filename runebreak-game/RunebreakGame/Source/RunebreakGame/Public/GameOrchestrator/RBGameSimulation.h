@@ -37,4 +37,7 @@ private:
 	int32 NumEntities;
 
 	void AddEntityToSimulation(USimulationEntity* Entity);
+
+	unsigned char GameStateBuffer[512];
+	int32 GameStateBufferLen = 0;
 };

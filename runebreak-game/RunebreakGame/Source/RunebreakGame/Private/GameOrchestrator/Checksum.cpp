@@ -8,7 +8,7 @@
  *
  *   http://en.wikipedia.org/wiki/Fletcher%27s_checksum
  */
-int fletcher32_checksum(char* data, size_t len)
+int fletcher32_checksum(unsigned char* data, size_t len)
 {
     int sum1 = 0xffff, sum2 = 0xffff;
 

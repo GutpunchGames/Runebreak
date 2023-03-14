@@ -231,7 +231,7 @@ bool AGGPOGameOrchestrator::load_game_state_callback(unsigned char* buffer, int3
     return Simulation->Load(buffer, len);
 }
 
-bool AGGPOGameOrchestrator::log_game_state(char* filename, unsigned char* buffer, int32)
+bool AGGPOGameOrchestrator::log_game_state(char* filename, unsigned char* buffer, int32 len)
 {
     return true;
 }

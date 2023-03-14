@@ -11,7 +11,7 @@ void URBPlayer::Act(URBGameSimulation* Simulation) {
     int Inputs = Simulation->_inputs[State.PlayerIndex];
     int MoveUp = Inputs & INPUT_MOVE_UP;
     int MoveDown = Inputs & INPUT_MOVE_DOWN;
-    int Shoot = Inputs & INPUT_SHOOT;
+    int Shoot = 0;// Inputs& INPUT_SHOOT;
     if (MoveUp) {
 		State.Position.y = State.Position.y + State.MoveSpeed;
     }
@@ -25,7 +25,14 @@ void URBPlayer::Act(URBGameSimulation* Simulation) {
     }
 }
 
-void* URBPlayer::GetState(int32& SizeOUT) {
-    SizeOUT = sizeof(State);
-    return &State;
+void URBPlayer::SerializeToBuffer(unsigned char* buffer, int32* bytes_written) {
+    Super::SerializeToBuffer(buffer, bytes_written);
+    memcpy(buffer + *bytes_written, &State, sizeof(State));
+    *(bytes_written) += sizeof(State);
+}
+
+void URBPlayer::DeserializeFromBuffer(unsigned char* buffer, int32* bytes_read) {
+    Super::DeserializeFromBuffer(buffer, bytes_read);
+    memcpy(&State, buffer + *bytes_read, sizeof(State));
+    *(bytes_read) += sizeof(State);
 }

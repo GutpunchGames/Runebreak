@@ -32,51 +32,48 @@ void URBGameSimulation::SimulationTick(int inputs[], int disconnect_flags)
 
 bool URBGameSimulation::Save(unsigned char** buffer, int32* len, int32* checksum)
 {
-    FSerializedSimulation SerializedSimulation;
-    SerializedSimulation.NumEntities = Entities.Num();
-    int i = 0;
+    *len = 0;
     for (auto& Entry : Entities) {
-        SerializedSimulation.Entities[i] = Entry.Value->SimSerialize();
-        i++;
+        int32 BytesWritten = 0;
+        Entry.Value->SerializeToBuffer(GameStateBuffer + *len, &BytesWritten);
+        *len += BytesWritten;
+		UE_LOG(LogTemp, Warning, TEXT("Serialized entity with id: %d, current buffer len: %d"), Entry.Value->Id, GameStateBufferLen)
     }
-    *len = sizeof(SerializedSimulation);
-    *buffer = (unsigned char*) malloc(*len);
-    if (!*buffer) {
-        return false;
-    }
-    memcpy(*buffer, &SerializedSimulation, *len);
-    *checksum = SerializedSimulation.ComputeChecksum();
+    *buffer = (unsigned char*)malloc(*len);
+    memcpy(*buffer, GameStateBuffer, *len);
+    *checksum = fletcher32_checksum(*buffer, *len);
+    UE_LOG(LogTemp, Warning, TEXT("Saved game with len: %d and checksum: %d"), *len, *checksum)
     return true;
 }
 
 bool URBGameSimulation::Load(unsigned char* buffer, int32 len)
 {
-    FSerializedSimulation SerializedSimulation;
-    memcpy(&SerializedSimulation, buffer, len);
+    int32 Checksum = fletcher32_checksum(buffer, len);
+	UE_LOG(LogTemp, Warning, TEXT("Loading game with checksum: %d and len: %d"), Checksum, len)
+    // for debug testing purposes, just empty all entities, always.
+    // todo: keep them around and resolve entity matches during deserialization.
+    Entities.Empty();
+    int32 Cursor = 0;
+    while (Cursor < len) {
+        UE_LOG(LogTemp, Warning, TEXT("Starting peek w/ cursor position: %d"), Cursor)
+        int32 PeekCursor = Cursor;
+        int32 EntityId;
+        TSubclassOf<USimulationEntity> EntityClass;
 
-    TSet<int32> KeepEntities;
-    for (int i = 0; i < SerializedSimulation.NumEntities; i++) {
-        int32 EntityId = SerializedSimulation.Entities[i].EntityId;
-        KeepEntities.Add(EntityId);
-        USimulationEntity** ExistingEntity = (Entities.Find(EntityId));
-        if (ExistingEntity) {
-			(*(ExistingEntity))->SimDeserialize(SerializedSimulation.Entities[i]);
-        }
-        else {
-            // todo: spawn the entity we need
-            UE_LOG(LogTemp, Warning, TEXT("FAILED TO FIND ENTITY TO DESERIALIZE. SPAWNING ONE INSTEAD"))
-			TSubclassOf<USimulationEntity> RuntimeClass = SerializedSimulation.Entities[i].EntityClass;
-			USimulationEntity* Entity = NewObject<USimulationEntity>(this, RuntimeClass);
-			Entity->SimDeserialize(SerializedSimulation.Entities[i]);
-            AddEntityToSimulation(Entity);
-        }
-    }
+        UE_LOG(LogTemp, Warning, TEXT("Peeking entity id with cursor: %d"), PeekCursor)
+        memcpy(&EntityId, buffer + PeekCursor, sizeof(EntityId));
+        PeekCursor += sizeof(EntityId);
+        UE_LOG(LogTemp, Warning, TEXT("Got entity id: %d"), EntityId)
+        UE_LOG(LogTemp, Warning, TEXT("Peeking entity class with cursor: %d"), PeekCursor)
+        memcpy(&EntityClass, buffer + PeekCursor, sizeof(EntityClass));
+        UE_LOG(LogTemp, Warning, TEXT("Got entity class: %s"), *(EntityClass->GetName()))
+        PeekCursor += sizeof(EntityClass);
 
-    // delete unused entities
-    for (TMap<int32, USimulationEntity*>::TIterator Iterator = Entities.CreateIterator(); Iterator; ++Iterator) {
-        if (!KeepEntities.Contains(Iterator.Key())) {
-            Iterator.RemoveCurrent();
-        }
+        int32 BytesRead = 0;
+		USimulationEntity* Entity = NewObject<USimulationEntity>(this, EntityClass);
+		Entity->DeserializeFromBuffer(buffer + Cursor, &BytesRead);
+        Cursor += BytesRead;
+		AddEntityToSimulation(Entity);
     }
 
     return true;
