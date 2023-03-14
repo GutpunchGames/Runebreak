@@ -31,7 +31,7 @@ public:
 
 private:
 	UPROPERTY()
-	int32 EntityIdGenerator;
+	int32 EntityIdGenerator = 0;
 
 	void AddEntityToSimulation(USimulationEntity* Entity);
 

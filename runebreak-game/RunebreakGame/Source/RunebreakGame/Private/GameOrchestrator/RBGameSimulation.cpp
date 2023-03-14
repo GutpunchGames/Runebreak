@@ -4,10 +4,6 @@
 
 void URBGameSimulation::Init()
 {
-    UE_LOG(LogTemp, Warning, TEXT("Simulation START"))
-    EntityIdGenerator = 0;
-
-    UE_LOG(LogTemp, Warning, TEXT("Simulation Init END"))
 }
 
 void URBGameSimulation::SimulationTick(int inputs[], int disconnect_flags)
