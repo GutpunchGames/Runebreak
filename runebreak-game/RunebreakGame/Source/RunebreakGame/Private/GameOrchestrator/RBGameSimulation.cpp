@@ -102,7 +102,6 @@ USimulationEntity* URBGameSimulation::SpawnEntity(UClass* EntityClassIN) {
 }
 
 void URBGameSimulation::AddEntityToSimulation(USimulationEntity* Entity) {
-    UE_LOG(LogTemp, Warning, TEXT("Adding entity to simulation of type: %s"), *(Entity->EntityClass->GetName()))
     Entities.Add(Entity->Id, Entity);
 }
 

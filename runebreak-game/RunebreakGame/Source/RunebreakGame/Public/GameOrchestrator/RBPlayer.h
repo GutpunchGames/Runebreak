@@ -14,11 +14,12 @@ struct FRBPlayerState {
 	UPROPERTY(BlueprintReadOnly)
 	int32 PlayerIndex;
 	UPROPERTY(BlueprintReadOnly)
-	int32 MoveSpeed;
-	UPROPERTY(BlueprintReadOnly)
+	int32 FireballCooldown = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 MoveSpeed = 10;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<USimulationEntity> FireballPrototype;
-	UPROPERTY(BlueprintReadOnly)
-	int32 FireballCooldown;
 
 	inline bool operator==(const FRBPlayerState& Other)
 	{
@@ -28,18 +29,6 @@ struct FRBPlayerState {
 			&& MoveSpeed == Other.MoveSpeed
 			&& FireballCooldown == Other.FireballCooldown;
 	}
-};
-
-USTRUCT(BlueprintType)
-struct FRBPlayerDefaults {
-	GENERATED_BODY()
-
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 MoveSpeed = 10;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<USimulationEntity> FireballPrototype;
 };
 
 UCLASS(Blueprintable)
@@ -53,11 +42,8 @@ public:
 	virtual void SerializeToBuffer(unsigned char* buffer, int32* bytes_written) override;
 	virtual void DeserializeFromBuffer(unsigned char* buffer, int32* bytes_read) override;
 
-	UPROPERTY(BlueprintReadOnly)
-	FRBPlayerState State;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FRBPlayerDefaults PlayerDefaults;
+	FRBPlayerState State;
 
 	UFUNCTION(BlueprintCallable)
 	void Initialize(int32 PlayerIndex);

@@ -3,9 +3,6 @@
 void URBPlayer::Initialize(int32 PlayerIndex) {
     State.Position.x = PlayerIndex == 0 ? -100 : 100;
 	State.PlayerIndex = PlayerIndex;
-	State.MoveSpeed = PlayerDefaults.MoveSpeed;
-    State.FireballPrototype = PlayerDefaults.FireballPrototype;
-    State.FireballCooldown = 0;
 }
 
 void URBPlayer::Act(URBGameSimulation* Simulation) {
@@ -22,7 +19,6 @@ void URBPlayer::Act(URBGameSimulation* Simulation) {
 
     if (Shoot) {
         if (State.FireballCooldown == 0) {
-            UE_LOG(LogTemp, Warning, TEXT("Spawned Fireball"))
 			Simulation->SpawnEntity(State.FireballPrototype);
             State.FireballCooldown = 60;
         }
