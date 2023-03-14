@@ -1,13 +1,25 @@
 #include "SerializationTest.h"
+#include "GameOrchestrator/RBPlayer.h"
 
-bool FSerializationTestTwo::RunTest(FString const& Parameters) {
-	return false;
-}
+bool FPlayerSerializationTest::RunTest(FString const& Parameters) {
+	URBPlayer* Player = NewObject<URBPlayer>();
+	URBPlayer* Player2 = NewObject<URBPlayer>();
 
-bool FSerializationTestThree::RunTest(FString const& Parameters) {
+	Player->AddToRoot();
+	Player2->AddToRoot();
+
+	Player->State.MoveSpeed = 20;
+	Player->State.Position.x = 150;
+	Player->State.Position.y = 300;
+	Player->State.PlayerIndex = 0;
+
+	FSerializedEntity SerializedEntity = Player->SimSerialize();
+	Player2->SimDeserialize(SerializedEntity);
+
+	TestTrue("Player deserialized properly", Player->State == Player2->State);
+
+	Player->RemoveFromRoot();
+	Player2->RemoveFromRoot();
 	return true;
 }
 
-bool FSerializationTest4::RunTest(FString const& Parameters) {
-	return true;
-}

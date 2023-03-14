@@ -17,6 +17,14 @@ struct FRBPlayerState {
 	int32 MoveSpeed;
 	UPROPERTY(BlueprintReadOnly)
 	TSubclassOf<USimulationEntity> FireballPrototype;
+
+	inline bool operator==(const FRBPlayerState& Other)
+	{
+		return Position.x == Other.Position.x
+			&& Position.y == Other.Position.y
+			&& PlayerIndex == Other.PlayerIndex
+			&& MoveSpeed == Other.MoveSpeed;
+	}
 };
 
 USTRUCT(BlueprintType)
@@ -39,8 +47,7 @@ GENERATED_BODY()
 
 public:
 	virtual void Act(URBGameSimulation* Simulation) override;
-	virtual FSerializedEntity SimSerialize() override;
-	virtual void SimDeserialize(FSerializedEntity SerializedEntity) override;
+	virtual void* GetState(int32& SizeOUT) override;
 
 	UPROPERTY(BlueprintReadOnly)
 	FRBPlayerState State;

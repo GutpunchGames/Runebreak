@@ -25,14 +25,7 @@ void URBPlayer::Act(URBGameSimulation* Simulation) {
     }
 }
 
-FSerializedEntity URBPlayer::SimSerialize() {
-    FSerializedEntity result = Super::SimSerialize();
-    result.Size = sizeof(State);
-    memcpy(result.Bytes, &State, result.Size);
-    return result;
-}
-
-void URBPlayer::SimDeserialize(FSerializedEntity SerializedEntity) {
-    Super::SimDeserialize(SerializedEntity);
-    memcpy(&State, SerializedEntity.Bytes, SerializedEntity.Size);
+void* URBPlayer::GetState(int32& SizeOUT) {
+    SizeOUT = sizeof(State);
+    return &State;
 }

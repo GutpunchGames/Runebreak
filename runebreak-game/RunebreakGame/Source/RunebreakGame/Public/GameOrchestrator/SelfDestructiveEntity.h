@@ -38,8 +38,7 @@ GENERATED_BODY()
 public:
 	virtual void InitDefaults() override;
 	virtual void Act(URBGameSimulation* Simulation) override;
-	virtual FSerializedEntity SimSerialize() override;
-	virtual void SimDeserialize(FSerializedEntity SerializedEntity) override;
+	virtual void* GetState(int32& SizeOUT) override;
 
 	UPROPERTY(BlueprintReadOnly)
 	FSelfDestructiveEntityState State;

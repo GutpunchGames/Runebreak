@@ -18,14 +18,7 @@ void USelfDestructiveEntity::Act(URBGameSimulation* Simulation) {
     }
 }
 
-FSerializedEntity USelfDestructiveEntity::SimSerialize() {
-    FSerializedEntity result = Super::SimSerialize();
-    result.Size = sizeof(State);
-    memcpy(result.Bytes, &State, result.Size);
-    return result;
-}
-
-void USelfDestructiveEntity::SimDeserialize(FSerializedEntity SerializedEntity) {
-    Super::SimDeserialize(SerializedEntity);
-    memcpy(&State, SerializedEntity.Bytes, SerializedEntity.Size);
+void* USelfDestructiveEntity::GetState(int32& SizeOUT) {
+    SizeOUT = sizeof(State);
+    return &State;
 }

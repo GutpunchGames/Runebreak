@@ -22,8 +22,9 @@ public:
 	virtual void InitDefaults();
 	virtual void Act(URBGameSimulation* Simulation);
 	virtual void ResolveCollisions(URBGameSimulation* Simulation);
-	virtual FSerializedEntity SimSerialize();
-	virtual void SimDeserialize(FSerializedEntity SerializedEntity);
+	virtual void* GetState(int32& SizeOUT);
+	FSerializedEntity SimSerialize();
+	void SimDeserialize(const FSerializedEntity& SerializedEntity);
 };
 
 
