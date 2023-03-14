@@ -28,11 +28,10 @@ void AGameOrchestrator::ActorSync() {
     // update existence. todo: only loop over entities marked for existence-syncing
     for (auto& Entry : Simulation->Entities) {
         USimulationEntity* Entity = Entry.Value;
-        ASimulationActor* EntityActor;
 
         ASimulationActor** EntityActorMapRef = EntityActors.Find(Entity->Id);
         if (EntityActorMapRef) {
-            EntityActor = *EntityActorMapRef;
+            (*EntityActorMapRef)->BindEntity(Entity);
         }
         else {
             UE_LOG(LogTemp, Warning, TEXT("Spawning actor for entity id: %d"), Entity->Id)
@@ -41,25 +40,22 @@ void AGameOrchestrator::ActorSync() {
             Position.Y = 0;
             Position.Z = 0;
 			FRotator Rotator;
-			EntityActor = Cast<ASimulationActor>(GetWorld()->SpawnActor(Entity->ActorClass, &Position, &Rotator));
+			ASimulationActor* EntityActor = Cast<ASimulationActor>(GetWorld()->SpawnActor(Entity->ActorClass, &Position, &Rotator));
+			EntityActor->BindEntity(Entity);
+			EntityActors.Add(Entity->Id, EntityActor);
         }
-		EntityActor->BindEntity(Entity);
-		EntityActors.Add(Entity->Id, EntityActor);
     }
 
-    // todo: delete unneeded actors. TODO: return them to a pool
+    // update actors that are staying, destroy those that are not. TODO: return them to a pool when deleted
     for (TMap<int32, ASimulationActor*>::TIterator Iterator = EntityActors.CreateIterator(); Iterator; ++Iterator)
     {
-        if (!(Simulation->Entities.Contains(Iterator.Key()))) {
+        if (Simulation->Entities.Contains(Iterator.Key())) {
+			Iterator.Value()->UpdateRendering();
+        }
+        else {
             UE_LOG(LogTemp, Warning, TEXT("Despawning actor for entity id: %d"), Iterator.Key())
 			GetWorld()->DestroyActor(Iterator.Value());
             Iterator.RemoveCurrent();
         }
-    }
-
-    // update rendering
-    for (auto& Entry : Simulation->Entities) {
-        USimulationEntity* Entity = Entry.Value;
-		EntityActors[Entity->Id]->UpdateRendering();
     }
 }
