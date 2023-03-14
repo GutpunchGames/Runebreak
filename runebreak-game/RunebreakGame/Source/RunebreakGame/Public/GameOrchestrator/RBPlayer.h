@@ -17,13 +17,16 @@ struct FRBPlayerState {
 	int32 MoveSpeed;
 	UPROPERTY(BlueprintReadOnly)
 	TSubclassOf<USimulationEntity> FireballPrototype;
+	UPROPERTY(BlueprintReadOnly)
+	int32 FireballCooldown;
 
 	inline bool operator==(const FRBPlayerState& Other)
 	{
 		return Position.x == Other.Position.x
 			&& Position.y == Other.Position.y
 			&& PlayerIndex == Other.PlayerIndex
-			&& MoveSpeed == Other.MoveSpeed;
+			&& MoveSpeed == Other.MoveSpeed
+			&& FireballCooldown == Other.FireballCooldown;
 	}
 };
 

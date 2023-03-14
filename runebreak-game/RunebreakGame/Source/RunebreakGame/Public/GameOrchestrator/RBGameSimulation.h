@@ -33,11 +33,7 @@ private:
 	UPROPERTY()
 	int32 EntityIdGenerator;
 
-	UPROPERTY()
-	int32 NumEntities;
-
 	void AddEntityToSimulation(USimulationEntity* Entity);
 
-	unsigned char GameStateBuffer[512];
-	int32 GameStateBufferLen = 0;
+	unsigned char GameStateBuffer[65536];
 };

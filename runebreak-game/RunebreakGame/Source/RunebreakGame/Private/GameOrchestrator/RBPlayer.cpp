@@ -5,13 +5,14 @@ void URBPlayer::Initialize(int32 PlayerIndex) {
 	State.PlayerIndex = PlayerIndex;
 	State.MoveSpeed = PlayerDefaults.MoveSpeed;
     State.FireballPrototype = PlayerDefaults.FireballPrototype;
+    State.FireballCooldown = 0;
 }
 
 void URBPlayer::Act(URBGameSimulation* Simulation) {
     int Inputs = Simulation->_inputs[State.PlayerIndex];
     int MoveUp = Inputs & INPUT_MOVE_UP;
     int MoveDown = Inputs & INPUT_MOVE_DOWN;
-    int Shoot = 0;// Inputs& INPUT_SHOOT;
+    int Shoot = Inputs & INPUT_SHOOT;
     if (MoveUp) {
 		State.Position.y = State.Position.y + State.MoveSpeed;
     }
@@ -20,8 +21,15 @@ void URBPlayer::Act(URBGameSimulation* Simulation) {
     }
 
     if (Shoot) {
-       UE_LOG(LogTemp, Warning, TEXT("Spawned Fireball"))
-       Simulation->SpawnEntity(State.FireballPrototype);
+        if (State.FireballCooldown == 0) {
+            UE_LOG(LogTemp, Warning, TEXT("Spawned Fireball"))
+			Simulation->SpawnEntity(State.FireballPrototype);
+            State.FireballCooldown = 60;
+        }
+    }
+
+    if (State.FireballCooldown > 0) {
+        State.FireballCooldown--;
     }
 }
 

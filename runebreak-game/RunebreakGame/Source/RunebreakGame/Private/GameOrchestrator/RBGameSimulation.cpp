@@ -5,7 +5,6 @@
 void URBGameSimulation::Init()
 {
     UE_LOG(LogTemp, Warning, TEXT("Simulation START"))
-    NumEntities = 0;
     EntityIdGenerator = 0;
 
     UE_LOG(LogTemp, Warning, TEXT("Simulation Init END"))
@@ -33,12 +32,19 @@ void URBGameSimulation::SimulationTick(int inputs[], int disconnect_flags)
 bool URBGameSimulation::Save(unsigned char** buffer, int32* len, int32* checksum)
 {
     *len = 0;
+
+    memcpy(GameStateBuffer + *len, &_framenumber, sizeof(_framenumber));
+    *len += sizeof(_framenumber);
+    memcpy(GameStateBuffer + *len, &EntityIdGenerator, sizeof(EntityIdGenerator));
+    *len += sizeof(EntityIdGenerator);
+
     for (auto& Entry : Entities) {
         int32 BytesWritten = 0;
         Entry.Value->SerializeToBuffer(GameStateBuffer + *len, &BytesWritten);
         *len += BytesWritten;
-		UE_LOG(LogTemp, Warning, TEXT("Serialized entity with id: %d, current buffer len: %d"), Entry.Value->Id, GameStateBufferLen)
+		UE_LOG(LogTemp, Warning, TEXT("Serialized entity with id: %d, current buffer len: %d"), Entry.Value->Id, *len)
     }
+
     *buffer = (unsigned char*)malloc(*len);
     memcpy(*buffer, GameStateBuffer, *len);
     *checksum = fletcher32_checksum(*buffer, *len);
@@ -50,23 +56,27 @@ bool URBGameSimulation::Load(unsigned char* buffer, int32 len)
 {
     int32 Checksum = fletcher32_checksum(buffer, len);
 	UE_LOG(LogTemp, Warning, TEXT("Loading game with checksum: %d and len: %d"), Checksum, len)
+
+    int32 Cursor = 0;
+
+    memcpy(&_framenumber, buffer + Cursor, sizeof(_framenumber));
+    Cursor += sizeof(_framenumber);
+    memcpy(&EntityIdGenerator, buffer + Cursor, sizeof(EntityIdGenerator));
+    Cursor += sizeof(EntityIdGenerator);
+
+    UE_LOG(LogTemp, Warning, TEXT("Restored to frame: %d with generator: %d"), _framenumber, EntityIdGenerator)
+
     // for debug testing purposes, just empty all entities, always.
     // todo: keep them around and resolve entity matches during deserialization.
     Entities.Empty();
-    int32 Cursor = 0;
     while (Cursor < len) {
-        UE_LOG(LogTemp, Warning, TEXT("Starting peek w/ cursor position: %d"), Cursor)
         int32 PeekCursor = Cursor;
         int32 EntityId;
         TSubclassOf<USimulationEntity> EntityClass;
 
-        UE_LOG(LogTemp, Warning, TEXT("Peeking entity id with cursor: %d"), PeekCursor)
         memcpy(&EntityId, buffer + PeekCursor, sizeof(EntityId));
         PeekCursor += sizeof(EntityId);
-        UE_LOG(LogTemp, Warning, TEXT("Got entity id: %d"), EntityId)
-        UE_LOG(LogTemp, Warning, TEXT("Peeking entity class with cursor: %d"), PeekCursor)
         memcpy(&EntityClass, buffer + PeekCursor, sizeof(EntityClass));
-        UE_LOG(LogTemp, Warning, TEXT("Got entity class: %s"), *(EntityClass->GetName()))
         PeekCursor += sizeof(EntityClass);
 
         int32 BytesRead = 0;
@@ -92,6 +102,7 @@ USimulationEntity* URBGameSimulation::SpawnEntity(UClass* EntityClassIN) {
 }
 
 void URBGameSimulation::AddEntityToSimulation(USimulationEntity* Entity) {
+    UE_LOG(LogTemp, Warning, TEXT("Adding entity to simulation of type: %s"), *(Entity->EntityClass->GetName()))
     Entities.Add(Entity->Id, Entity);
 }
 
