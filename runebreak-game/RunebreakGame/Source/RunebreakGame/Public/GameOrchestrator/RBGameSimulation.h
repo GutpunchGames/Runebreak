@@ -2,7 +2,9 @@
 
 #include "CoreMinimal.h"
 #include "GameOrchestrator/RBPlayer.h"
+#include "GameOrchestrator/GameSimulationSerializer.h"
 #include "RBGameSimulation.generated.h"
+
 
 UCLASS()
 class URBGameSimulation : public UObject {
@@ -21,6 +23,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	USimulationEntity* SpawnEntity(UClass* EntityClassIN);
 
+	UPROPERTY()
+	int32 EntityIdGenerator = 0;
+
 	bool RemoveEntity(int32 EntityId);
 
 	void Init();
@@ -29,11 +34,8 @@ public:
 	bool Save(unsigned char** buffer, int32* len, int32* checksum);
 	bool Load(unsigned char* buffer, int32 len);
 
-private:
-	UPROPERTY()
-	int32 EntityIdGenerator = 0;
-
 	void AddEntityToSimulation(USimulationEntity* Entity);
 
-	unsigned char GameStateBuffer[65536];
+private:
+	GameSimulationSerializer Serializer;
 };

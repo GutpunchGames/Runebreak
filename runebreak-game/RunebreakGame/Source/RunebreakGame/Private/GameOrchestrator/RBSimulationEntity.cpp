@@ -7,15 +7,10 @@ void USimulationEntity::ResolveCollisions(URBGameSimulation* Simulation) { }
 void USimulationEntity::InitDefaults() {
 }
 
-void USimulationEntity::SerializeToBuffer(unsigned char* buffer, int32* bytes_written) {
-    *bytes_written = 0;
-    memcpy(buffer + *bytes_written, &Id, sizeof(Id));
-    (*bytes_written) += sizeof(Id);
-    memcpy(buffer + *bytes_written, &EntityClass, sizeof(EntityClass));
-    UE_LOG(LogTemp, Warning, TEXT("Serialized class type: %s"), *(EntityClass->GetName()))
-    (*bytes_written) += sizeof(EntityClass);
-    memcpy(buffer + *bytes_written, &ActorClass, sizeof(ActorClass));
-    (*bytes_written) += sizeof(ActorClass);
+void USimulationEntity::SerializeToBuffer(GameSimulationSerializer* Serializer) {
+    Serializer->WriteInt(Id);
+    Serializer->WriteClass(EntityClass);
+    Serializer->WriteClass(ActorClass);
 }
 
 void USimulationEntity::DeserializeFromBuffer(unsigned char* buffer, int32* bytes_read) {

@@ -18,10 +18,9 @@ void USelfDestructiveEntity::Act(URBGameSimulation* Simulation) {
     }
 }
 
-void USelfDestructiveEntity::SerializeToBuffer(unsigned char* buffer, int32* bytes_written) {
-    Super::SerializeToBuffer(buffer, bytes_written);
-    memcpy(buffer + *bytes_written, &State, sizeof(State));
-    *(bytes_written) += sizeof(State);
+void USelfDestructiveEntity::SerializeToBuffer(GameSimulationSerializer* Serializer) {
+    Super::SerializeToBuffer(Serializer);
+    Serializer->WriteBytes(&State, sizeof(State));
 }
 
 void USelfDestructiveEntity::DeserializeFromBuffer(unsigned char* buffer, int32* bytes_read) {

@@ -2,6 +2,7 @@
 
 #include "GameOrchestrator/RBGamePrimitives.h"
 #include "GameOrchestrator/RBGameSerialization.h"
+#include "GameOrchestrator/GameSimulationSerializer.h"
 #include "GameOrchestrator/RBSimulationEntity.h"
 #include "RBPlayer.generated.h"
 
@@ -39,8 +40,9 @@ GENERATED_BODY()
 
 public:
 	virtual void Act(URBGameSimulation* Simulation) override;
-	virtual void SerializeToBuffer(unsigned char* buffer, int32* bytes_written) override;
-	virtual void DeserializeFromBuffer(unsigned char* buffer, int32* bytes_read) override;
+
+	virtual void SerializeToBuffer(GameSimulationSerializer* Serializer);
+	virtual void DeserializeFromBuffer(unsigned char* buffer, int32* bytes_read);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FRBPlayerState State;
