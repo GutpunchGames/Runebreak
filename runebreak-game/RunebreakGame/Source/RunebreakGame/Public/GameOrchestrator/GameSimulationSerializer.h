@@ -14,7 +14,6 @@ public:
 public:
 	bool Serialize(URBGameSimulation* Simulation, unsigned char** buffer, int32* len, int32* checksum);
 	void WriteInt(const int32 Value);
-	void WriteClass(UClass* Class);
 	void WriteBytes(void* Bytes, int32 Size);
 };
 
@@ -26,10 +25,7 @@ public:
 
 public:
 	bool Deserialize(URBGameSimulation* Simulation, unsigned char* buffer, int32 len);
-	int32 PeekInt();
-	UClass* PeekClass();
 	void ReadInt(int32* Destination);
-	void ReadClass(UClass** Destination);
 	void ReadBytes(void* Destination, int32 NumBytes);
 };
 

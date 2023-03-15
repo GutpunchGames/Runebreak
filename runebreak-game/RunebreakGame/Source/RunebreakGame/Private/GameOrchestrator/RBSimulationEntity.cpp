@@ -9,8 +9,9 @@ void USimulationEntity::InitDefaults() {
 
 void USimulationEntity::SerializeToBuffer(GameSimulationSerializer* Serializer) {
     Serializer->WriteInt(Id);
-    Serializer->WriteClass(EntityClass);
-    Serializer->WriteClass(ActorClass);
+    Serializer->WriteBytes(&EntityClass, sizeof(EntityClass));
+    UE_LOG(LogTemp, Warning, TEXT("Serialized class: %s"), *(EntityClass->GetName()))
+    Serializer->WriteBytes(&ActorClass, sizeof(ActorClass));
 }
 
 void USimulationEntity::DeserializeFromBuffer(unsigned char* buffer, int32* bytes_read) {
