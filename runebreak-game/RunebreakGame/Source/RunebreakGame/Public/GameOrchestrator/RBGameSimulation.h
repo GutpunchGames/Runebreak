@@ -12,7 +12,7 @@ class URBGameSimulation : public UObject {
 
 public:
 	UPROPERTY()
-	int32 _framenumber = 5;
+	int32 _framenumber = 0;
 
 	UPROPERTY()
 	TMap<int32, USimulationEntity*> Entities;

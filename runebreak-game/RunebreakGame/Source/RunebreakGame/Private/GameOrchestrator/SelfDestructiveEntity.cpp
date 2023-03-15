@@ -2,7 +2,7 @@
 
 void USelfDestructiveEntity::InitDefaults() {
     State.Position.x = 0;
-    State.Position.y = 0;
+    State.Position.y = 100;
     State.TimeAlive = 0;
 
     State.MoveSpeed = Defaults.MoveSpeed;
