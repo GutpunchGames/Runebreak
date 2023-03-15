@@ -23,9 +23,8 @@ void USelfDestructiveEntity::SerializeToBuffer(GameSimulationSerializer* Seriali
     Serializer->WriteBytes(&State, sizeof(State));
 }
 
-void USelfDestructiveEntity::DeserializeFromBuffer(unsigned char* buffer, int32* bytes_read) {
-    Super::DeserializeFromBuffer(buffer, bytes_read);
-    memcpy(&State, buffer + *bytes_read, sizeof(State));
-    *(bytes_read) += sizeof(State);
+void USelfDestructiveEntity::DeserializeFromBuffer(GameSimulationDeserializer* Deserializer) {
+    Super::DeserializeFromBuffer(Deserializer);
+    Deserializer->ReadBytes(&State, sizeof(State));
 }
 

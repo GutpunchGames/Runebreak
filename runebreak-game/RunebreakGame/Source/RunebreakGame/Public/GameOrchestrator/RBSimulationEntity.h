@@ -25,7 +25,7 @@ public:
 	virtual void ResolveCollisions(URBGameSimulation* Simulation);
 
 	virtual void SerializeToBuffer(GameSimulationSerializer* Serializer);
-	virtual void DeserializeFromBuffer(unsigned char* buffer, int32* bytes_read);
+	virtual void DeserializeFromBuffer(GameSimulationDeserializer* Deserializer);
 };
 
 

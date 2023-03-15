@@ -40,7 +40,7 @@ public:
 	virtual void InitDefaults() override;
 	virtual void Act(URBGameSimulation* Simulation) override;
 	virtual void SerializeToBuffer(GameSimulationSerializer* Serializer) override;
-	virtual void DeserializeFromBuffer(unsigned char* buffer, int32* bytes_read) override;
+	virtual void DeserializeFromBuffer(GameSimulationDeserializer* Deserializer) override;
 
 	UPROPERTY(BlueprintReadOnly)
 	FSelfDestructiveEntityState State;

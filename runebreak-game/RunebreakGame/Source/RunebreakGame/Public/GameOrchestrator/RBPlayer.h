@@ -42,7 +42,7 @@ public:
 	virtual void Act(URBGameSimulation* Simulation) override;
 
 	virtual void SerializeToBuffer(GameSimulationSerializer* Serializer);
-	virtual void DeserializeFromBuffer(unsigned char* buffer, int32* bytes_read);
+	virtual void DeserializeFromBuffer(GameSimulationDeserializer* Deserializer) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FRBPlayerState State;

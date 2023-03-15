@@ -34,8 +34,7 @@ void URBPlayer::SerializeToBuffer(GameSimulationSerializer* Serializer) {
     Serializer->WriteBytes(&State, sizeof(State));
 }
 
-void URBPlayer::DeserializeFromBuffer(unsigned char* buffer, int32* bytes_read) {
-    Super::DeserializeFromBuffer(buffer, bytes_read);
-    memcpy(&State, buffer + *bytes_read, sizeof(State));
-    *(bytes_read) += sizeof(State);
+void URBPlayer::DeserializeFromBuffer(GameSimulationDeserializer* Deserializer) {
+    Super::DeserializeFromBuffer(Deserializer);
+    Deserializer->ReadBytes(&State, sizeof(State));
 }

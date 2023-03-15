@@ -32,7 +32,7 @@ bool GameSimulationDeserializer::Deserialize(URBGameSimulation* Simulation, unsi
 	ReadInt(&(Simulation->_framenumber));
 	ReadInt(&(Simulation->EntityIdGenerator));
 
-	UE_LOG(LogTemp, Warning, TEXT("Got frame number: %d and generator: %d"), Simulation->_framenumber, Simulation->EntityIdGenerator)
+	UE_LOG(LogTemp, Warning, TEXT("Got frame number: %d and ID generator: %d"), Simulation->_framenumber, Simulation->EntityIdGenerator)
 
     // for debug testing purposes, just empty all entities, always.
     // todo: keep them around and resolve entity matches during deserialization.
@@ -45,16 +45,14 @@ bool GameSimulationDeserializer::Deserialize(URBGameSimulation* Simulation, unsi
         TSubclassOf<USimulationEntity> EntityClass;
 
         ReadInt(&EntityId);
-        UE_LOG(LogTemp, Warning, TEXT("Got entity id: %d. Cursor: %d"), EntityId, Cursor)
-		// this is broken or something, or maybe on the serialization side
         ReadBytes(&EntityClass, sizeof(EntityClass));
-        UE_LOG(LogTemp, Warning, TEXT("Got class: %s. Cursor: %d"), *(EntityClass->GetName()))
+        UE_LOG(LogTemp, Warning, TEXT("Got entity id: %d. Cursor: %d. Class: %s"), EntityId, Cursor, *(EntityClass->GetName()))
 
         Cursor = EntityBeginningCursor;
 
 		USimulationEntity* Entity = NewObject<USimulationEntity>(Simulation, EntityClass);
         int32 BytesRead = 0;
-		Entity->DeserializeFromBuffer(Buffer + Cursor, &BytesRead);
+		Entity->DeserializeFromBuffer(this);
         Cursor += BytesRead;
 		Simulation->AddEntityToSimulation(Entity);
     }
