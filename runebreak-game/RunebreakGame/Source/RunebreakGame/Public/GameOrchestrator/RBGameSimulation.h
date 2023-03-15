@@ -11,7 +11,7 @@ class URBGameSimulation : public UObject {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	int32 _framenumber = 0;
 
 	UPROPERTY()
@@ -38,4 +38,5 @@ public:
 
 private:
 	GameSimulationSerializer Serializer;
+	GameSimulationDeserializer Deserializer;
 };

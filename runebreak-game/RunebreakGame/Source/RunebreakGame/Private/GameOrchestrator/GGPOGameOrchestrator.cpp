@@ -24,20 +24,19 @@ AGGPOGameOrchestrator::AGGPOGameOrchestrator()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-// Called when the game starts or when spawned
 void AGGPOGameOrchestrator::Init()
 {
+    if (bSessionStarted) {
+        UE_LOG(LogTemp, Fatal, TEXT("Init has already been called on this instance"))
+    }
     Super::Init();
 
     Simulation = NewObject<URBGameSimulation>(this, "Simulation");
 
-    UE_LOG(LogTemp, Warning, TEXT("BeginPlay"))
+    UE_LOG(LogTemp, Warning, TEXT("GGPOGameOrchestrator Init() START"))
+	FDebug::DumpStackTraceToLog(ELogVerbosity::Log);
 
     UGGPONetwork* GGPONetwork = nullptr;
-	int32 NumPlayers = 2;
-    if (IsSyncTest) {
-        NumPlayers = 1;
-    }
 
     // If this is a GGPO game instance
     UGameInstance* GameInstance = GetGameInstance();
@@ -46,35 +45,41 @@ void AGGPOGameOrchestrator::Init()
     {
         // Get the network addresses
         GGPONetwork = GgpoGameInstance->GGPONetwork;
-        NumPlayers = GGPONetwork->NumPlayers();
+        int32 NumPlayers = GGPONetwork->NumPlayers();
         // Reset the game instance network addresses
         GgpoGameInstance->GGPONetwork = nullptr;
-    }
 
-    UE_LOG(LogTemp, Warning, TEXT("got num players: %d"), NumPlayers)
-    bSessionStarted = TryStartGGPOSession(NumPlayers, GGPONetwork);
+        UE_LOG(LogTemp, Warning, TEXT("got num players: %d"), NumPlayers)
+		bSessionStarted = TryStartGGPOSession(NumPlayers, GGPONetwork);
 
-    if (bSessionStarted)
-    {
-			UE_LOG(LogTemp, Warning, TEXT("Session Started: %b"), bSessionStarted)
+        if (bSessionStarted)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Session Started: %b"), bSessionStarted)
 			// Initialize the game state
 			Simulation->Init();
-			ngs.NumPlayers = NumPlayers;
-			ActorSync();
-			OnSessionStarted();
+            ngs.NumPlayers = NumPlayers;
+            ActorSync();
+            OnSessionStarted();
 
-			NetworkGraphData.Empty();
-			TArray<FGGPONetworkStats> Network = GetNetworkStats();
-			int32 Count = Network.Num();
-			for (int32 i = 0; i < Count; i++)
-			{
-				NetworkGraphData.Add(FNetworkGraphPlayer{ });
-			}
+            NetworkGraphData.Empty();
+            TArray<FGGPONetworkStats> Network = GetNetworkStats();
+            int32 Count = Network.Num();
+            for (int32 i = 0; i < Count; i++)
+            {
+                NetworkGraphData.Add(FNetworkGraphPlayer{ });
+            }
+        }
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Failed to create GGPO session"));
 		}
+    }
     else
     {
-        UE_LOG(LogTemp, Error, TEXT("Failed to create GGPO session"));
+        UE_LOG(LogTemp, Error, TEXT("Was not a GGPOGameInstance"));
     }
+
+    UE_LOG(LogTemp, Warning, TEXT("GGPOGameOrchestrator Init() END"))
 }
 
 // Called every frame
@@ -127,40 +132,30 @@ bool AGGPOGameOrchestrator::TryStartGGPOSession(
     // If there are no network addresses...
     if (NetworkAddresses == nullptr)
     {
-        Players[0].size = sizeof(Players[0]);
-        Players[0].player_num = 1;
-        Players[0].type = EGGPOPlayerType::LOCAL;
-
-        Players[1].size = sizeof(Players[0]);
-        Players[1].player_num = 2;
-        Players[1].type = EGGPOPlayerType::LOCAL;
-
-        LocalPort = 7000;
-        NumPlayers = 2;
+        UE_LOG(LogTemp, Fatal, TEXT("no network addresses found"))
     }
-    else
-    {
-        if (NumPlayers > NetworkAddresses->NumPlayers())
-            return false;
 
-        LocalPort = NetworkAddresses->GetLocalPort();
+	if (NumPlayers > NetworkAddresses->NumPlayers())
+		return false;
 
-        int32 i;
-        for (i = 0; i < NumPlayers; i++)
-        {
-            Players[i].size = sizeof(Players[i]);
-            Players[i].player_num = i + 1;
-            // The local player
-            if (NetworkAddresses->IsPlayerLocal(i)) {
-                Players[i].type = EGGPOPlayerType::LOCAL;
-            }
-            else {
-                Players[i].type = EGGPOPlayerType::REMOTE;
-                Players[i].u.remote.port = (uint16)NetworkAddresses->GetAddress(i)->GetPort();
-                NetworkAddresses->GetAddress(i)->GetIpAddress(Players[i].u.remote.ip_address);
-            }
-        }
-    }
+	LocalPort = NetworkAddresses->GetLocalPort();
+
+	for (int32 i = 0; i < NumPlayers; i++)
+	{
+		Players[i].size = sizeof(Players[i]);
+		Players[i].player_num = i + 1;
+		// The local player
+		if (NetworkAddresses->IsPlayerLocal(i)) {
+			Players[i].type = EGGPOPlayerType::LOCAL;
+			UE_LOG(LogTemp, Warning, TEXT("Player %d is LOCAL"), i)
+		}
+		else {
+			Players[i].type = EGGPOPlayerType::REMOTE;
+			Players[i].u.remote.port = (uint16)NetworkAddresses->GetAddress(i)->GetPort();
+			NetworkAddresses->GetAddress(i)->GetIpAddress(Players[i].u.remote.ip_address);
+			UE_LOG(LogTemp, Warning, TEXT("Player %d is REMOTE"), i)
+		}
+	}
 
     ConfigureGGPO(LocalPort, NumPlayers, Players);
 

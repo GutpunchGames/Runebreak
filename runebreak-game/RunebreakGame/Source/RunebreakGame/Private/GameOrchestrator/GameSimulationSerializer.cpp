@@ -1,9 +1,6 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
+#include "GameOrchestrator/GameSimulationSerializer.h"
 #include "GameOrchestrator/RBGameSimulation.h"
 #include "GameOrchestrator/Checksum.h"
-#include "GameOrchestrator/GameSimulationSerializer.h"
 
 bool GameSimulationSerializer::Serialize(URBGameSimulation* Simulation, unsigned char** buffer, int32* len, int32* checksum) {
     Size = 0;
@@ -70,6 +67,11 @@ void GameSimulationSerializer::WriteBytes(void* Bytes, int32 NumBytes) {
     Size += NumBytes;
 }
 
+template <typename T> void GameSimulationSerializer::WriteClass(TSubclassOf<T> Class) {
+    memcpy(Buffer + Size, &Class, sizeof(Class));
+    Size += sizeof(Class);
+}
+
 void GameSimulationDeserializer::ReadInt(int32* Destination) {
     memcpy(Destination, Buffer + Cursor, sizeof(int32));
     Cursor += sizeof(int32);
@@ -78,4 +80,9 @@ void GameSimulationDeserializer::ReadInt(int32* Destination) {
 void GameSimulationDeserializer::ReadBytes(void* Destination, int32 NumBytes) {
     memcpy(Destination, Buffer + Cursor, NumBytes);
     Cursor += NumBytes;
+}
+
+template <typename T> void GameSimulationDeserializer::ReadClass(TSubclassOf<T>* Destination) {
+    memcpy(Destination, Buffer + Cursor, sizeof(TSubclassOf<T>));
+    Cursor += sizeof(TSubclassOf<T>);
 }

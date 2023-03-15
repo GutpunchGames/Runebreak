@@ -19,17 +19,15 @@ bool FPlayerSerializationTest::RunTest(FString const& Parameters) {
 	Player->State.PlayerIndex = 0;
 
 	GameSimulationSerializer Serializer;
-
 	Player->SerializeToBuffer(&Serializer);
+	GameSimulationDeserializer Deserializer;
+	Deserializer.Buffer = Serializer.Buffer;
+	Player2->DeserializeFromBuffer(&Deserializer);
 
-	//int32 BytesRead = 0;
-	//Player2->DeserializeFromBuffer(Serializer.Buffer, &BytesRead);
-
-	//TestEqual("Player id deserialized", Player2->Id, 5);
-	//TestTrue("Player state deserialized", Player->State == Player2->State);
+	TestEqual("Player id deserialized", Player2->Id, 5);
+	TestTrue("Player state deserialized", Player->State == Player2->State);
 
 	Player->RemoveFromRoot();
 	Player2->RemoveFromRoot();
 	return true;
 }
-

@@ -22,12 +22,13 @@ void ALocalGameOrchestrator::Init()
 
     Simulation = NewObject<URBGameSimulation>(this, "Simulation");
 
-    UE_LOG(LogTemp, Warning, TEXT("BeginPlay"))
+    UE_LOG(LogTemp, Warning, TEXT("LocalGameOrchestrator Init() START"))
 
 	// Initialize the game state
 	Simulation->Init();
     ActorSync();
 	OnSessionStarted();
+    UE_LOG(LogTemp, Warning, TEXT("LocalGameOrchestrator Init() END"))
 }
 
 // Called every frame

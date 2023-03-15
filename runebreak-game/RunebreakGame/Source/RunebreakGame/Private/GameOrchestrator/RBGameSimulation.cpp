@@ -32,7 +32,6 @@ bool URBGameSimulation::Save(unsigned char** buffer, int32* len, int32* checksum
 
 bool URBGameSimulation::Load(unsigned char* buffer, int32 len)
 {
-    GameSimulationDeserializer Deserializer;
     return Deserializer.Deserialize(this, buffer, len);
 }
 

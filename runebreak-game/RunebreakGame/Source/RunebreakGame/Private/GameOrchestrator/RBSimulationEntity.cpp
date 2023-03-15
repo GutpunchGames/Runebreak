@@ -9,12 +9,12 @@ void USimulationEntity::InitDefaults() {
 
 void USimulationEntity::SerializeToBuffer(GameSimulationSerializer* Serializer) {
     Serializer->WriteInt(Id);
-    Serializer->WriteBytes(&EntityClass, sizeof(EntityClass));
-    Serializer->WriteBytes(&ActorClass, sizeof(ActorClass));
+    Serializer->WriteClass<USimulationEntity>(EntityClass);
+    Serializer->WriteClass<ASimulationActor>(ActorClass);
 }
 
 void USimulationEntity::DeserializeFromBuffer(GameSimulationDeserializer* Deserializer) {
     Deserializer->ReadInt(&Id);
-    Deserializer->ReadBytes(&EntityClass, sizeof(EntityClass));
-    Deserializer->ReadBytes(&ActorClass, sizeof(ActorClass));
+    Deserializer->ReadClass<USimulationEntity>(&EntityClass);
+    Deserializer->ReadClass<ASimulationActor>(&ActorClass);
 }
