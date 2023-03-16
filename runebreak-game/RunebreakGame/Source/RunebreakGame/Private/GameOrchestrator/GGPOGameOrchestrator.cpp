@@ -223,7 +223,9 @@ bool AGGPOGameOrchestrator::save_game_state_callback(unsigned char** buffer, int
 
 bool AGGPOGameOrchestrator::load_game_state_callback(unsigned char* buffer, int32 len)
 {
-    return Simulation->Load(buffer, len);
+    Simulation->Load(buffer, len);
+	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2, FColor::Blue, FString::Printf(TEXT("Rolled back to frame: %d"), Simulation->_framenumber));
+    return true;
 }
 
 bool AGGPOGameOrchestrator::log_game_state(char* filename, unsigned char* buffer, int32 len)
@@ -239,6 +241,8 @@ void AGGPOGameOrchestrator::free_buffer(void* buffer)
 bool AGGPOGameOrchestrator::advance_frame_callback(int32) {
     int inputs[2] = { 0 };
     int disconnect_flags;
+
+	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2, FColor::Blue, FString::Printf(TEXT("Synthetic tick of frame: %d"), Simulation->_framenumber));
 
     // Make sure we fetch new inputs from GGPO and use those to update
     // the game state instead of reading from the keyboard.
@@ -275,7 +279,9 @@ bool AGGPOGameOrchestrator::on_event_callback(GGPOEvent* info) {
         ngs.SetConnectState(info->u.disconnected.player, EPlayerConnectState::Disconnected);
         break;
     case GGPO_EVENTCODE_TIMESYNC:
-        RiftCorrectionFrames = info->u.timesync.frames_ahead;
+        // frames_ahead is ACTUALLY ggpo's _recommendation_ of how many frames to wait, which is ALREADY
+        // halved off of the actual "frames ahead".
+        RiftCorrectionFrames = info->u.timesync.frames_ahead + 1;
         break;
     }
     return true;

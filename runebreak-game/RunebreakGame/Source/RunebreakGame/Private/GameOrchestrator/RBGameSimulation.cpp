@@ -32,7 +32,10 @@ bool URBGameSimulation::Save(unsigned char** buffer, int32* len, int32* checksum
 
 bool URBGameSimulation::Load(unsigned char* buffer, int32 len)
 {
-    return Deserializer.Deserialize(this, buffer, len);
+    if (!Deserializer.Deserialize(this, buffer, len)) {
+        UE_LOG(LogTemp, Fatal, TEXT("Failed to load from buffer"))
+    }
+    return true;
 }
 
 USimulationEntity* URBGameSimulation::SpawnEntity(UClass* EntityClassIN) {
