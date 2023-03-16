@@ -66,6 +66,19 @@ public:
 
 	virtual void Init() override;
 
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "GGPO")
+	TArray<FVector2D> GetNetworkGraphData(int32 Index, ENetworkGraphType Type, FVector2D GraphSize, int32 MinY, int32 MaxY);
+
+	/** Gets stats about the network connection. */
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Game State")
+	TArray<FGGPONetworkStats> GetNetworkStats();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Game State")
+	int32 GetFrameRate();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Game State")
+	float GraphValue(int32 Value, FVector2D GraphSize, int32 MinY, int32 MaxY);
+
 protected:
 	/*
 	 * VectorWar_Init --
@@ -98,10 +111,6 @@ protected:
 	 * for its internal bookkeeping.
 	 */
 	void Idle(int32 time);
-
-	/** Gets stats about the network connection. */
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Game State")
-	TArray<FGGPONetworkStats> GetNetworkStats();
 
 	UPROPERTY()
 	bool bSessionStarted;

@@ -105,6 +105,7 @@ void AGGPOGameOrchestrator::Tick(float DeltaTime)
     }
 }
 
+// returns a FGGPONetworkStats struct for each remote player
 TArray<FGGPONetworkStats> AGGPOGameOrchestrator::GetNetworkStats()
 {
     GGPOPlayerHandle RemoteHandles[MAX_PLAYERS];
@@ -356,43 +357,47 @@ void AGGPOGameOrchestrator::TickGameState()
     RunFrame(Input);
     ActorSync();
 
-    // Network data
-    TArray<FGGPONetworkStats> Network = GetNetworkStats();
-    for (int32 i = 0; i < NetworkGraphData.Num(); i++)
+    if (!IsSyncTest)
     {
-        TArray<FNetworkGraphData>* PlayerData = &NetworkGraphData[i].PlayerData;
+		// Network data
+		TArray<FGGPONetworkStats> Network = GetNetworkStats();
+		for (int32 i = 0; i < NetworkGraphData.Num(); i++)
+		{
+			TArray<FNetworkGraphData>* PlayerData = &NetworkGraphData[i].PlayerData;
 
-        int32 Fairness;
-        int32 LocalFairness = Network[i].timesync.local_frames_behind;
-        int32 RemoteFairness = Network[i].timesync.remote_frames_behind;
-        int32 Ping = Network[i].network.ping;
+			int32 Fairness;
+			int32 LocalFairness = Network[i].timesync.local_frames_behind;
+			int32 RemoteFairness = Network[i].timesync.remote_frames_behind;
+			int32 Ping = Network[i].network.ping;
 
-        if (LocalFairness < 0 && RemoteFairness < 0) {
-            /*
-             * Both think it's unfair (which, ironically, is fair).  Scale both and subtrace.
-             */
-            Fairness = abs(abs(LocalFairness) - abs(RemoteFairness));
-        }
-        else if (LocalFairness > 0 && RemoteFairness > 0) {
-            /*
-             * Impossible!  Unless the network has negative transmit time.  Odd....
-             */
-            Fairness = 0;
-        }
-        else {
-            /*
-             * They disagree.  Add.
-             */
-            Fairness = abs(LocalFairness) + abs(RemoteFairness);
-        }
+			if (LocalFairness < 0 && RemoteFairness < 0) {
+				/*
+				 * Both think it's unfair (which, ironically, is fair).  Scale both and subtract.
+				 */
+				Fairness = abs(abs(LocalFairness) - abs(RemoteFairness));
+			}
+			else if (LocalFairness > 0 && RemoteFairness > 0) {
+				/*
+				 * Impossible!  Unless the network has negative transmit time.  Odd....
+				 */
+				Fairness = 0;
+			}
+			else {
+				/*
+				 * They disagree.  Add.
+				 */
+				Fairness = abs(LocalFairness) + abs(RemoteFairness);
+			}
 
-        FNetworkGraphData GraphData = FNetworkGraphData{ Fairness, RemoteFairness, Ping };
-        PlayerData->Add(GraphData);
+			FNetworkGraphData GraphData = FNetworkGraphData{ Fairness, RemoteFairness, Ping };
+			PlayerData->Add(GraphData);
 
-        while (PlayerData->Num() > NETWORK_GRAPH_STEPS)
-        {
-            PlayerData->RemoveAt(0);
-        }
+			// limit to a max of NETWORK_GRAPH_STEPS
+			while (PlayerData->Num() > NETWORK_GRAPH_STEPS)
+			{
+				PlayerData->RemoveAt(0);
+			}
+		}
     }
 }
 
@@ -443,6 +448,58 @@ int32 AGGPOGameOrchestrator::GetLocalInputs() {
         UE_LOG(LogTemp, Warning, TEXT("Failed to get input"))
 		return 0;
     }
+}
+
+TArray<FVector2D> AGGPOGameOrchestrator::GetNetworkGraphData(int32 Index, ENetworkGraphType Type, FVector2D GraphSize, int32 MinY, int32 MaxY)
+{
+    TArray<FVector2D> Result = TArray<FVector2D>();
+
+    // Return an empty array if there's no entry for this index
+    if (Index >= NetworkGraphData.Num())
+        return Result;
+
+    TArray<FNetworkGraphData> PlayerData = NetworkGraphData[Index].PlayerData;
+    for (int32 i = 0; i < PlayerData.Num(); i++)
+    {
+        int32 IntValue = 0;
+        switch (Type)
+        {
+        case ENetworkGraphType::PING:
+            IntValue = PlayerData[i].Ping;
+            break;
+        case ENetworkGraphType::SYNC:
+            IntValue = PlayerData[i].Fairness;
+            break;
+        case ENetworkGraphType::REMOTE_SYNC:
+            IntValue = PlayerData[i].RemoteFairness;
+            break;
+        }
+
+        float Value = GraphValue(IntValue, GraphSize, MinY, MaxY);
+        float X = (i * (GraphSize.X - 1)) / NETWORK_GRAPH_STEPS;
+        Result.Add(FVector2D(X, Value));
+    }
+
+    return Result;
+}
+
+float AGGPOGameOrchestrator::GraphValue(int32 Value, FVector2D GraphSize, int32 MinY, int32 MaxY)
+{
+    float Result = 0.f;
+
+    int32 DiffY = MaxY - MinY;
+    if (DiffY > 0)
+    {
+        int32 IntValue = FMath::Clamp(Value - MinY, 0, DiffY);
+        Result = IntValue / (float)DiffY;
+        Result = (1.f - Result) * (GraphSize.Y - 1);
+    }
+
+    return Result;
+}
+
+int32 AGGPOGameOrchestrator::GetFrameRate() {
+    return FRAME_RATE;
 }
 
 // UE4: disallow windows platform types
