@@ -17,6 +17,10 @@
 #define FRAME_RATE 60
 #define ONE_FRAME (1.0f / FRAME_RATE)
 
+static void LogGGPOMessage(FString Message, FColor Color = FColor::Blue) {
+    GEngine->AddOnScreenDebugMessage(-1, 5, Color, *Message);
+}
+
 // Sets default values
 AGGPOGameOrchestrator::AGGPOGameOrchestrator()
 {
@@ -242,7 +246,7 @@ bool AGGPOGameOrchestrator::advance_frame_callback(int32) {
     int inputs[2] = { 0 };
     int disconnect_flags;
 
-	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2, FColor::Blue, FString::Printf(TEXT("Synthetic tick of frame: %d"), Simulation->_framenumber));
+    LogGGPOMessage(FString::Printf(TEXT("Synthetic tick of frame: %d"), Simulation->_framenumber), FColor::Blue);
 
     // Make sure we fetch new inputs from GGPO and use those to update
     // the game state instead of reading from the keyboard.
@@ -256,27 +260,34 @@ bool AGGPOGameOrchestrator::on_event_callback(GGPOEvent* info) {
     switch (info->code) {
     case GGPO_EVENTCODE_CONNECTED_TO_PEER:
         ngs.SetConnectState(info->u.connected.player, EPlayerConnectState::Synchronizing);
+		LogGGPOMessage(FString::Printf(TEXT("Connected to peer: %d"), info->u.connected.player));
         break;
     case GGPO_EVENTCODE_SYNCHRONIZING_WITH_PEER:
         progress = 100 * info->u.synchronizing.count / info->u.synchronizing.total;
         ngs.UpdateConnectProgress(info->u.synchronizing.player, progress);
+		LogGGPOMessage(FString::Printf(TEXT("Synchronizing with peer: %d"), info->u.synchronizing.player));
         break;
     case GGPO_EVENTCODE_SYNCHRONIZED_WITH_PEER:
         ngs.UpdateConnectProgress(info->u.synchronized.player, 100);
+		LogGGPOMessage(FString::Printf(TEXT("Synchronized with peer: %d"), info->u.synchronized.player));
         break;
     case GGPO_EVENTCODE_RUNNING:
         ngs.SetConnectState(EPlayerConnectState::Running);
+		LogGGPOMessage(TEXT("Running"));
         break;
     case GGPO_EVENTCODE_CONNECTION_INTERRUPTED:
         ngs.SetDisconnectTimeout(info->u.connection_interrupted.player,
             timeGetTime(),
             info->u.connection_interrupted.disconnect_timeout);
+		LogGGPOMessage(TEXT("TIMEOUT"), FColor::Red);
         break;
     case GGPO_EVENTCODE_CONNECTION_RESUMED:
         ngs.SetConnectState(info->u.connection_resumed.player, EPlayerConnectState::Running);
+		LogGGPOMessage(TEXT("Connection Resumed"), FColor::Red);
         break;
     case GGPO_EVENTCODE_DISCONNECTED_FROM_PEER:
         ngs.SetConnectState(info->u.disconnected.player, EPlayerConnectState::Disconnected);
+		LogGGPOMessage(FString::Printf(TEXT("DISCONNECTED FROM PEER: %d"), info->u.disconnected.player), FColor::Red);
         break;
     case GGPO_EVENTCODE_TIMESYNC:
         // frames_ahead is ACTUALLY ggpo's _recommendation_ of how many frames to wait, which is ALREADY
