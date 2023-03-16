@@ -116,6 +116,8 @@ private:
 	/** Gets the inputs from the local player. */
 	int32 GetLocalInputs();
 
+	int32 RiftCorrectionFrames = 0;
+
 	/*
 	 * The begin game callback.  We don't need to do anything special here,
 	 * so just return true.

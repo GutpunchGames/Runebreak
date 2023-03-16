@@ -13,8 +13,8 @@
 
 #define FRAME_WINDOW_SIZE           40
 #define MIN_UNIQUE_FRAMES           10
-#define MIN_FRAME_ADVANTAGE          3
-#define MAX_FRAME_ADVANTAGE          9
+#define MIN_FRAME_ADVANTAGE          2
+#define MAX_FRAME_ADVANTAGE          3
 
 class TimeSync {
 public:

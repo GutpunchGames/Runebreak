@@ -275,7 +275,7 @@ bool AGGPOGameOrchestrator::on_event_callback(GGPOEvent* info) {
         ngs.SetConnectState(info->u.disconnected.player, EPlayerConnectState::Disconnected);
         break;
     case GGPO_EVENTCODE_TIMESYNC:
-        Sleep(1000 * info->u.timesync.frames_ahead / 60);
+        RiftCorrectionFrames = info->u.timesync.frames_ahead;
         break;
     }
     return true;
@@ -329,6 +329,12 @@ void AGGPOGameOrchestrator::Idle(int32 time)
 
 void AGGPOGameOrchestrator::TickGameState()
 {
+    if (RiftCorrectionFrames > 0) {
+        GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Yellow, TEXT("Skipping frame to correct rift"));
+        RiftCorrectionFrames--;
+        return;
+    }
+
     int32 Input = GetLocalInputs();
     RunFrame(Input);
     ActorSync();
