@@ -6,6 +6,14 @@
 #include "GameOrchestrator/RBSimulationEntity.h"
 #include "RBPlayer.generated.h"
 
+UCLASS(Blueprintable)
+class RUNEBREAKGAME_API UPlayerState_Idle : public UEntityState {
+	GENERATED_BODY()
+
+public:
+	virtual void TickState(USimulationEntity* Owner, URBGameSimulation* Simulation) override;
+};
+
 USTRUCT(BlueprintType)
 struct FRBPlayerState {
 	GENERATED_BODY()
@@ -46,6 +54,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FRBPlayerState State;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UPlayerState_Idle> IdleState;
 
 	UFUNCTION(BlueprintCallable)
 	void Initialize(int32 PlayerIndex);

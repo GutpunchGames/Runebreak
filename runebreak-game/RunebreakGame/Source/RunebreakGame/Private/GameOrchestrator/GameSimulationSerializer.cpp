@@ -72,6 +72,11 @@ template <typename T> void GameSimulationSerializer::WriteClass(TSubclassOf<T> C
     Size += sizeof(Class);
 }
 
+void GameSimulationSerializer::WriteRawClass(UClass Class) {
+    memcpy(Buffer + Size, &Class, sizeof(Class));
+    Size += sizeof(Class);
+}
+
 void GameSimulationDeserializer::ReadInt(int32* Destination) {
     memcpy(Destination, Buffer + Cursor, sizeof(int32));
     Cursor += sizeof(int32);
@@ -80,6 +85,11 @@ void GameSimulationDeserializer::ReadInt(int32* Destination) {
 void GameSimulationDeserializer::ReadBytes(void* Destination, int32 NumBytes) {
     memcpy(Destination, Buffer + Cursor, NumBytes);
     Cursor += NumBytes;
+}
+
+void GameSimulationDeserializer::ReadRawClass(UClass* Destination) {
+    memcpy(Destination, Buffer + Cursor, sizeof(UClass));
+    Cursor += sizeof(UClass);
 }
 
 template <typename T> void GameSimulationDeserializer::ReadClass(TSubclassOf<T>* Destination) {
