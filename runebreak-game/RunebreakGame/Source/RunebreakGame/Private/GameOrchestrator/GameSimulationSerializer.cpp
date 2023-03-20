@@ -72,6 +72,14 @@ template <typename T> void GameSimulationSerializer::WriteClass(TSubclassOf<T> C
     Size += sizeof(Class);
 }
 
+void GameSimulationSerializer::WriteString(FString& Value) {
+    uint8 OutBytes[32];
+    int32 NumBytes = StringToBytes(Value, OutBytes, 32);
+    UE_LOG(LogTemp, Warning, TEXT("Writing string with length: %d"), NumBytes)
+    WriteInt(NumBytes);
+	WriteBytes(OutBytes, NumBytes);
+}
+
 void GameSimulationSerializer::WriteRawClass(UClass Class) {
     memcpy(Buffer + Size, &Class, sizeof(Class));
     Size += sizeof(Class);
@@ -95,4 +103,12 @@ void GameSimulationDeserializer::ReadRawClass(UClass* Destination) {
 template <typename T> void GameSimulationDeserializer::ReadClass(TSubclassOf<T>* Destination) {
     memcpy(Destination, Buffer + Cursor, sizeof(TSubclassOf<T>));
     Cursor += sizeof(TSubclassOf<T>);
+}
+
+FString GameSimulationDeserializer::ReadString() {
+    int32 NumBytes;
+    ReadInt(&NumBytes);
+    ReadBytes(ReadBuffer, NumBytes);
+    FString Result = BytesToString(ReadBuffer, NumBytes);
+	return Result;
 }

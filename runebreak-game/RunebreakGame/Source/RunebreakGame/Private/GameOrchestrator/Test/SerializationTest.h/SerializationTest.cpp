@@ -31,3 +31,66 @@ bool FPlayerSerializationTest::RunTest(FString const& Parameters) {
 	Player2->RemoveFromRoot();
 	return true;
 }
+
+bool FStringSerializationTest::RunTest(FString const& Parameters) {
+	return true;
+}
+
+bool FStringSerializationTest2::RunTest(FString const& Parameters) {
+	return true;
+}
+
+bool FStringSerializationTest3::RunTest(FString const& Parameters) {
+	FString Value = "Test";
+	GameSimulationSerializer Serializer;
+	Serializer.WriteString(Value);
+	GameSimulationDeserializer Deserializer;
+	Deserializer.Buffer = Serializer.Buffer;
+	FString OutValue = Deserializer.ReadString();
+	TestEqual("Got correct value", OutValue, "Test");
+	return true;
+}
+
+bool FStringSerializationTest4::RunTest(FString const& Parameters) {
+	FString Value = "Poop";
+	GameSimulationSerializer Serializer;
+	Serializer.WriteString(Value);
+	GameSimulationDeserializer Deserializer;
+	Deserializer.Buffer = Serializer.Buffer;
+	FString OutValue = Deserializer.ReadString();
+	TestEqual("Got correct value", OutValue, "Poop");
+	return true;
+}
+
+bool FStringSerializationTest5::RunTest(FString const& Parameters) {
+	FString Value = "Poop";
+	GameSimulationSerializer Serializer;
+	Serializer.WriteString(Value);
+	GameSimulationDeserializer Deserializer;
+	Deserializer.Buffer = Serializer.Buffer;
+	FString OutValue = Deserializer.ReadString();
+	TestEqual("Got correct value", OutValue, "Poop");
+	return true;
+}
+
+bool FStringSerializationTest6::RunTest(FString const& Parameters) {
+	FString Value = "Poop";
+	GameSimulationSerializer Serializer;
+	Serializer.WriteString(Value);
+	GameSimulationDeserializer Deserializer;
+	Deserializer.Buffer = Serializer.Buffer;
+	FString OutValue = Deserializer.ReadString();
+	TestEqual("Got correct value", OutValue, "Poop");
+	return true;
+}
+
+bool FStringSerializationTest7::RunTest(FString const& Parameters) {
+	FString Value = "Poop";
+	GameSimulationSerializer Serializer;
+	Serializer.WriteString(Value);
+	GameSimulationDeserializer Deserializer;
+	Deserializer.Buffer = Serializer.Buffer;
+	FString OutValue = Deserializer.ReadString();
+	TestEqual("Got correct value", OutValue, "Poop");
+	return true;
+}

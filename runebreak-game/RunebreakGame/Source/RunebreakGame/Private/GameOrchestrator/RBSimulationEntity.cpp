@@ -15,7 +15,9 @@ void USimulationEntity::SerializeToBuffer(GameSimulationSerializer* Serializer) 
     Serializer->WriteInt(Id);
     Serializer->WriteClass<USimulationEntity>(EntityClass);
     Serializer->WriteClass<ASimulationActor>(ActorClass);
-    Serializer->WriteBytes(&(StateMachine->GetState()->Name), 8);
+    FString StateName = StateMachine->GetState()->Name;
+    UE_LOG(LogTemp, Warning, TEXT("Writing StateName: %s"), *StateName)
+    Serializer->WriteString(StateName);
     Serializer->WriteInt(StateMachine->GetState()->Frame);
 }
 
@@ -23,10 +25,10 @@ void USimulationEntity::DeserializeFromBuffer(GameSimulationDeserializer* Deseri
     Deserializer->ReadInt(&Id);
     Deserializer->ReadClass<USimulationEntity>(&EntityClass);
     Deserializer->ReadClass<ASimulationActor>(&ActorClass);
-    FString StateName("", 8);
     int32 StateFrame;
-    Deserializer->ReadBytes(&StateName, 8);
+    FString StateName = Deserializer->ReadString();
     Deserializer->ReadInt(&StateFrame);
 
+    UE_LOG(LogTemp, Warning, TEXT("Deserialize Checkpoint. Name: %s -- Frame: %d"), *StateName, StateFrame)
     StateMachine->SkipToStateByName(StateName, StateFrame);
 }

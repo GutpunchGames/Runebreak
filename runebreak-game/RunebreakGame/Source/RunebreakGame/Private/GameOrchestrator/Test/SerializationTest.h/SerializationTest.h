@@ -1,1 +1,8 @@
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPlayerSerializationTest, "Serialization.Player", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FStringSerializationTest, "Serialization.String", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FStringSerializationTest2, "Serialization.String2", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FStringSerializationTest3, "Serialization.String3", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FStringSerializationTest4, "Serialization.String4", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FStringSerializationTest5, "Serialization.String5", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FStringSerializationTest6, "Serialization.String6", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FStringSerializationTest7, "Serialization.String7", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter)

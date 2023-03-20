@@ -47,6 +47,8 @@ class URBPlayer : public USimulationEntity
 GENERATED_BODY()
 
 public:
+	URBPlayer();
+
 	virtual void Act(URBGameSimulation* Simulation) override;
 
 	virtual void SerializeToBuffer(GameSimulationSerializer* Serializer);
