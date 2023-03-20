@@ -57,9 +57,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FRBPlayerState State;
 
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UPlayerState_Idle> IdleState;
-
 	UFUNCTION(BlueprintCallable)
 	void Initialize(int32 PlayerIndex);
 };

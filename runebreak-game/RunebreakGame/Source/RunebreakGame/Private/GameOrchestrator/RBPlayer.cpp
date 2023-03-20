@@ -17,7 +17,7 @@ void UPlayerState_Idle::TickState(USimulationEntity* Owner, URBGameSimulation* S
     int Inputs = Simulation->_inputs[State->PlayerIndex];
     int MoveUp = Inputs & INPUT_MOVE_UP;
     int MoveDown = Inputs & INPUT_MOVE_DOWN;
-    int Shoot = 0;//Inputs & INPUT_SHOOT;
+    int Shoot = Inputs & INPUT_SHOOT;
     if (MoveUp) {
 		State->Position.y = State->Position.y + State->MoveSpeed;
     }

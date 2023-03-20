@@ -5,6 +5,14 @@
 #include "GameOrchestrator/GameSimulationSerializer.h"
 #include "SelfDestructiveEntity.generated.h"
 
+UCLASS(Blueprintable)
+class RUNEBREAKGAME_API USelfDestructiveEntity_Move : public UEntityState {
+	GENERATED_BODY()
+
+public:
+	virtual void TickState(USimulationEntity* Owner, URBGameSimulation* Simulation) override;
+};
+
 USTRUCT(BlueprintType)
 struct FSelfDestructiveEntityState {
 	GENERATED_BODY()
@@ -37,6 +45,7 @@ class RUNEBREAKGAME_API USelfDestructiveEntity : public USimulationEntity
 GENERATED_BODY()
 
 public:
+	USelfDestructiveEntity();
 	virtual void InitDefaults() override;
 	virtual void Act(URBGameSimulation* Simulation) override;
 	virtual void SerializeToBuffer(GameSimulationSerializer* Serializer) override;
