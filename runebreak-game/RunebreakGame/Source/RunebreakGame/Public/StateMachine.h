@@ -27,9 +27,12 @@ class RUNEBREAKGAME_API UEntityStateMachine : public UObject
 
 protected:
 	UPROPERTY()
-	UEntityState* CurrentState;
+	UEntityState* CurrentState = nullptr;
 
 public:
+
+	UEntityStateMachine();
+
 	UFUNCTION()
 	void AddState(FString Name, UEntityState* State);
 

@@ -1,5 +1,8 @@
 #include "StateMachine.h"
 
+UEntityStateMachine::UEntityStateMachine() {
+}
+
 void UEntityState::TickState(USimulationEntity* Owner, URBGameSimulation* Simulation) {
 	UE_LOG(LogTemp, Warning, TEXT("ticking state"))
 	Frame++;
@@ -10,17 +13,11 @@ UEntityState* UEntityStateMachine::GetState() {
 }
 
 void UEntityStateMachine::AddState(FString Name, UEntityState* State) {
-	UE_LOG(LogTemp, Warning, TEXT("checkpoint 1"))
-	UE_LOG(LogTemp, Warning, TEXT("setting state name: %s"), *Name)
 	State->Name = Name;
-	UE_LOG(LogTemp, Warning, TEXT("checkpoint 2"))
-	UE_LOG(LogTemp, Warning, TEXT("states num: %d"), States.Num())
 	States.Add(Name, State);
-	UE_LOG(LogTemp, Warning, TEXT("checkpoint 3"))
-	if (States.Num() == 1) {
+	if (!CurrentState) {
 		CurrentState = State;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("checkpoint 4"))
 }
 
 void UEntityStateMachine::TransitionToState(UEntityState* State) {

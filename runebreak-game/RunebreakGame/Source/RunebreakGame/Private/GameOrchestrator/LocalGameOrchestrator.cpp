@@ -42,7 +42,6 @@ void ALocalGameOrchestrator::Tick(float DeltaTime)
 
     ElapsedTime += DeltaTime;
 
-    int32 IdleMs = (int32)(ONE_FRAME - (int32)(ElapsedTime * 1000));
     while (ElapsedTime >= ONE_FRAME) {
         TickGameState();
         ElapsedTime -= ONE_FRAME;

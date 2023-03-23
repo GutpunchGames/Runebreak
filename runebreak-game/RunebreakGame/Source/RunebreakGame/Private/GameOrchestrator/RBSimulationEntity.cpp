@@ -1,7 +1,7 @@
 #include "GameOrchestrator/RBSimulationEntity.h"
 
-USimulationEntity::USimulationEntity() {
-    StateMachine = CreateDefaultSubobject<UEntityStateMachine>(FName("EntityStateMachine"));
+void USimulationEntity::SetupStates() {
+    StateMachine = NewObject<UEntityStateMachine>(this, FName("EntityStateMachine"));
 }
 
 void USimulationEntity::Act(URBGameSimulation* Simulation) { }

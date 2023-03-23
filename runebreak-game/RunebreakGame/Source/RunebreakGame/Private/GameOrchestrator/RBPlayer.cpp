@@ -1,13 +1,17 @@
 #include "GameOrchestrator/RBPlayer.h"
 
 URBPlayer::URBPlayer() {
-    // Add states
-    StateMachine->AddState("Idle", CreateDefaultSubobject<UPlayerState_Idle>(FName("PlayerIdle")));
 }
 
 void URBPlayer::Initialize(int32 PlayerIndex) {
     State.Position.x = PlayerIndex == 0 ? -100 : 100;
 	State.PlayerIndex = PlayerIndex;
+}
+
+void URBPlayer::SetupStates() {
+    Super::SetupStates();
+	UEntityState* IdleState = NewObject<UPlayerState_Idle>(this, FName("IdleState"));
+    StateMachine->AddState("Idle", IdleState);
 }
 
 void UPlayerState_Idle::TickState(USimulationEntity* Owner, URBGameSimulation* Simulation) {

@@ -1,10 +1,5 @@
 #include "GameOrchestrator/SelfDestructiveEntity.h"
 
-USelfDestructiveEntity::USelfDestructiveEntity() {
-    // Add states
-    StateMachine->AddState("Move", CreateDefaultSubobject<USelfDestructiveEntity_Move>(FName("Move")));
-}
-
 void USelfDestructiveEntity::InitDefaults() {
     State.Position.x = 0;
     State.Position.y = 100;
@@ -12,6 +7,11 @@ void USelfDestructiveEntity::InitDefaults() {
 
     State.MoveSpeed = Defaults.MoveSpeed;
     State.TimeToLive = Defaults.TimeToLive;
+}
+
+void USelfDestructiveEntity::SetupStates() {
+    Super::SetupStates();
+    StateMachine->AddState("Move", NewObject<USelfDestructiveEntity_Move>(this, FName("Move")));
 }
 
 void USelfDestructiveEntity::Act(URBGameSimulation* Simulation) {

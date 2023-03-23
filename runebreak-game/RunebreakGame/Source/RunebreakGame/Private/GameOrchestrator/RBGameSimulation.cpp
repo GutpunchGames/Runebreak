@@ -45,6 +45,7 @@ USimulationEntity* URBGameSimulation::SpawnEntity(UClass* EntityClassIN) {
     Entity->EntityClass = EntityClassIN;
     Entity->Id = Id;
     Entity->InitDefaults();
+    Entity->SetupStates();
 
     AddEntityToSimulation(Entity);
     return Entity;

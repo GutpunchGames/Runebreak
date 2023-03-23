@@ -12,8 +12,6 @@ class USimulationEntity : public UObject {
 	GENERATED_BODY()
 
 public:
-	USimulationEntity();
-
 	UPROPERTY(BlueprintReadOnly)
 	int32 Id;
 
@@ -26,6 +24,7 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	UEntityStateMachine* StateMachine;
 
+	virtual void SetupStates();
 	virtual void InitDefaults();
 	virtual void Act(URBGameSimulation* Simulation);
 	virtual void ResolveCollisions(URBGameSimulation* Simulation);

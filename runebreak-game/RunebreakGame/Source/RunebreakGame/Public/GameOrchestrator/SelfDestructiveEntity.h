@@ -45,7 +45,6 @@ class RUNEBREAKGAME_API USelfDestructiveEntity : public USimulationEntity
 GENERATED_BODY()
 
 public:
-	USelfDestructiveEntity();
 	virtual void InitDefaults() override;
 	virtual void Act(URBGameSimulation* Simulation) override;
 	virtual void SerializeToBuffer(GameSimulationSerializer* Serializer) override;
@@ -56,4 +55,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FSelfDestructiveEntityDefaults Defaults;
+
+	virtual void SetupStates() override;
 };
