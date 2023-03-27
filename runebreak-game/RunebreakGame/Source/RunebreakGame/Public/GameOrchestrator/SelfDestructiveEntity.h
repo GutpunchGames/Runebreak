@@ -10,7 +10,7 @@ class RUNEBREAKGAME_API USelfDestructiveEntity_Move : public UEntityState {
 	GENERATED_BODY()
 
 public:
-	virtual void TickState(USimulationEntity* Owner, URBGameSimulation* Simulation) override;
+	virtual void TickState(USimulationEntity* Owner) override;
 };
 
 USTRUCT(BlueprintType)
@@ -56,5 +56,5 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FSelfDestructiveEntityDefaults Defaults;
 
-	virtual void SetupStates() override;
+	virtual void SetupStates(URBGameSimulation* Simulation) override;
 };

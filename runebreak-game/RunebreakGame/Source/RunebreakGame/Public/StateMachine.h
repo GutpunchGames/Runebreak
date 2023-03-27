@@ -16,8 +16,20 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	int32 Frame = 0;
 
+	UPROPERTY(BlueprintReadOnly)
+	URBGameSimulation* Simulation;
+
 	UFUNCTION()
-	virtual void TickState(USimulationEntity* Owner, URBGameSimulation* Simulation);
+	virtual void BindToSimulation(URBGameSimulation* _Simulation);
+
+	UFUNCTION()
+	virtual void OnTransitionToState(UEntityState* Previous, USimulationEntity* Owner);
+
+	UFUNCTION()
+	virtual void OnEnterState();
+
+	UFUNCTION()
+	virtual void TickState(USimulationEntity* Owner);
 };
 
 UCLASS()
@@ -33,24 +45,30 @@ public:
 
 	UEntityStateMachine();
 
-	UFUNCTION()
-	void AddState(FString Name, UEntityState* State);
+	UPROPERTY(VisibleAnywhere)
+	URBGameSimulation* Simulation;
 
 	UPROPERTY(VisibleAnywhere)
 	TMap<FString, UEntityState*> States;
 
 	UFUNCTION()
+	void AddState(FString Name, UEntityState* State);
+
+	UFUNCTION()
 	UEntityState* GetState();
 
 	UFUNCTION()
-	void TransitionToState(UEntityState* State);
+	void TransitionToState(UEntityState* Previous, UEntityState* Next, USimulationEntity* Owner);
 
 	UFUNCTION()
-	void SkipToStateByName(const FString& StateName, int32 Frame);
+	void TransitionToStateByName(UEntityState* Previous, const FString& StateName, USimulationEntity* Owner);
 
 	UFUNCTION()
 	void SkipToState(UEntityState* State, int32 Frame);
 
 	UFUNCTION()
-	void TickState(USimulationEntity* Owner, URBGameSimulation* Simulation);
+	void SkipToStateByName(const FString& StateName, int32 Frame = 0);
+
+	UFUNCTION()
+	void TickState(USimulationEntity* Owner);
 };

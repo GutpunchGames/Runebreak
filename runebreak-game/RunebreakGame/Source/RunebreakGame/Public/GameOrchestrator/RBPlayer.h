@@ -4,6 +4,8 @@
 #include "GameOrchestrator/RBGameSerialization.h"
 #include "GameOrchestrator/GameSimulationSerializer.h"
 #include "GameOrchestrator/RBSimulationEntity.h"
+#include "GameOrchestrator/RBGameSimulation.h"
+#include "StateMachine.h"
 #include "RBPlayer.generated.h"
 
 UCLASS(Blueprintable)
@@ -11,7 +13,25 @@ class RUNEBREAKGAME_API UPlayerState_Idle : public UEntityState {
 	GENERATED_BODY()
 
 public:
-	void TickState(USimulationEntity* Owner, URBGameSimulation* Simulation) override;
+	void TickState(USimulationEntity* Owner) override;
+};
+
+UCLASS(Blueprintable)
+class RUNEBREAKGAME_API UPlayerState_Walk_Forward : public UEntityState {
+	GENERATED_BODY()
+
+public:
+	void OnTransitionToState(UEntityState* Previous, USimulationEntity* Owner) override;
+	void TickState(USimulationEntity* Owner) override;
+};
+
+UCLASS(Blueprintable)
+class RUNEBREAKGAME_API UPlayerState_Walk_Back : public UEntityState {
+	GENERATED_BODY()
+
+public:
+	void OnTransitionToState(UEntityState* Previous, USimulationEntity* Owner) override;
+	void TickState(USimulationEntity* Owner) override;
 };
 
 USTRUCT(BlueprintType)
@@ -51,7 +71,7 @@ public:
 
 	virtual void Act(URBGameSimulation* Simulation) override;
 
-	virtual void SetupStates() override;
+	virtual void SetupStates(URBGameSimulation* Simulation) override;
 	virtual void SerializeToBuffer(GameSimulationSerializer* Serializer);
 	virtual void DeserializeFromBuffer(GameSimulationDeserializer* Deserializer) override;
 
@@ -64,4 +84,5 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<UPlayerState_Idle> IdleStatePrototype;
 
+	void Move(int32 X, int32 Y);
 };

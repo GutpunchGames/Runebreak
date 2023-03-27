@@ -7,12 +7,12 @@ int32 ARBPlayerController::GetPlayerInput()
         FKey     key;
         int32    input;
     } inputtable[] = {
-       { EKeys::Up,       INPUT_MOVE_UP },
-       { EKeys::Down,     INPUT_MOVE_DOWN },
+       { EKeys::Left,       INPUT_MOVE_LEFT },
+       { EKeys::Right,     INPUT_MOVE_RIGHT },
        { EKeys::A,     INPUT_SHOOT },
     };
-    int32 i, inputs = 0;
 
+    int32 i, inputs = 0;
     for (i = 0; i < sizeof(inputtable) / sizeof(inputtable[0]); i++) {
         if (IsInputKeyDown(inputtable[i].key)) {
             inputs |= inputtable[i].input;

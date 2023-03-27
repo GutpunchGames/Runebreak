@@ -24,7 +24,7 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	UEntityStateMachine* StateMachine;
 
-	virtual void SetupStates();
+	virtual void SetupStates(URBGameSimulation* Simulation);
 	virtual void InitDefaults();
 	virtual void Act(URBGameSimulation* Simulation);
 	virtual void ResolveCollisions(URBGameSimulation* Simulation);

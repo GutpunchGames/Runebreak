@@ -48,7 +48,7 @@ bool GameSimulationDeserializer::Deserialize(URBGameSimulation* Simulation, unsi
         Cursor = EntityBeginningCursor;
 
 		USimulationEntity* Entity = NewObject<USimulationEntity>(Simulation, EntityClass);
-        Entity->SetupStates();
+        Entity->SetupStates(Simulation);
         int32 BytesRead = 0;
 		Entity->DeserializeFromBuffer(this);
         Cursor += BytesRead;

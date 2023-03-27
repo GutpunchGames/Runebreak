@@ -1,7 +1,8 @@
 #include "GameOrchestrator/RBSimulationEntity.h"
 
-void USimulationEntity::SetupStates() {
+void USimulationEntity::SetupStates(URBGameSimulation* Simulation) {
     StateMachine = NewObject<UEntityStateMachine>(this, FName("EntityStateMachine"));
+    StateMachine->Simulation = Simulation;
 }
 
 void USimulationEntity::Act(URBGameSimulation* Simulation) { }
@@ -16,7 +17,6 @@ void USimulationEntity::SerializeToBuffer(GameSimulationSerializer* Serializer) 
     Serializer->WriteClass<USimulationEntity>(EntityClass);
     Serializer->WriteClass<ASimulationActor>(ActorClass);
     FString StateName = StateMachine->GetState()->Name;
-    UE_LOG(LogTemp, Warning, TEXT("Writing StateName: %s"), *StateName)
     Serializer->WriteString(StateName);
     Serializer->WriteInt(StateMachine->GetState()->Frame);
 }
@@ -29,6 +29,5 @@ void USimulationEntity::DeserializeFromBuffer(GameSimulationDeserializer* Deseri
     FString StateName = Deserializer->ReadString();
     Deserializer->ReadInt(&StateFrame);
 
-    UE_LOG(LogTemp, Warning, TEXT("Deserialize Checkpoint. Name: %s -- Frame: %d"), *StateName, StateFrame)
     StateMachine->SkipToStateByName(StateName, StateFrame);
 }

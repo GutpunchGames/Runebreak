@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 
 enum PlayerInputs {
-	INPUT_MOVE_UP = (1 << 0),
-	INPUT_MOVE_DOWN = (1 << 1),
+	INPUT_MOVE_LEFT = (1 << 0),
+	INPUT_MOVE_RIGHT = (1 << 1),
 	INPUT_SHOOT = (1 << 2),
 };
