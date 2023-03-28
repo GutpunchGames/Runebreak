@@ -44,5 +44,7 @@ void ASimulationActor::UpdateLocation() {
 }
 
 void ASimulationActor::UpdateAnimation() {
+	UEntityState* CurrentState = Entity->StateMachine->CurrentState;
+	Animator->SetAnimationForState(CurrentState->Name, CurrentState->Frame);
 }
 

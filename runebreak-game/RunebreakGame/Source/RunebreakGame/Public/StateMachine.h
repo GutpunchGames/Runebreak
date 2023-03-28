@@ -38,8 +38,6 @@ class RUNEBREAKGAME_API UEntityStateMachine : public UObject
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY()
-	UEntityState* CurrentState = nullptr;
 
 public:
 
@@ -71,4 +69,7 @@ public:
 
 	UFUNCTION()
 	void TickState(USimulationEntity* Owner);
+
+	UPROPERTY()
+	UEntityState* CurrentState = nullptr;
 };

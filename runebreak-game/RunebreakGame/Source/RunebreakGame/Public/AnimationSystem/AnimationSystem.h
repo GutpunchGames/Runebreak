@@ -20,4 +20,7 @@ class URBEntityAnimator : public UObject {
 public:
 	UPROPERTY(EditAnywhere)
 	TMap<FString, FRBAnimation> Animations;
+
+	UFUNCTION()
+	void SetAnimationForState(FString StateName, const int32& Frame);
 };
