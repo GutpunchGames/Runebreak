@@ -24,6 +24,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	UEntityStateMachine* StateMachine;
 
+	UPROPERTY(BlueprintReadOnly)
+	FPosition Position;
+
 	virtual void SetupStates(URBGameSimulation* Simulation);
 	virtual void InitDefaults();
 	virtual void Act(URBGameSimulation* Simulation);
@@ -32,5 +35,4 @@ public:
 	virtual void SerializeToBuffer(GameSimulationSerializer* Serializer);
 	virtual void DeserializeFromBuffer(GameSimulationDeserializer* Deserializer);
 };
-
 

@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "GameOrchestrator/RBSimulationEntity.h"
 #include "GameOrchestrator/RBGamePrimitives.h"
+#include "AnimationSystem/AnimationSystem.h"
 #include "SimulationActor.generated.h"
 
 UCLASS()
@@ -32,7 +33,13 @@ public:
 	void UpdateRendering();
 	virtual void UpdateRendering_Implementation();
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<URBEntityAnimator> AnimatorClass;
+
 protected:
 	UPROPERTY(BlueprintReadOnly)
 	USimulationEntity* Entity;
+
+	UPROPERTY()
+	URBEntityAnimator* Animator;
 };

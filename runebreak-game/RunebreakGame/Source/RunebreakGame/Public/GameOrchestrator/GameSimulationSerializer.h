@@ -14,6 +14,7 @@ public:
 public:
 	bool Serialize(URBGameSimulation* Simulation, unsigned char** buffer, int32* len, int32* checksum);
 	void WriteInt(const int32 Value);
+	void WriteFloat(const float Value);
 	void WriteBytes(void* Bytes, int32 Size);
 	void WriteRawClass(UClass Class);
 	void WriteString(FString& Value);
@@ -29,6 +30,7 @@ public:
 public:
 	bool Deserialize(URBGameSimulation* Simulation, unsigned char* buffer, int32 len);
 	void ReadInt(int32* Destination);
+	void ReadFloat(float* Destination);
 	void ReadBytes(void* Destination, int32 NumBytes);
 	template <typename T> void ReadClass(TSubclassOf<T>* Destination);
 	void ReadRawClass(UClass* Destination);

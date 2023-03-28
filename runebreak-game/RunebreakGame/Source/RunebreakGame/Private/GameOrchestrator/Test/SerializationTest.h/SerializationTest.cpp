@@ -14,8 +14,8 @@ bool FPlayerSerializationTest::RunTest(FString const& Parameters) {
 	Player->EntityClass = URBPlayer::StaticClass();
 
 	Player->State.MoveSpeed = 20;
-	Player->State.Position.x = 150;
-	Player->State.Position.y = 300;
+	Player->Position.x = 150;
+	Player->Position.y = 300;
 	Player->State.PlayerIndex = 0;
 
 	GameSimulationSerializer Serializer;

@@ -8,14 +8,13 @@ ASimulationActor::ASimulationActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 // Called when the game starts or when spawned
 void ASimulationActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	Animator = NewObject<URBEntityAnimator>(this, AnimatorClass, FName("Animator"));
 }
 
 // Called every frame
@@ -34,5 +33,8 @@ void ASimulationActor::UnbindEntity() {
 }
 
 void ASimulationActor::UpdateRendering_Implementation() {
-	UE_LOG(LogTemp, Warning, TEXT("UpdateRendering_Implementation)"))
+	// update position
+	FVector Location;
+	Location.Set(0, Entity->Position.x, Entity->Position.y);
+	SetActorLocation(Location);
 }

@@ -19,6 +19,8 @@ void USimulationEntity::SerializeToBuffer(GameSimulationSerializer* Serializer) 
     FString StateName = StateMachine->GetState()->Name;
     Serializer->WriteString(StateName);
     Serializer->WriteInt(StateMachine->GetState()->Frame);
+    Serializer->WriteFloat(Position.x);
+    Serializer->WriteFloat(Position.y);
 }
 
 void USimulationEntity::DeserializeFromBuffer(GameSimulationDeserializer* Deserializer) {
@@ -30,4 +32,6 @@ void USimulationEntity::DeserializeFromBuffer(GameSimulationDeserializer* Deseri
     Deserializer->ReadInt(&StateFrame);
 
     StateMachine->SkipToStateByName(StateName, StateFrame);
+    Deserializer->ReadFloat(&(Position.x));
+    Deserializer->ReadFloat(&(Position.y));
 }

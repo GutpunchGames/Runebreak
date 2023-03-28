@@ -39,8 +39,6 @@ struct FRBPlayerState {
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadOnly)
-	FPosition Position;
-	UPROPERTY(BlueprintReadOnly)
 	int32 PlayerIndex;
 	UPROPERTY(BlueprintReadOnly)
 	int32 FireballCooldown = 0;
@@ -52,9 +50,7 @@ struct FRBPlayerState {
 
 	inline bool operator==(const FRBPlayerState& Other)
 	{
-		return Position.x == Other.Position.x
-			&& Position.y == Other.Position.y
-			&& PlayerIndex == Other.PlayerIndex
+		return PlayerIndex == Other.PlayerIndex
 			&& MoveSpeed == Other.MoveSpeed
 			&& FireballCooldown == Other.FireballCooldown;
 	}

@@ -63,6 +63,11 @@ void GameSimulationSerializer::WriteInt(const int32 Value) {
     Size += sizeof(Value);
 }
 
+void GameSimulationSerializer::WriteFloat(const float Value) {
+    memcpy(Buffer + Size, &Value, sizeof(Value));
+    Size += sizeof(Value);
+}
+
 void GameSimulationSerializer::WriteBytes(void* Bytes, int32 NumBytes) {
     memcpy(Buffer + Size, Bytes, NumBytes);
     Size += NumBytes;
@@ -89,6 +94,11 @@ void GameSimulationSerializer::WriteRawClass(UClass Class) {
 void GameSimulationDeserializer::ReadInt(int32* Destination) {
     memcpy(Destination, Buffer + Cursor, sizeof(int32));
     Cursor += sizeof(int32);
+}
+
+void GameSimulationDeserializer::ReadFloat(float* Destination) {
+    memcpy(Destination, Buffer + Cursor, sizeof(float));
+    Cursor += sizeof(float);
 }
 
 void GameSimulationDeserializer::ReadBytes(void* Destination, int32 NumBytes) {

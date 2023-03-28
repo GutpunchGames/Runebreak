@@ -5,7 +5,7 @@ URBPlayer::URBPlayer() {
 }
 
 void URBPlayer::Initialize(int32 PlayerIndex) {
-    State.Position.x = PlayerIndex == 0 ? -100 : 100;
+    Position.x = PlayerIndex == 0 ? -100 : 100;
 	State.PlayerIndex = PlayerIndex;
 }
 
@@ -24,8 +24,10 @@ void URBPlayer::SetupStates(URBGameSimulation* Simulation) {
 
 void UPlayerState_Idle::TickState(USimulationEntity* Owner) {
     Super::TickState(Owner);
+
     URBPlayer* Player = Cast<URBPlayer>(Owner);
     FRBPlayerState* State = &(Player->State);
+
     int Inputs = Simulation->_inputs[State->PlayerIndex];
     int MoveUp = Inputs & INPUT_MOVE_RIGHT;
     int MoveDown = Inputs & INPUT_MOVE_LEFT;
@@ -113,8 +115,8 @@ void URBPlayer::Act(URBGameSimulation* Simulation) {
 }
 
 void URBPlayer::Move(int32 X, int32 Y) {
-	State.Position.x = State.Position.x + X;
-	State.Position.y = State.Position.y + Y;
+	Position.x = Position.x + X;
+	Position.y = Position.y + Y;
 }
 
 void URBPlayer::SerializeToBuffer(GameSimulationSerializer* Serializer) {
