@@ -79,6 +79,4 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<UPlayerState_Idle> IdleStatePrototype;
-
-	void Move(int32 X, int32 Y);
 };

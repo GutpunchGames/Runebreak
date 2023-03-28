@@ -34,5 +34,7 @@ public:
 
 	virtual void SerializeToBuffer(GameSimulationSerializer* Serializer);
 	virtual void DeserializeFromBuffer(GameSimulationDeserializer* Deserializer);
+
+	virtual void Move(const int32& X, const int32& Y);
 };
 

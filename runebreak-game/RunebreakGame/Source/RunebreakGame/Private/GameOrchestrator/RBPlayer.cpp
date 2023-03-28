@@ -68,14 +68,14 @@ void UPlayerState_Walk_Forward::TickState(USimulationEntity* Owner) {
     URBPlayer* Player = Cast<URBPlayer>(Owner);
     FRBPlayerState* State = &(Player->State);
     int Inputs = Simulation->_inputs[State->PlayerIndex];
-    int MoveUp = Inputs & INPUT_MOVE_RIGHT;
-    int MoveDown = Inputs & INPUT_MOVE_LEFT;
+    int MoveRight = Inputs & INPUT_MOVE_RIGHT;
+    int MoveLeft = Inputs & INPUT_MOVE_LEFT;
 
-    if (MoveDown) {
+    if (MoveLeft) {
         Owner->StateMachine->TransitionToStateByName(this, "WalkBack", Owner);
         return;
     }
-    else if (!MoveUp) {
+    else if (!MoveRight) {
         Owner->StateMachine->TransitionToStateByName(this, "Idle", Owner);
         return;
     }
@@ -97,13 +97,13 @@ void UPlayerState_Walk_Back::TickState(USimulationEntity* Owner) {
     FRBPlayerState* State = &(Player->State);
 
     int Inputs = Simulation->_inputs[State->PlayerIndex];
-    int MoveUp = Inputs & INPUT_MOVE_RIGHT;
-    int MoveDown = Inputs & INPUT_MOVE_LEFT;
-    if (MoveUp) {
+    int MoveRight = Inputs & INPUT_MOVE_RIGHT;
+    int MoveLeft = Inputs & INPUT_MOVE_LEFT;
+    if (MoveRight) {
         Owner->StateMachine->TransitionToStateByName(this, "WalkForward", Owner);
         return;
     }
-    else if (!MoveDown) {
+    else if (!MoveLeft) {
         Owner->StateMachine->TransitionToStateByName(this, "Idle", Owner);
         return;
     }
@@ -113,11 +113,6 @@ void UPlayerState_Walk_Back::TickState(USimulationEntity* Owner) {
 
 void URBPlayer::Act(URBGameSimulation* Simulation) {
     StateMachine->TickState(this);
-}
-
-void URBPlayer::Move(int32 X, int32 Y) {
-	Position.x = Position.x + X;
-	Position.y = Position.y + Y;
 }
 
 void URBPlayer::SerializeToBuffer(GameSimulationSerializer* Serializer) {

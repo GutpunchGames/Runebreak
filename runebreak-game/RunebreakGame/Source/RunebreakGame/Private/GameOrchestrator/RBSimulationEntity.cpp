@@ -35,3 +35,9 @@ void USimulationEntity::DeserializeFromBuffer(GameSimulationDeserializer* Deseri
     Deserializer->ReadFloat(&(Position.x));
     Deserializer->ReadFloat(&(Position.y));
 }
+
+void USimulationEntity::Move(const int32& X, const int32& Y) {
+	Position.x = Position.x + X;
+	Position.y = Position.y + Y;
+}
+

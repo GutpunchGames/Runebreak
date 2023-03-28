@@ -45,3 +45,4 @@ void ASimulationActor::UpdateLocation() {
 
 void ASimulationActor::UpdateAnimation() {
 }
+
