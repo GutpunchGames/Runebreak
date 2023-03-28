@@ -33,8 +33,15 @@ void ASimulationActor::UnbindEntity() {
 }
 
 void ASimulationActor::UpdateRendering_Implementation() {
-	// update position
+	UpdateLocation();
+	UpdateAnimation();
+}
+
+void ASimulationActor::UpdateLocation() {
 	FVector Location;
 	Location.Set(0, Entity->Position.x, Entity->Position.y);
 	SetActorLocation(Location);
+}
+
+void ASimulationActor::UpdateAnimation() {
 }

@@ -1,8 +1,8 @@
 #include "GameOrchestrator/SelfDestructiveEntity.h"
 
 void USelfDestructiveEntity::InitDefaults() {
-    State.Position.x = 0;
-    State.Position.y = 100;
+    Position.x = 0;
+    Position.y = 0;
     State.TimeAlive = 0;
 
     State.MoveSpeed = Defaults.MoveSpeed;
@@ -21,7 +21,7 @@ void USelfDestructiveEntity::Act(URBGameSimulation* Simulation) {
 void USelfDestructiveEntity_Move::TickState(USimulationEntity* Owner) {
     USelfDestructiveEntity* Entity = Cast<USelfDestructiveEntity>(Owner);
     FSelfDestructiveEntityState* State = &(Entity->State);
-    State->Position.x = State->Position.x + State->MoveSpeed;
+    Entity->Position.x = Entity->Position.x + State->MoveSpeed;
     State->TimeAlive = State->TimeAlive + 1;
 
     if (State->TimeAlive > State->TimeToLive) {

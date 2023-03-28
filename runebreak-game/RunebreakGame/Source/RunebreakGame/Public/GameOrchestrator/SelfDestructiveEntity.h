@@ -18,8 +18,6 @@ struct FSelfDestructiveEntityState {
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadOnly)
-	FPosition Position;
-	UPROPERTY(BlueprintReadOnly)
 	int32 MoveSpeed = 10;
 	UPROPERTY(BlueprintReadOnly)
 	int32 TimeAlive = 0;

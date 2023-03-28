@@ -29,22 +29,23 @@ void UPlayerState_Idle::TickState(USimulationEntity* Owner) {
     FRBPlayerState* State = &(Player->State);
 
     int Inputs = Simulation->_inputs[State->PlayerIndex];
-    int MoveUp = Inputs & INPUT_MOVE_RIGHT;
-    int MoveDown = Inputs & INPUT_MOVE_LEFT;
+    int MoveRight = Inputs & INPUT_MOVE_RIGHT;
+    int MoveLeft = Inputs & INPUT_MOVE_LEFT;
     int Shoot = Inputs & INPUT_SHOOT;
 
-    if (MoveUp) {
+    if (MoveRight) {
         Owner->StateMachine->TransitionToStateByName(this, "WalkForward", Owner);
         return;
     }
-    else if (MoveDown) {
+    else if (MoveLeft) {
         Owner->StateMachine->TransitionToStateByName(this, "WalkBack", Owner);
         return;
     }
 
     if (Shoot) {
         if (State->FireballCooldown == 0) {
-			Simulation->SpawnEntity(State->FireballPrototype);
+			USimulationEntity* Fireball = Simulation->SpawnEntity(State->FireballPrototype);
+            Fireball->Position = Owner->Position;
             State->FireballCooldown = 60;
         }
     }

@@ -42,4 +42,8 @@ protected:
 
 	UPROPERTY()
 	URBEntityAnimator* Animator;
+
+private:
+	void UpdateLocation();
+	void UpdateAnimation();
 };
