@@ -10,7 +10,7 @@ class RUNEBREAKGAME_API UEntityState : public UObject {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FString Name;
 
 	UPROPERTY(BlueprintReadOnly)
@@ -70,6 +70,6 @@ public:
 	UFUNCTION()
 	void TickState(USimulationEntity* Owner);
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	UEntityState* CurrentState = nullptr;
 };
