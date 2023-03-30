@@ -7,5 +7,6 @@
 enum PlayerInputs {
 	INPUT_MOVE_LEFT = (1 << 0),
 	INPUT_MOVE_RIGHT = (1 << 1),
-	INPUT_SHOOT = (1 << 2),
+	INPUT_LIGHT_ATTACK = (1 << 2),
+	INPUT_SHOOT = (1 << 3),
 };

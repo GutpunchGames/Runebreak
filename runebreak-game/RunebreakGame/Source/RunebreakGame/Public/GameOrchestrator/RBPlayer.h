@@ -34,6 +34,14 @@ public:
 	void TickState(USimulationEntity* Owner) override;
 };
 
+UCLASS(Blueprintable)
+class RUNEBREAKGAME_API UPlayerState_Punch : public UEntityState {
+	GENERATED_BODY()
+
+public:
+	void TickState(USimulationEntity* Owner) override;
+};
+
 USTRUCT(BlueprintType)
 struct FRBPlayerState {
 	GENERATED_BODY()

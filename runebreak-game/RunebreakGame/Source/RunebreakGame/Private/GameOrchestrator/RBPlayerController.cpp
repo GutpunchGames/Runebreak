@@ -10,6 +10,7 @@ int32 ARBPlayerController::GetPlayerInput()
        { EKeys::Left,       INPUT_MOVE_LEFT },
        { EKeys::Right,     INPUT_MOVE_RIGHT },
        { EKeys::A,     INPUT_SHOOT },
+       { EKeys::R,     INPUT_LIGHT_ATTACK },
     };
 
     int32 i, inputs = 0;

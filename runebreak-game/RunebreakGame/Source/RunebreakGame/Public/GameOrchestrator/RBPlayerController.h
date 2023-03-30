@@ -6,9 +6,6 @@
 #include "GameFramework/PlayerController.h"
 #include "RBPlayerController.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class RUNEBREAKGAME_API ARBPlayerController : public APlayerController
 {

@@ -20,6 +20,9 @@ void URBPlayer::SetupStates(URBGameSimulation* Simulation) {
 
 	UEntityState* WalkBackState = NewObject<UPlayerState_Walk_Back>(this, FName("WalkBackState"));
     StateMachine->AddState("WalkBack", WalkBackState);
+
+	UEntityState* PunchState = NewObject<UPlayerState_Punch>(this, FName("PunchState"));
+    StateMachine->AddState("Punch", PunchState);
 }
 
 void UPlayerState_Idle::TickState(USimulationEntity* Owner) {
@@ -54,7 +57,14 @@ void UPlayerState_Idle::TickState(USimulationEntity* Owner) {
         State->FireballCooldown--;
     }
 
-    Simulation->ActivateDetectionBox(Owner->Id, Player->Position.x + 50, Player->Position.y + 100, 75, 100, DetectionBoxType::Hurtbox);
+    int Punch = Inputs & INPUT_LIGHT_ATTACK;
+
+    if (Punch) {
+        Owner->StateMachine->TransitionToStateByName(this, "Punch", Owner);
+        return;
+    }
+
+    Simulation->ActivateDetectionBox(Owner->Id, Player->Position.x, Player->Position.y + 80, 200, 200, DetectionBoxType::Hurtbox);
 }
 
 void UPlayerState_Walk_Forward::OnTransitionToState(UEntityState* Previous, USimulationEntity* Owner) {
@@ -113,6 +123,21 @@ void UPlayerState_Walk_Back::TickState(USimulationEntity* Owner) {
     }
 
 	Player->Move(-1 * State->MoveSpeed, 0);
+}
+
+void UPlayerState_Punch::TickState(USimulationEntity* Owner) {
+    Super::TickState(Owner);
+
+    if (Frame >= 25) {
+        Simulation->ActivateDetectionBox(Owner->Id, Owner->Position.x + 50, Owner->Position.y + 100, 75, 100, DetectionBoxType::Hitbox);
+    }
+
+    Simulation->ActivateDetectionBox(Owner->Id, Owner->Position.x, Owner->Position.y + 80, 200, 200, DetectionBoxType::Hurtbox);
+
+    if (Frame >= 60) {
+        Owner->StateMachine->TransitionToStateByName(this, "Idle", Owner);
+        return;
+    }
 }
 
 void URBPlayer::Act(URBGameSimulation* Simulation) {
