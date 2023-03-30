@@ -53,6 +53,8 @@ void UPlayerState_Idle::TickState(USimulationEntity* Owner) {
     if (State->FireballCooldown > 0) {
         State->FireballCooldown--;
     }
+
+    Simulation->ActivateDetectionBox(Owner->Id, Player->Position.x + 50, Player->Position.y + 100, 75, 100, DetectionBoxType::Hurtbox);
 }
 
 void UPlayerState_Walk_Forward::OnTransitionToState(UEntityState* Previous, USimulationEntity* Owner) {
@@ -82,10 +84,7 @@ void UPlayerState_Walk_Forward::TickState(USimulationEntity* Owner) {
 
 	Player->Move(State->MoveSpeed, 0);
 
-    FVector2D Size;
-    Size.X = 100;
-    Size.Y = 100;
-    Simulation->ActivateDetectionBox(Owner->Id, Player->Position.x + 50, Player->Position.y + 100, 75, 100, DetectionBoxType::Collision);
+    Simulation->ActivateDetectionBox(Owner->Id, Player->Position.x + 50, Player->Position.y + 100, 75, 100, DetectionBoxType::Hitbox);
 }
 
 void UPlayerState_Walk_Back::OnTransitionToState(UEntityState* Previous, USimulationEntity* Owner) {
