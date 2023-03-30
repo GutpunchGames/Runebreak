@@ -7,6 +7,7 @@
 #include "GameOrchestrator/SimulationActor.h"
 #include "GameOrchestrator/RBGameSimulation.h"
 #include "GameOrchestrator/RBNonGameState.h"
+#include "Collisions/DetectionBoxActor.h"
 #include "GameOrchestrator.generated.h"
 
 UCLASS()
@@ -35,6 +36,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	URBGameSimulation* Simulation = 0;
 
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	TSubclassOf<ADetectionBoxActor> DetectionBoxActorPrototype;
+
 	NonGameState ngs = { 0 };
 
 	float ElapsedTime = 0;;
@@ -44,4 +48,5 @@ protected:
 
 private:
 	TMap<int32, ASimulationActor*> EntityActors;
+	TArray<ADetectionBoxActor*> DetectionBoxActors;
 };

@@ -19,6 +19,13 @@ void AGameOrchestrator::Tick(float DeltaTime)
 
 void AGameOrchestrator::Init()
 {
+    for (int i = 0; i < 8; i++) {
+        FVector Origin;
+        FRotator Rotator;
+		ADetectionBoxActor* DetectionBoxActor = Cast<ADetectionBoxActor>(GetWorld()->SpawnActor(DetectionBoxActorPrototype, &Origin, &Rotator));
+        DetectionBoxActor->MarkInactive();
+        DetectionBoxActors.Add(DetectionBoxActor);
+    }
 }
 
 void AGameOrchestrator::OnSessionStarted_Implementation() {
@@ -56,6 +63,16 @@ void AGameOrchestrator::ActorSync() {
             UE_LOG(LogTemp, Warning, TEXT("Despawning actor for entity id: %d"), Iterator.Key())
 			GetWorld()->DestroyActor(Iterator.Value());
             Iterator.RemoveCurrent();
+        }
+    }
+
+    for (int i = 0; i < DetectionBoxActors.Num(); i++) {
+        ADetectionBoxActor* Actor = DetectionBoxActors[i];
+        if (i < Simulation->NumActiveDetectionBoxes) {
+            Actor->SetDetectionBox(Simulation->DetectionBoxes[i]);
+        }
+        else {
+            Actor->MarkInactive();
         }
     }
 }

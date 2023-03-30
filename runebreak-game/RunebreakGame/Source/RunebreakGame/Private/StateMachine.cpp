@@ -13,7 +13,6 @@ void UEntityState::BindToSimulation(URBGameSimulation* _Simulation) {
 }
 
 void UEntityState::TickState(USimulationEntity* Owner) {
-	UE_LOG(LogTemp, Warning, TEXT("ticking state"))
 	Frame++;
 }
 

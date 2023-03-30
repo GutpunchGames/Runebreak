@@ -81,6 +81,11 @@ void UPlayerState_Walk_Forward::TickState(USimulationEntity* Owner) {
     }
 
 	Player->Move(State->MoveSpeed, 0);
+
+    FVector2D Size;
+    Size.X = 100;
+    Size.Y = 100;
+    Simulation->ActivateDetectionBox(Owner->Id, Player->Position.x + 50, Player->Position.y + 100, 75, 100, DetectionBoxType::Collision);
 }
 
 void UPlayerState_Walk_Back::OnTransitionToState(UEntityState* Previous, USimulationEntity* Owner) {

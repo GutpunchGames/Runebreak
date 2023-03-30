@@ -4,10 +4,15 @@
 
 void URBGameSimulation::Init()
 {
+    DetectionBoxes.AddDefaulted(MaxDetectionBoxes);
+    for (auto& DetectionBox : DetectionBoxes) {
+        DetectionBox.Type = DetectionBoxType::Inactive;
+    }
 }
 
 void URBGameSimulation::SimulationTick(int inputs[], int disconnect_flags)
 {
+    NumActiveDetectionBoxes = 0;
     _framenumber++;
     _inputs[0] = inputs[0];
     _inputs[1] = inputs[1];
@@ -57,4 +62,19 @@ void URBGameSimulation::AddEntityToSimulation(USimulationEntity* Entity) {
 
 bool URBGameSimulation::RemoveEntity(int32 EntityId) {
     return Entities.Remove(EntityId) > 0;
+}
+
+void URBGameSimulation::ActivateDetectionBox(int32 OwnerId, int32 PosX, int32 PosY, int32 SizeX, int32 SizeY, DetectionBoxType Type) {
+    DetectionBoxes[NumActiveDetectionBoxes].OwnerId = OwnerId;
+    DetectionBoxes[NumActiveDetectionBoxes].Position.x = PosX;
+    DetectionBoxes[NumActiveDetectionBoxes].Position.y = PosY;
+    DetectionBoxes[NumActiveDetectionBoxes].Size.X = SizeX;
+    DetectionBoxes[NumActiveDetectionBoxes].Size.Y = SizeY;
+    DetectionBoxes[NumActiveDetectionBoxes].Type = Type;
+
+    NumActiveDetectionBoxes++;
+
+    if (NumActiveDetectionBoxes >= MaxDetectionBoxes) {
+        UE_LOG(LogTemp, Fatal, TEXT("exceeded max detection boxes for tick"))
+    }
 }

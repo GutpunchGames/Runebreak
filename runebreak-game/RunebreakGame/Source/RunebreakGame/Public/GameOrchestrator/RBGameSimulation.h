@@ -1,12 +1,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameOrchestrator/RBPlayer.h"
 #include "GameOrchestrator/GameSimulationSerializer.h"
+#include <RunebreakGame/Public/Collisions/DetectionBox.h>
 #include "RBGameSimulation.generated.h"
 
+static int32 MaxDetectionBoxes = 256;
 
-UCLASS()
+UCLASS(Blueprintable)
 class URBGameSimulation : public UObject {
 	GENERATED_BODY()
 
@@ -26,6 +27,13 @@ public:
 	UPROPERTY()
 	int32 EntityIdGenerator = 0;
 
+	UPROPERTY()
+	int32 NumActiveDetectionBoxes;
+
+	// this will be padded after each tick with inactive detection boxes. for size, refer to NumActiveDetectionBoxes.
+	UPROPERTY(VisibleAnywhere)
+	TArray<FDetectionBox> DetectionBoxes;
+
 	bool RemoveEntity(int32 EntityId);
 
 	void Init();
@@ -35,6 +43,9 @@ public:
 	bool Load(unsigned char* buffer, int32 len);
 
 	void AddEntityToSimulation(USimulationEntity* Entity);
+	void ActivateDetectionBox(int32 OwnerId, int32 PosX, int32 PosY, int32 SizeX, int32 SizeY, DetectionBoxType Type);
+
+protected:
 
 private:
 	GameSimulationSerializer Serializer;
