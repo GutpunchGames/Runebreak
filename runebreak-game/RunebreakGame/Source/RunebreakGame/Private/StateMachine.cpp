@@ -20,13 +20,9 @@ UEntityState* UEntityStateMachine::GetState() {
 	return CurrentState;
 }
 
-void UEntityState::OnTransitionToState(UEntityState* Previous, USimulationEntity* Owner) {
+void UEntityState::OnTransitionToState(UEntityState* Previous, USimulationEntity* Owner) { }
 
-}
-
-void UEntityState::OnEnterState() {
-
-}
+void UEntityState::OnEnterState() { }
 
 void UEntityStateMachine::AddState(FString Name, UEntityState* State) {
 	State->Name = Name;
@@ -39,7 +35,7 @@ void UEntityStateMachine::AddState(FString Name, UEntityState* State) {
 
 void UEntityStateMachine::TransitionToState(UEntityState* Previous, UEntityState* Next, USimulationEntity* Owner) {
 	CurrentState = Next;
-	CurrentState->Frame = 0;
+	CurrentState->Frame = 1;
 	CurrentState->OnEnterState();
 	CurrentState->OnTransitionToState(Previous, Owner);
 }

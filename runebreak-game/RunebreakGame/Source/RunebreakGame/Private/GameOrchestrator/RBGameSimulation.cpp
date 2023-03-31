@@ -66,8 +66,8 @@ bool URBGameSimulation::RemoveEntity(int32 EntityId) {
 
 void URBGameSimulation::ActivateDetectionBox(int32 OwnerId, int32 PosX, int32 PosY, int32 SizeX, int32 SizeY, DetectionBoxType Type) {
     DetectionBoxes[NumActiveDetectionBoxes].OwnerId = OwnerId;
-    DetectionBoxes[NumActiveDetectionBoxes].Position.x = PosX;
-    DetectionBoxes[NumActiveDetectionBoxes].Position.y = PosY;
+    DetectionBoxes[NumActiveDetectionBoxes].Location.X = PosX;
+    DetectionBoxes[NumActiveDetectionBoxes].Location.Y = PosY;
     DetectionBoxes[NumActiveDetectionBoxes].Size.X = SizeX;
     DetectionBoxes[NumActiveDetectionBoxes].Size.Y = SizeY;
     DetectionBoxes[NumActiveDetectionBoxes].Type = Type;

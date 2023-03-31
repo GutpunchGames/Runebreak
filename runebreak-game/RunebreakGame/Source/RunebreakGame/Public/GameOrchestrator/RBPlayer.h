@@ -14,6 +14,9 @@ class RUNEBREAKGAME_API UPlayerState_Idle : public UEntityState {
 
 public:
 	void TickState(USimulationEntity* Owner) override;
+
+	UPROPERTY(EditAnywhere)
+	UDataTable* FrameConfigs;
 };
 
 UCLASS(Blueprintable)

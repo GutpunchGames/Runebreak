@@ -14,7 +14,7 @@ public:
 	FString Name;
 
 	UPROPERTY(BlueprintReadOnly)
-	int32 Frame = 0;
+	int32 Frame = 1;
 
 	UPROPERTY(BlueprintReadOnly)
 	URBGameSimulation* Simulation;

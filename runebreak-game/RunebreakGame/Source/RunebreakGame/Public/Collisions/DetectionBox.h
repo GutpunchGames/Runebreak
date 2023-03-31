@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "../GameOrchestrator/RBGamePrimitives.h"
+#include "Engine/DataTable.h"
 #include "DetectionBox.generated.h"
+
 
 UENUM()
 enum DetectionBoxType {
@@ -15,12 +17,27 @@ enum DetectionBoxType {
 };
 
 USTRUCT(BlueprintType)
-struct FDetectionBox
+struct FDetectionBoxConfig : public FTableRowBase
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FPosition Position;
+	FVector2D Offset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FVector2D Size;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TEnumAsByte<DetectionBoxType> Type = DetectionBoxType::Inactive;
+};
+
+USTRUCT(BlueprintType)
+struct FDetectionBox 
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FVector2D Location;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FVector2D Size;
@@ -30,4 +47,13 @@ struct FDetectionBox
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int32 OwnerId;
+};
+
+USTRUCT(BlueprintType)
+struct FStateFrame : public FTableRowBase
+{
+	GENERATED_BODY()
+
+		UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		TArray<FDetectionBoxConfig> Boxes;
 };

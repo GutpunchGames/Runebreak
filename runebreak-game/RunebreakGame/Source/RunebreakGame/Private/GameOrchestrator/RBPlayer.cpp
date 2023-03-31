@@ -12,7 +12,7 @@ void URBPlayer::Initialize(int32 PlayerIndex) {
 void URBPlayer::SetupStates(URBGameSimulation* Simulation) {
     Super::SetupStates(Simulation);
 
-	UEntityState* IdleState = NewObject<UPlayerState_Idle>(this, FName("IdleState"));
+	UEntityState* IdleState = NewObject<UPlayerState_Idle>(this, IdleStatePrototype);
     StateMachine->AddState("Idle", IdleState);
 
 	UEntityState* WalkForwardState = NewObject<UPlayerState_Walk_Forward>(this, FName("WalkForwardState"));
@@ -135,12 +135,32 @@ void URBPlayer::Act(URBGameSimulation* Simulation) {
 }
 
 void URBPlayer::ActivateDetectionBoxes(URBGameSimulation* Simulation) {
-    // add hurtboxes (should be based on state)
-    Simulation->ActivateDetectionBox(Id, Position.x, Position.y + 70, 140, 180, DetectionBoxType::Hurtbox);
+    //// add hurtboxes (should be based on state)
+    //Simulation->ActivateDetectionBox(Id, Position.x, Position.y + 70, 140, 180, DetectionBoxType::Hurtbox);
 
     // add hitboxes (based on state)
-    if (StateMachine->CurrentState->Name.Equals("Punch") && StateMachine->CurrentState->Frame >= 25) {
-		Simulation->ActivateDetectionBox(Id, Position.x + 50, Position.y + 100, 75, 100, DetectionBoxType::Hitbox);
+  //  if (StateMachine->CurrentState->Name.Equals("Punch") && StateMachine->CurrentState->Frame >= 25) {
+		//Simulation->ActivateDetectionBox(Id, Position.x + 50, Position.y + 100, 75, 100, DetectionBoxType::Hitbox);
+  //  }
+
+    // testing the idle state data table
+    if (StateMachine->CurrentState->Name.Equals("Idle")) {
+        UPlayerState_Idle* IdleState = Cast<UPlayerState_Idle>(StateMachine->CurrentState);
+        int NumRows = IdleState->FrameConfigs->GetRowNames().Num();
+
+        // this makes the hitboxes loop, do something about this later
+        int RowKeyInt = (IdleState->Frame % NumRows) + 1;
+		FString RowKey = FString::Printf(TEXT("%d"), RowKeyInt);
+        FStateFrame* Config = IdleState->FrameConfigs->FindRow<FStateFrame>(*RowKey, "");
+        if (Config) {
+			for (int i = 0; i < Config->Boxes.Num(); i++) {
+				FDetectionBoxConfig BoxConfig = Config->Boxes[i];
+				Simulation->ActivateDetectionBox(Id, Position.x + BoxConfig.Offset.X, Position.y + BoxConfig.Offset.Y, BoxConfig.Size.X, BoxConfig.Size.Y, BoxConfig.Type);
+			}
+        }
+        else {
+            UE_LOG(LogTemp, Warning, TEXT("Failed to find config for frame: %d"), IdleState->Frame)
+        }
     }
 }
 
