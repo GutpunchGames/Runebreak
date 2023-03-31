@@ -5,12 +5,18 @@ void USimulationEntity::SetupStates(URBGameSimulation* Simulation) {
     StateMachine->Simulation = Simulation;
 }
 
+void USimulationEntity::SimulationTick(URBGameSimulation* Simulation) { 
+    Act(Simulation);
+    ActivateDetectionBoxes(Simulation);
+}
+
 void USimulationEntity::Act(URBGameSimulation* Simulation) { }
+
+void USimulationEntity::ActivateDetectionBoxes(URBGameSimulation* Simulation) { }
 
 void USimulationEntity::ResolveCollisions(URBGameSimulation* Simulation) { }
 
-void USimulationEntity::InitDefaults() {
-}
+void USimulationEntity::InitDefaults() { }
 
 void USimulationEntity::SerializeToBuffer(GameSimulationSerializer* Serializer) {
     Serializer->WriteInt(Id);

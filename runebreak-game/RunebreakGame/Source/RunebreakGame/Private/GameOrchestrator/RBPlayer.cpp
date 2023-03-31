@@ -63,8 +63,6 @@ void UPlayerState_Idle::TickState(USimulationEntity* Owner) {
         Owner->StateMachine->TransitionToStateByName(this, "Punch", Owner);
         return;
     }
-
-    Simulation->ActivateDetectionBox(Owner->Id, Player->Position.x, Player->Position.y + 80, 200, 200, DetectionBoxType::Hurtbox);
 }
 
 void UPlayerState_Walk_Forward::OnTransitionToState(UEntityState* Previous, USimulationEntity* Owner) {
@@ -93,8 +91,6 @@ void UPlayerState_Walk_Forward::TickState(USimulationEntity* Owner) {
     }
 
 	Player->Move(State->MoveSpeed, 0);
-
-    Simulation->ActivateDetectionBox(Owner->Id, Player->Position.x + 50, Player->Position.y + 100, 75, 100, DetectionBoxType::Hitbox);
 }
 
 void UPlayerState_Walk_Back::OnTransitionToState(UEntityState* Previous, USimulationEntity* Owner) {
@@ -128,12 +124,6 @@ void UPlayerState_Walk_Back::TickState(USimulationEntity* Owner) {
 void UPlayerState_Punch::TickState(USimulationEntity* Owner) {
     Super::TickState(Owner);
 
-    if (Frame >= 25) {
-        Simulation->ActivateDetectionBox(Owner->Id, Owner->Position.x + 50, Owner->Position.y + 100, 75, 100, DetectionBoxType::Hitbox);
-    }
-
-    Simulation->ActivateDetectionBox(Owner->Id, Owner->Position.x, Owner->Position.y + 80, 200, 200, DetectionBoxType::Hurtbox);
-
     if (Frame >= 60) {
         Owner->StateMachine->TransitionToStateByName(this, "Idle", Owner);
         return;
@@ -142,6 +132,16 @@ void UPlayerState_Punch::TickState(USimulationEntity* Owner) {
 
 void URBPlayer::Act(URBGameSimulation* Simulation) {
     StateMachine->TickState(this);
+}
+
+void URBPlayer::ActivateDetectionBoxes(URBGameSimulation* Simulation) {
+    // add hurtboxes (should be based on state)
+    Simulation->ActivateDetectionBox(Id, Position.x, Position.y + 70, 140, 180, DetectionBoxType::Hurtbox);
+
+    // add hitboxes (based on state)
+    if (StateMachine->CurrentState->Name.Equals("Punch") && StateMachine->CurrentState->Frame >= 25) {
+		Simulation->ActivateDetectionBox(Id, Position.x + 50, Position.y + 100, 75, 100, DetectionBoxType::Hitbox);
+    }
 }
 
 void URBPlayer::SerializeToBuffer(GameSimulationSerializer* Serializer) {

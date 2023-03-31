@@ -74,6 +74,7 @@ public:
 	URBPlayer();
 
 	virtual void Act(URBGameSimulation* Simulation) override;
+	virtual void ActivateDetectionBoxes(URBGameSimulation* Simulation) override;
 
 	virtual void SetupStates(URBGameSimulation* Simulation) override;
 	virtual void SerializeToBuffer(GameSimulationSerializer* Serializer);

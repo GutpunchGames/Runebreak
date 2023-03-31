@@ -29,12 +29,17 @@ public:
 
 	virtual void SetupStates(URBGameSimulation* Simulation);
 	virtual void InitDefaults();
-	virtual void Act(URBGameSimulation* Simulation);
 	virtual void ResolveCollisions(URBGameSimulation* Simulation);
+
+	void SimulationTick(URBGameSimulation* Simulation);
 
 	virtual void SerializeToBuffer(GameSimulationSerializer* Serializer);
 	virtual void DeserializeFromBuffer(GameSimulationDeserializer* Deserializer);
 
 	virtual void Move(const int32& X, const int32& Y);
+
+protected:
+	virtual void Act(URBGameSimulation* Simulation);
+	virtual void ActivateDetectionBoxes(URBGameSimulation* Simulation);
 };
 

@@ -21,7 +21,7 @@ void URBGameSimulation::SimulationTick(int inputs[], int disconnect_flags)
     Entities.GenerateKeyArray(Keys);
     for (auto& Key : Keys) {
         // move, update hitboxes, etc.
-        Entities[Key]->Act(this);
+        Entities[Key]->SimulationTick(this);
     }
 
     for (auto& Entry : Entities) {
