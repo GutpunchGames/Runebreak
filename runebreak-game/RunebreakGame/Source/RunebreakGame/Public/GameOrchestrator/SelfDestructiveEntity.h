@@ -55,6 +55,4 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FSelfDestructiveEntityDefaults Defaults;
-
-	virtual void SetupStates(URBGameSimulation* Simulation) override;
 };

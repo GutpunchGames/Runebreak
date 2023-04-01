@@ -27,6 +27,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	FPosition Position;
 
+	UPROPERTY(EditDefaultsOnly)
+	TMap<FName, TSubclassOf<UEntityState>> StatePrototypes;
+
 	virtual void SetupStates(URBGameSimulation* Simulation);
 	virtual void InitDefaults();
 	virtual void ResolveCollisions(URBGameSimulation* Simulation);

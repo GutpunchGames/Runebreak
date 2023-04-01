@@ -81,7 +81,9 @@ template <typename T> void GameSimulationSerializer::WriteClass(TSubclassOf<T> C
 void GameSimulationSerializer::WriteString(FString& Value) {
     uint8 OutBytes[32];
     int32 NumBytes = StringToBytes(Value, OutBytes, 32);
-    UE_LOG(LogTemp, Warning, TEXT("Writing string with length: %d"), NumBytes)
+    if (Value.Len() >= 32) {
+        UE_LOG(LogTemp, Fatal, TEXT("cannot serialize string: %s"), *Value)
+    }
     WriteInt(NumBytes);
 	WriteBytes(OutBytes, NumBytes);
 }

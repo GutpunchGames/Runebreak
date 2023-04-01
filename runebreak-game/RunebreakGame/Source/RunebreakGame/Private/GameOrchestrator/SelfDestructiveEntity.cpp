@@ -9,11 +9,6 @@ void USelfDestructiveEntity::InitDefaults() {
     State.TimeToLive = Defaults.TimeToLive;
 }
 
-void USelfDestructiveEntity::SetupStates(URBGameSimulation* Simulation) {
-    Super::SetupStates(Simulation);
-    StateMachine->AddState("Move", NewObject<USelfDestructiveEntity_Move>(this, FName("Move")));
-}
-
 void USelfDestructiveEntity::Act(URBGameSimulation* Simulation) {
     StateMachine->TickState(this);
 }

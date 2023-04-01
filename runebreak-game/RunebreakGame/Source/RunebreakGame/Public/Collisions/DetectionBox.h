@@ -48,12 +48,3 @@ struct FDetectionBox
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int32 OwnerId;
 };
-
-USTRUCT(BlueprintType)
-struct FStateFrame : public FTableRowBase
-{
-	GENERATED_BODY()
-
-		UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		TArray<FDetectionBoxConfig> Boxes;
-};

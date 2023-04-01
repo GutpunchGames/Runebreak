@@ -3,6 +3,13 @@
 void USimulationEntity::SetupStates(URBGameSimulation* Simulation) {
     StateMachine = NewObject<UEntityStateMachine>(this, FName("EntityStateMachine"));
     StateMachine->Simulation = Simulation;
+
+    for (const auto& Iterator : StatePrototypes) {
+        FName Name = Iterator.Key;
+		UEntityState* State = NewObject<UEntityState>(this, Iterator.Value);
+        State->Name = Name.ToString();
+		StateMachine->AddState(State->Name, State);
+    }
 }
 
 void USimulationEntity::SimulationTick(URBGameSimulation* Simulation) { 

@@ -2,22 +2,36 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "Engine/DataTable.h"
+#include "Collisions/DetectionBox.h"
 #include "GameOrchestrator/RBGamePrimitives.h"
 #include "StateMachine.generated.h"
+
+USTRUCT(BlueprintType)
+struct FDetectionBoxesForFrame : public FTableRowBase {
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<FDetectionBoxConfig> DetectionBoxes;
+};
 
 UCLASS(Blueprintable)
 class RUNEBREAKGAME_API UEntityState : public UObject {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FString Name;
 
-	UPROPERTY(BlueprintReadOnly)
-	int32 Frame = 1;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int32 NumFrames;
 
 	UPROPERTY(BlueprintReadOnly)
 	URBGameSimulation* Simulation;
+
+	UPROPERTY(BlueprintReadOnly)
+	int32 Frame = 1;
 
 	UFUNCTION()
 	virtual void BindToSimulation(URBGameSimulation* _Simulation);
@@ -30,6 +44,9 @@ public:
 
 	UFUNCTION()
 	virtual void TickState(USimulationEntity* Owner);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<FDetectionBoxesForFrame> FrameDetectionBoxesConfigs;
 };
 
 UCLASS()

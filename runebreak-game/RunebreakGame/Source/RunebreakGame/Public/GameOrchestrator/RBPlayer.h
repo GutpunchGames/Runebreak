@@ -14,9 +14,6 @@ class RUNEBREAKGAME_API UPlayerState_Idle : public UEntityState {
 
 public:
 	void TickState(USimulationEntity* Owner) override;
-
-	UPROPERTY(EditAnywhere)
-	UDataTable* FrameConfigs;
 };
 
 UCLASS(Blueprintable)
@@ -79,7 +76,6 @@ public:
 	virtual void Act(URBGameSimulation* Simulation) override;
 	virtual void ActivateDetectionBoxes(URBGameSimulation* Simulation) override;
 
-	virtual void SetupStates(URBGameSimulation* Simulation) override;
 	virtual void SerializeToBuffer(GameSimulationSerializer* Serializer);
 	virtual void DeserializeFromBuffer(GameSimulationDeserializer* Deserializer) override;
 
@@ -88,7 +84,4 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Initialize(int32 PlayerIndex);
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<UPlayerState_Idle> IdleStatePrototype;
 };
