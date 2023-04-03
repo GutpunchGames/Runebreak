@@ -45,8 +45,14 @@ public:
 	UFUNCTION()
 	virtual void TickState(USimulationEntity* Owner);
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TArray<FDetectionBoxesForFrame> FrameDetectionBoxesConfigs;
+	UFUNCTION()
+	virtual void LoadDetectionBoxes();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UDataTable* DetectionBoxData;
+
+	UPROPERTY(VisibleAnywhere)
+	FStateDetectionBoxConfig StateDetectionBoxes;
 };
 
 UCLASS()
@@ -87,6 +93,6 @@ public:
 	UFUNCTION()
 	void TickState(USimulationEntity* Owner);
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UEntityState* CurrentState = nullptr;
 };

@@ -37,7 +37,7 @@ public:
 	TSubclassOf<URBEntityAnimator> AnimatorClass;
 
 protected:
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USimulationEntity* Entity;
 
 	UPROPERTY()

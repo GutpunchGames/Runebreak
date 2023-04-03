@@ -8,6 +8,7 @@ void USimulationEntity::SetupStates(URBGameSimulation* Simulation) {
         FName Name = Iterator.Key;
 		UEntityState* State = NewObject<UEntityState>(this, Iterator.Value);
         State->Name = Name.ToString();
+        State->LoadDetectionBoxes();
 		StateMachine->AddState(State->Name, State);
     }
 }

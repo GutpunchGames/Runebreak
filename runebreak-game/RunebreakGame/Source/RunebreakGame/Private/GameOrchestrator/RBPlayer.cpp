@@ -119,24 +119,15 @@ void URBPlayer::Act(URBGameSimulation* Simulation) {
 }
 
 void URBPlayer::ActivateDetectionBoxes(URBGameSimulation* Simulation) {
-  //  if (StateMachine->CurrentState->Name.Equals("Idle")) {
-  //      UPlayerState_Idle* IdleState = Cast<UPlayerState_Idle>(StateMachine->CurrentState);
-  //      int NumRows = IdleState->FrameConfigs->GetRowNames().Num();
+	UEntityState* CurrentState = StateMachine->CurrentState;
+    if (CurrentState->StateDetectionBoxes.DetectionBoxesByFrame.Num() <= 0) {
+        return;
+    }
 
-  //      // this makes the hitboxes loop, do something about this later
-  //      int RowKeyInt = (IdleState->Frame % NumRows) + 1;
-		//FString RowKey = FString::Printf(TEXT("%d"), RowKeyInt);
-  //      FStateFrame* Config = IdleState->FrameConfigs->FindRow<FStateFrame>(*RowKey, "");
-  //      if (Config) {
-		//	for (int i = 0; i < Config->Boxes.Num(); i++) {
-		//		FDetectionBoxConfig BoxConfig = Config->Boxes[i];
-		//		Simulation->ActivateDetectionBox(Id, Position.x + BoxConfig.Offset.X, Position.y + BoxConfig.Offset.Y, BoxConfig.Size.X, BoxConfig.Size.Y, BoxConfig.Type);
-		//	}
-  //      }
-  //      else {
-  //          UE_LOG(LogTemp, Warning, TEXT("Failed to find config for frame: %d"), IdleState->Frame)
-  //      }
-  //  }
+    for (const FDetectionBoxConfig& BoxConfig : CurrentState->StateDetectionBoxes.DetectionBoxesByFrame[CurrentState->Frame].DetectionBoxes) {
+        UE_LOG(LogTemp, Warning, TEXT("Activating box for frame: %d with offset y: %f and type: %s"), CurrentState->Frame, BoxConfig.Offset.Y, *UEnum::GetValueAsString(BoxConfig.Type))
+		Simulation->ActivateDetectionBox(Id, Position.x + BoxConfig.Offset.X, Position.y + BoxConfig.Offset.Y, BoxConfig.Size.X, BoxConfig.Size.Y, BoxConfig.Type);
+    }
 }
 
 void URBPlayer::SerializeToBuffer(GameSimulationSerializer* Serializer) {

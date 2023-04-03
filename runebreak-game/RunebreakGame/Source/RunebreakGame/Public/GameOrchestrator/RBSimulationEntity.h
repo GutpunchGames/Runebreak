@@ -21,7 +21,7 @@ public:
 	UPROPERTY()
 	TSubclassOf<USimulationEntity> EntityClass;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UEntityStateMachine* StateMachine;
 
 	UPROPERTY(BlueprintReadOnly)

@@ -14,6 +14,9 @@ void UEntityState::BindToSimulation(URBGameSimulation* _Simulation) {
 
 void UEntityState::TickState(USimulationEntity* Owner) {
 	Frame++;
+	if (Frame > NumFrames) {
+		Frame = 1;
+	}
 }
 
 UEntityState* UEntityStateMachine::GetState() {
@@ -23,6 +26,12 @@ UEntityState* UEntityStateMachine::GetState() {
 void UEntityState::OnTransitionToState(UEntityState* Previous, USimulationEntity* Owner) { }
 
 void UEntityState::OnEnterState() { }
+
+void UEntityState::LoadDetectionBoxes() {
+	UE_LOG(LogTemp, Warning, TEXT("Loading boxes for state: %s -- %d"), *Name, NumFrames)
+	UDetectionBoxLoader* Loader = NewObject<UDetectionBoxLoader>(this);
+	StateDetectionBoxes = Loader->LoadDetectionBoxConfigs(NumFrames, DetectionBoxData);
+}
 
 void UEntityStateMachine::AddState(FString Name, UEntityState* State) {
 	State->Name = Name;
