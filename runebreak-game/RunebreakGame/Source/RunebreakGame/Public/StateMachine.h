@@ -51,7 +51,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UDataTable* DetectionBoxData;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleInstanceOnly)
 	FStateDetectionBoxConfig StateDetectionBoxes;
 };
 

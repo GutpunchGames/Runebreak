@@ -118,17 +118,6 @@ void URBPlayer::Act(URBGameSimulation* Simulation) {
     StateMachine->TickState(this);
 }
 
-void URBPlayer::ActivateDetectionBoxes(URBGameSimulation* Simulation) {
-	UEntityState* CurrentState = StateMachine->CurrentState;
-    if (CurrentState->StateDetectionBoxes.DetectionBoxesByFrame.Num() <= 0) {
-        return;
-    }
-
-    for (const FDetectionBoxConfig& BoxConfig : CurrentState->StateDetectionBoxes.DetectionBoxesByFrame[CurrentState->Frame].DetectionBoxes) {
-		Simulation->ActivateDetectionBox(Id, Position.x + BoxConfig.Offset.X, Position.y + BoxConfig.Offset.Y, BoxConfig.Size.X, BoxConfig.Size.Y, BoxConfig.Type);
-    }
-}
-
 void URBPlayer::SerializeToBuffer(GameSimulationSerializer* Serializer) {
     Super::SerializeToBuffer(Serializer);
     Serializer->WriteBytes(&State, sizeof(State));

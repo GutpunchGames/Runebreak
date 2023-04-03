@@ -46,7 +46,6 @@ GENERATED_BODY()
 public:
 	virtual void InitDefaults() override;
 	virtual void Act(URBGameSimulation* Simulation) override;
-	virtual void ActivateDetectionBoxes(URBGameSimulation* Simulation) override;
 	virtual void SerializeToBuffer(GameSimulationSerializer* Serializer) override;
 	virtual void DeserializeFromBuffer(GameSimulationDeserializer* Deserializer) override;
 

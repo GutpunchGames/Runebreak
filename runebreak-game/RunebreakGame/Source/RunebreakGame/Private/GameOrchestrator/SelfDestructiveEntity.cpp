@@ -13,11 +13,8 @@ void USelfDestructiveEntity::Act(URBGameSimulation* Simulation) {
     StateMachine->TickState(this);
 }
 
-void USelfDestructiveEntity::ActivateDetectionBoxes(URBGameSimulation* Simulation) {
-    Simulation->ActivateDetectionBox(Id, Position.x, Position.y, 60, 60, DetectionBoxType::Hitbox);
-}
-
 void USelfDestructiveEntity_Move::TickState(USimulationEntity* Owner) {
+    Super::TickState(Owner);
     USelfDestructiveEntity* Entity = Cast<USelfDestructiveEntity>(Owner);
     FSelfDestructiveEntityState* State = &(Entity->State);
     Entity->Position.x = Entity->Position.x + State->MoveSpeed;

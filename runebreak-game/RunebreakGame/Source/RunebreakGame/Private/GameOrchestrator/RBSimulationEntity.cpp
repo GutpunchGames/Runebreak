@@ -20,7 +20,16 @@ void USimulationEntity::SimulationTick(URBGameSimulation* Simulation) {
 
 void USimulationEntity::Act(URBGameSimulation* Simulation) { }
 
-void USimulationEntity::ActivateDetectionBoxes(URBGameSimulation* Simulation) { }
+void USimulationEntity::ActivateDetectionBoxes(URBGameSimulation* Simulation) {
+	UEntityState* CurrentState = StateMachine->CurrentState;
+    if (CurrentState->StateDetectionBoxes.DetectionBoxesByFrame.Num() <= 0) {
+        return;
+    }
+
+    for (const FDetectionBoxConfig& BoxConfig : CurrentState->StateDetectionBoxes.DetectionBoxesByFrame[CurrentState->Frame].DetectionBoxes) {
+		Simulation->ActivateDetectionBox(Id, Position.x + BoxConfig.Offset.X, Position.y + BoxConfig.Offset.Y, BoxConfig.Size.X, BoxConfig.Size.Y, BoxConfig.Type);
+    }
+}
 
 void USimulationEntity::ResolveCollisions(URBGameSimulation* Simulation) { }
 
