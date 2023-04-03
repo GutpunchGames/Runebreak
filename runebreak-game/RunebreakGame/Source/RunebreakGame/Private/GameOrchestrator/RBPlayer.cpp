@@ -108,7 +108,7 @@ void UPlayerState_Walk_Back::TickState(USimulationEntity* Owner) {
 void UPlayerState_Punch::TickState(USimulationEntity* Owner) {
     Super::TickState(Owner);
 
-    if (Frame >= 60) {
+    if (Frame >= 30) {
         Owner->StateMachine->TransitionToStateByName(this, "Idle", Owner);
         return;
     }
@@ -125,7 +125,6 @@ void URBPlayer::ActivateDetectionBoxes(URBGameSimulation* Simulation) {
     }
 
     for (const FDetectionBoxConfig& BoxConfig : CurrentState->StateDetectionBoxes.DetectionBoxesByFrame[CurrentState->Frame].DetectionBoxes) {
-        UE_LOG(LogTemp, Warning, TEXT("Activating box for frame: %d with offset y: %f and type: %s"), CurrentState->Frame, BoxConfig.Offset.Y, *UEnum::GetValueAsString(BoxConfig.Type))
 		Simulation->ActivateDetectionBox(Id, Position.x + BoxConfig.Offset.X, Position.y + BoxConfig.Offset.Y, BoxConfig.Size.X, BoxConfig.Size.Y, BoxConfig.Type);
     }
 }
